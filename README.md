@@ -8,8 +8,8 @@ information, making daily activities more organized and seamless.
 Admin, Teacher, Parent, and Student
 
 ## Core Features
-=> Centralized Dashboard Overview
-=> Daily Schedule & Exam Schedule Management
-=> Announcements & Updates
-=> User Authentication & Role-Based Access Control
-=> Student Attendance & Records Management
+- Centralized Dashboard Overview
+- Daily Schedule & Exam Schedule Management
+- Announcements & Updates
+- User Authentication & Role-Based Access Control
+- Student Attendance & Records Management
