@@ -621,11 +621,17 @@ video {
 .w-full {
   width: 100%;
 }
+.flex-1 {
+  flex: 1 1 0%;
+}
 .cursor-pointer {
   cursor: pointer;
 }
 .flex-col {
   flex-direction: column;
+}
+.flex-wrap {
+  flex-wrap: wrap;
 }
 .items-center {
   align-items: center;
@@ -651,6 +657,9 @@ video {
 .overflow-scroll {
   overflow: scroll;
 }
+.rounded-2xl {
+  border-radius: 1rem;
+}
 .rounded-full {
   border-radius: 9999px;
 }
@@ -669,24 +678,6 @@ video {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
-.bg-\[\#F7F8F1\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(247 248 241 / var(--tw-bg-opacity));
-}
-.bg-\[\#F7F8F\] {
-  background-color: #F7F8F;
-}
-.bg-\[\#F7F8A1\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(247 248 161 / var(--tw-bg-opacity));
-}
-.bg-\[\#F7F8A\] {
-  background-color: #F7F8A;
-}
-.bg-\[\#f1f3f7\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(241 243 247 / var(--tw-bg-opacity));
-}
 .p-2 {
   padding: 0.5rem;
 }
@@ -697,12 +688,20 @@ video {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
 }
+.py-1 {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
 .py-2 {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
 }
 .text-right {
   text-align: right;
+}
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
 }
 .text-\[10px\] {
   font-size: 10px;
@@ -721,6 +720,12 @@ video {
 .font-medium {
   font-weight: 500;
 }
+.font-semibold {
+  font-weight: 600;
+}
+.capitalize {
+  text-transform: capitalize;
+}
 .leading-3 {
   line-height: .75rem;
 }
@@ -731,6 +736,10 @@ video {
 .text-gray-500 {
   --tw-text-opacity: 1;
   color: rgb(107 114 128 / var(--tw-text-opacity));
+}
+.text-green-600 {
+  --tw-text-opacity: 1;
+  color: rgb(22 163 74 / var(--tw-text-opacity));
 }
 .text-white {
   --tw-text-opacity: 1;
@@ -749,6 +758,14 @@ video {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(209 213 219 / var(--tw-ring-opacity));
 }
+.odd\:bg-campPurple:nth-child(odd) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(207 206 255 / var(--tw-bg-opacity));
+}
+.even\:bg-campYellow:nth-child(even) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(250 226 124 / var(--tw-bg-opacity));
+}
 @media (min-width: 768px) {
 
   .md\:flex {
@@ -762,11 +779,23 @@ video {
   .md\:w-\[92\%\] {
     width: 92%;
   }
+
+  .md\:flex-row {
+    flex-direction: row;
+  }
 }
 @media (min-width: 1024px) {
 
   .lg\:block {
     display: block;
+  }
+
+  .lg\:w-1\/3 {
+    width: 33.333333%;
+  }
+
+  .lg\:w-2\/3 {
+    width: 66.666667%;
   }
 
   .lg\:w-\[16\%\] {
