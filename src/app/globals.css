@@ -13,6 +13,19 @@
 }
 
 .react-calendar__tile--active {
-    background-color: #C3EBFA !important;
+    background-color: #003b73 !important;
+    color: white !important;
+    border-radius: 10px;
+}
+
+.react-calendar__tile:hover {
+    background-color: #C0C0C0;
+    color: black;
+    border-radius: 10px;
+}
+
+.react-calendar__tile--now {
+    background: #Fddb5d !important; /* Change this to your preferred color */
     color: black !important;
+    border-radius: 10px;
 }
