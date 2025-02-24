@@ -2,30 +2,78 @@
 @tailwind components;
 @tailwind utilities;
 
-.react-calendar{
-    width: 100% !important;
-    border: none !important;
-    font-family: "Inter", sans-serif !important;
+.react-calendar {
+  width: 100% !important;
+  border: none !important;
+  font-family: "Inter", sans-serif !important;
 }
 
-.react-calendar__navigation__label__labelText{
-    font-weight: 600;
+.react-calendar__navigation__label__labelText {
+  font-weight: 600;
 }
 
 .react-calendar__tile--active {
-    background-color: #003b73 !important;
-    color: white !important;
-    border-radius: 10px;
+  background-color: #003b73 !important;
+  color: white !important;
+  border-radius: 10px;
 }
 
 .react-calendar__tile:hover {
-    background-color: #C0C0C0;
-    color: black;
-    border-radius: 10px;
+  background-color: #c0c0c0;
+  color: black;
+  border-radius: 10px;
 }
 
 .react-calendar__tile--now {
-    background: #Fddb5d !important; /* Change this to your preferred color */
-    color: black !important;
-    border-radius: 10px;
+  background: #fddb5d !important; /* Change this to your preferred color */
+  color: black !important;
+  border-radius: 10px;
+}
+
+/* Scroll CSS - Menu */
+.sidebar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.sidebar::-webkit-scrollbar {
+  display: none;
+}
+
+.sidebar:hover {
+  scrollbar-width: thin; /* Firefox */
+  -ms-overflow-style: auto; /* IE and Edge */
+}
+
+.sidebar:hover::-webkit-scrollbar {
+  display: block;
+  width: 6px;
+}
+
+.sidebar:hover::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar:hover::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 20px;
+}
+
+/* Dashboard content scrollbar styles */
+.dashboard-content {
+  scrollbar-width: thin;
+  -ms-overflow-style: auto;
+}
+
+.dashboard-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dashboard-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dashboard-content::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 20px;
 }

@@ -63,6 +63,7 @@ const AttendanceChart = () => {
           <YAxis tick={{ fill: "#7E99A3" }} tickLine={false} />
           <Tooltip
             contentStyle={{ borderRadius: "10px", borderColor: "lightgray" }}
+            cursor={{ fill: 'transparent' }}
           />
           <Legend
             align="left"
@@ -74,12 +75,14 @@ const AttendanceChart = () => {
             fill="#0183ff"
             legendType="circle"
             radius={[10, 10, 0, 0]}
+            activeBar={<Rectangle stroke="#1F2431" strokeWidth={0.8} />}
           />
           <Bar
             dataKey="absent"
             fill="#8ea3bf"
             legendType="circle"
             radius={[10, 10, 0, 0]}
+            activeBar={<Rectangle stroke="#1F2431" strokeWidth={0.8} />}
           />
         </BarChart>
       </ResponsiveContainer>

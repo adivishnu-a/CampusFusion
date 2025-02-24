@@ -1,27 +1,21 @@
 "use client";
 import Image from "next/image";
 import {
-  RadialBarChart,
-  RadialBar,
-  Legend,
+  PieChart,
+  Pie,
   ResponsiveContainer,
 } from "recharts";
 
 const data = [
   {
-    name: "Total",
-    count: 106,
-    fill: "white",
+    name: "Boys",
+    value: 55,
+    fill: "#0183ff",
   },
   {
     name: "Girls",
-    count: 53,
+    value: 45,
     fill: "#Fc6a6b",
-  },
-  {
-    name: "Boys",
-    count: 53,
-    fill: "#0183ff",
   },
 ];
 
@@ -36,19 +30,21 @@ const CountChart = () => {
       {/* Chart */}
       <div className="relative w-full h-[75%]">
         <ResponsiveContainer>
-            <RadialBarChart
-                cx="50%"
-                cy="50%"
-                innerRadius="40%"
-                outerRadius="100%"
-                barSize={32}
-                data={data}
-            >
-                <RadialBar
-                    background
-                    dataKey="count"
-                />
-            </RadialBarChart>
+          <PieChart>
+            <Pie
+              data={data}
+              cx="50%"
+              cy="50%"
+              innerRadius="55%"
+              outerRadius="85%"
+              dataKey="value"
+              startAngle={-270}
+              endAngle={90}
+              paddingAngle={2}
+              animationBegin={0}
+              animationDuration={1200}
+            />
+          </PieChart>
         </ResponsiveContainer>
         <Image src="/maleFemale.png" alt="" width={50} height={50} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
       </div>
