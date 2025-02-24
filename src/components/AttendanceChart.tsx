@@ -70,18 +70,18 @@ const AttendanceChart = () => {
             verticalAlign="top"
             wrapperStyle={{ paddingTop: "20px", paddingBottom: "40px" }}
           />
-          <Bar
+          <Bar  
             dataKey="present"
             fill="#0183ff"
             legendType="circle"
-            radius={[10, 10, 0, 0]}
+            radius={[5, 5, 0, 0]}
             activeBar={<Rectangle stroke="#1F2431" strokeWidth={0.8} />}
           />
           <Bar
             dataKey="absent"
             fill="#8ea3bf"
             legendType="circle"
-            radius={[10, 10, 0, 0]}
+            radius={[5, 5, 0, 0]}
             activeBar={<Rectangle stroke="#1F2431" strokeWidth={0.8} />}
           />
         </BarChart>
