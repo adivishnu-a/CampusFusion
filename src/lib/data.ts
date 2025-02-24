@@ -915,149 +915,197 @@ export const announcementsData = [
   },
 ];
 
-
 // YOU SHOULD CHANGE THE DATES OF THE EVENTS TO THE CURRENT DATE TO SEE THE EVENTS ON THE CALENDAR
-export const calendarEvents = [
-  {
-    title: "Math",
-    allDay: false,
-    start: new Date(2025, 7, 12, 8, 0),
-    end: new Date(2025, 7, 12, 8, 45),
-  },
-  {
-    title: "English",
-    allDay: false,
-    start: new Date(2025, 7, 12, 9, 0),
-    end: new Date(2025, 7, 12, 9, 45),
-  },
-  {
-    title: "Biology",
-    allDay: false,
-    start: new Date(2025, 7, 12, 10, 0),
-    end: new Date(2025, 7, 12, 10, 45),
-  },
-  {
-    title: "Physics",
-    allDay: false,
-    start: new Date(2025, 7, 12, 11, 0),
-    end: new Date(2025, 7, 12, 11, 45),
-  },
-  {
-    title: "Chemistry",
-    allDay: false,
-    start: new Date(2025, 7, 12, 13, 0),
-    end: new Date(2025, 7, 12, 13, 45),
-  },
-  {
-    title: "History",
-    allDay: false,
-    start: new Date(2025, 7, 12, 14, 0),
-    end: new Date(2025, 7, 12, 14, 45),
-  },
-  {
-    title: "English",
-    allDay: false,
-    start: new Date(2025, 7, 13, 9, 0),
-    end: new Date(2025, 7, 13, 9, 45),
-  },
-  {
-    title: "Biology",
-    allDay: false,
-    start: new Date(2025, 7, 13, 10, 0),
-    end: new Date(2025, 7, 13, 10, 45),
-  },
-  {
-    title: "Physics",
-    allDay: false,
-    start: new Date(2025, 7, 13, 11, 0),
-    end: new Date(2025, 7, 13, 11, 45),
-  },
+// export const calendarEvents = [
+//   {
+//     title: "Math",
+//     allDay: false,
+//     start: new Date(2025, 2, 24, 8, 0),
+//     end: new Date(2025, 2, 24, 8, 45),
+//   },
+//   {
+//     title: "English",
+//     allDay: false,
+//     start: new Date(2025, 2, 24, 9, 0),
+//     end: new Date(2025, 2, 24, 9, 45),
+//   },
+//   {
+//     title: "Biology",
+//     allDay: false,
+//     start: new Date(2025, 2, 24, 10, 0),
+//     end: new Date(2025, 2, 24, 10, 45),
+//   },
+//   {
+//     title: "Physics",
+//     allDay: false,
+//     start: new Date(2025, 2, 24, 11, 0),
+//     end: new Date(2025, 2, 24, 11, 45),
+//   },
+//   {
+//     title: "Chemistry",
+//     allDay: false,
+//     start: new Date(2025, 2, 24, 13, 0),
+//     end: new Date(2025, 2, 24, 13, 45),
+//   },
+//   {
+//     title: "History",
+//     allDay: false,
+//     start: new Date(2025, 2, 24, 14, 0),
+//     end: new Date(2025, 2, 24, 14, 45),
+//   },
+//   {
+//     title: "English",
+//     allDay: false,
+//     start: new Date(2025, 2, 25, 9, 0),
+//     end: new Date(2025, 2, 25, 9, 45),
+//   },
+//   {
+//     title: "Biology",
+//     allDay: false,
+//     start: new Date(2025, 2, 25, 10, 0),
+//     end: new Date(2025, 2, 25, 10, 45),
+//   },
+//   {
+//     title: "Physics",
+//     allDay: false,
+//     start: new Date(2025, 2, 25, 11, 0),
+//     end: new Date(2025, 2, 25, 11, 45),
+//   },
 
-  {
-    title: "History",
-    allDay: false,
-    start: new Date(2025, 7, 13, 14, 0),
-    end: new Date(2025, 7, 13, 14, 45),
-  },
-  {
-    title: "Math",
-    allDay: false,
-    start: new Date(2025, 7, 14, 8, 0),
-    end: new Date(2025, 7, 14, 8, 45),
-  },
-  {
-    title: "Biology",
-    allDay: false,
-    start: new Date(2025, 7, 14, 10, 0),
-    end: new Date(2025, 7, 14, 10, 45),
-  },
+//   {
+//     title: "History",
+//     allDay: false,
+//     start: new Date(2025, 2, 25, 14, 0),
+//     end: new Date(2025, 2, 25, 14, 45),
+//   },
+//   {
+//     title: "Math",
+//     allDay: false,
+//     start: new Date(2025, 2, 26, 8, 0),
+//     end: new Date(2025, 2, 26, 8, 45),
+//   },
+//   {
+//     title: "Biology",
+//     allDay: false,
+//     start: new Date(2025, 2, 26, 10, 0),
+//     end: new Date(2025, 2, 26, 10, 45),
+//   },
 
-  {
-    title: "Chemistry",
-    allDay: false,
-    start: new Date(2025, 7, 14, 13, 0),
-    end: new Date(2025, 7, 14, 13, 45),
-  },
-  {
-    title: "History",
-    allDay: false,
-    start: new Date(2025, 7, 14, 14, 0),
-    end: new Date(2025, 7, 13, 14, 45),
-  },
-  {
-    title: "English",
-    allDay: false,
-    start: new Date(2025, 7, 15, 9, 0),
-    end: new Date(2025, 7, 15, 9, 45),
-  },
-  {
-    title: "Biology",
-    allDay: false,
-    start: new Date(2025, 7, 15, 10, 0),
-    end: new Date(2025, 7, 15, 10, 45),
-  },
-  {
-    title: "Physics",
-    allDay: false,
-    start: new Date(2025, 7, 15, 11, 0),
-    end: new Date(2025, 7, 15, 11, 45),
-  },
+//   {
+//     title: "Chemistry",
+//     allDay: false,
+//     start: new Date(2025, 2, 26, 13, 0),
+//     end: new Date(2025, 2, 26, 13, 45),
+//   },
+//   {
+//     title: "History",
+//     allDay: false,
+//     start: new Date(2025, 2, 26, 14, 0),
+//     end: new Date(2025, 2, 26, 14, 45),
+//   },
+//   {
+//     title: "English",
+//     allDay: false,
+//     start: new Date(2025, 2, 27, 9, 0),
+//     end: new Date(2025, 2, 27, 9, 45),
+//   },
+//   {
+//     title: "Biology",
+//     allDay: false,
+//     start: new Date(2025, 2, 27, 10, 0),
+//     end: new Date(2025, 2, 27, 10, 45),
+//   },
+//   {
+//     title: "Physics",
+//     allDay: false,
+//     start: new Date(2025, 2, 27, 11, 0),
+//     end: new Date(2025, 2, 27, 11, 45),
+//   },
 
-  {
-    title: "History",
-    allDay: false,
-    start: new Date(2025, 7, 15, 14, 0),
-    end: new Date(2025, 7, 15, 14, 45),
-  },
-  {
-    title: "Math",
-    allDay: false,
-    start: new Date(2025, 7, 16, 8, 0),
-    end: new Date(2025, 7, 16, 8, 45),
-  },
-  {
-    title: "English",
-    allDay: false,
-    start: new Date(2025, 7, 16, 9, 0),
-    end: new Date(2025, 7, 16, 9, 45),
-  },
+//   {
+//     title: "History",
+//     allDay: false,
+//     start: new Date(2025, 2, 27, 14, 0),
+//     end: new Date(2025, 2, 27, 14, 45),
+//   },
+//   {
+//     title: "Math",
+//     allDay: false,
+//     start: new Date(2025, 2, 28, 8, 0),
+//     end: new Date(2025, 2, 28, 8, 45),
+//   },
+//   {
+//     title: "English",
+//     allDay: false,
+//     start: new Date(2025, 2, 28, 9, 0),
+//     end: new Date(2025, 2, 28, 9, 45),
+//   },
 
-  {
-    title: "Physics",
-    allDay: false,
-    start: new Date(2025, 7, 16, 11, 0),
-    end: new Date(2025, 7, 16, 11, 45),
-  },
-  {
-    title: "Chemistry",
-    allDay: false,
-    start: new Date(2025, 7, 16, 13, 0),
-    end: new Date(2025, 7, 16, 13, 45),
-  },
-  {
-    title: "History",
-    allDay: false,
-    start: new Date(2025, 7, 16, 14, 0),
-    end: new Date(2025, 7, 16, 14, 45),
-  },
+//   {
+//     title: "Physics",
+//     allDay: false,
+//     start: new Date(2025, 2, 28, 11, 0),
+//     end: new Date(2025, 2, 28, 11, 45),
+//   },
+//   {
+//     title: "Chemistry",
+//     allDay: false,
+//     start: new Date(2025, 2, 28, 13, 0),
+//     end: new Date(2025, 2, 28, 13, 45),
+//   },
+//   {
+//     title: "History",
+//     allDay: false,
+//     start: new Date(2025, 2, 28, 14, 0),
+//     end: new Date(2025, 2, 28, 14, 45),
+//   },
+// ];
+const today = new Date(2025, 1, 24); // Monday, Feb 24, 2025
+
+const calendarEvents: any = [];
+
+const subjects = [
+  "Math",
+  "English",
+  "Biology",
+  "Physics",
+  "Chemistry",
+  "History",
 ];
+const timings = [
+  { start: [8, 0], end: [8, 45] },
+  { start: [9, 0], end: [9, 45] },
+  { start: [10, 0], end: [10, 45] },
+  { start: [11, 0], end: [11, 45] },
+  { start: [13, 0], end: [13, 45] },
+  { start: [14, 0], end: [14, 45] },
+];
+
+// Generate events for the next 6 days (Monday to Saturday)
+for (let i = 0; i < 6; i++) {
+  let eventDate = new Date(today);
+  eventDate.setDate(today.getDate() + i); // Move to next day
+
+  subjects.forEach((subject, index) => {
+    const { start, end } = timings[index];
+
+    calendarEvents.push({
+      title: subject,
+      allDay: false,
+      start: new Date(
+        eventDate.getFullYear(),
+        eventDate.getMonth(),
+        eventDate.getDate(),
+        ...start
+      ),
+      end: new Date(
+        eventDate.getFullYear(),
+        eventDate.getMonth(),
+        eventDate.getDate(),
+        ...end
+      ),
+    });
+  });
+}
+
+export { calendarEvents };

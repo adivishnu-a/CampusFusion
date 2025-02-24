@@ -1,6 +1,6 @@
 import EventCalendar from "@/components/EventCalendar";
 import Announcements from "@/components/Announcements";
-import BigCalendar from '../../../components/BigCalendar';
+import BigCalendar from '@/components/BigCalendar';
 const StudentPage = () => {
   return (
     <div className='p-4 flex gap-4 flex-col xl:flex-row'>
