@@ -9,11 +9,11 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex h-screen">
+    <div className="h-screen flex">
       {/* Left */}
       <div className="w-[14%] md:w-[8%] lg:w-[16%] xl:w-[14%] h-screen flex flex-col">
         <div className="p-4">
-          <Link href="/" className="flex items-center justify-center gap-2">
+          <Link href="/" className="flex items-center justify-center lg:justify-start gap-2">
             <Image src="/logo.png" alt="logo" width={32} height={32} />
             <span className="hidden lg:block font-bold">CampusFusion</span>
           </Link>
@@ -29,7 +29,7 @@ export default function DashboardLayout({
           <Navbar />
         </div>
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto dashboard-content">
+        <div className="flex-1 overflow-y-auto dashboard-content flex flex-col">
           {children}
         </div>
       </div>
