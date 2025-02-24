@@ -19,16 +19,16 @@ const AdminPage = () => {
         {/* Middle Charts */}
         <div className="flex gap-4 flex-col lg:flex-row">
           {/* Count Chart */}
-          <div className="w-full lg:w-1/3 h-[450px]">
+          <div className="w-full lg:w-1/3 h-[450px] bg-white rounded-xl shadow-sm p-4">
             <CountChart />
           </div>
           {/* Attendance Chart */}
-          <div className="w-full lg:w-2/3 h-[450px]">
+          <div className="w-full lg:w-2/3 h-[450px] bg-white rounded-xl shadow-sm p-4">
             <AttendanceChart />
           </div>
         </div>
         {/* Bottom Chart */}
-        <div className="w-full h-[500px]">
+        <div className="w-full h-[500px] bg-white rounded-xl shadow-sm p-4">
           <FinanceChart />
         </div>
       </div>
