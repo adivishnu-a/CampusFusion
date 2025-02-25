@@ -163,6 +163,18 @@
 .rbc-event:nth-child(8) {
   background-color: #FFF8E5 !important;
 }
+.rbc-event:nth-child(9) {
+  background-color: #EBFAFB !important;
+}
+.rbc-event:nth-child(10) {
+  background-color: #F9F2FF !important;
+}
+.rbc-event:nth-child(11) {
+  background-color: #FFF4E9 !important;
+}
+.rbc-event:nth-child(12) {
+  background-color: #FFF8E5 !important;
+}
 
 .rbc-event-label{
   color: gray !important;
