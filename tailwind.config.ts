@@ -33,10 +33,8 @@ const config: Config = {
         campDarwinPastelSignalBlue: "#8ea3bf",
         campDarwinPastelCandyPeach: "#f9f2ff",
         campDarwinPastelZincYellow: "#fff8e5",
-        campDarwinPastelOne: "EBFAFB",
-        campDawrinPastelTwo: "F9F2FF",
-        campDarwinPastelThree: "FFF4E9",
-        campDarwinPastelFour: "FFF8E5",
+        campDarwinPastelOrange: "#fff4e9",
+        campDarwinPastelSlateGray: "#F3F5F9"
       },
     },
   },
