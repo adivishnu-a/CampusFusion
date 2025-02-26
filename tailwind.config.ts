@@ -21,6 +21,7 @@ const config: Config = {
         campYellow: "#FAE27C",
         campYellowLight: "#FEFCE8",
         campDarwinCobaltBlue: "#0183ff",
+        campDarwinMixedBlue: "#4E9CFF",
         campDarwinSignalBlue: "#003b73",
         campDarwinCharcoal: "#1F2431",
         campDarwinCandyPeach: "#Fc6a6b",
