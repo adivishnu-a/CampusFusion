@@ -3,6 +3,8 @@ import Performance from "@/components/Performance";
 import Image from "next/image";
 import Link from "next/link";
 import BigCalendar from '@/components/BigCalendar';
+import FormModal from "@/components/FormModal";
+import { role } from "@/lib/data";
 
 const SingleStudentPage = () => {
   return (
@@ -23,7 +25,29 @@ const SingleStudentPage = () => {
               />
             </div>
             <div className="w-2/3 flex flex-col justify-between gap-4">
-              <h1 className="text-xl text-white font-semibold">Cameron Moran</h1>
+            <div className="flex items-center gap-4">
+                <h1 className="text-xl text-white font-semibold">Cameron Moran</h1>
+                {role === "admin" && (
+                  <FormModal
+                    table="student"
+                    type="update"
+                    data={{
+                      id: 1,
+                      username: "cameronmoran",
+                      email: "cameronmoran@gmail.com",
+                      password: "password",
+                      firstName: "Cameron",
+                      lastName: "Moran",
+                      phone: "+1 234 567 89",
+                      address: "1234 Main St, Anytown, USA",
+                      bloodType: "B+",
+                      birthday: "2003-01-01",
+                      gender: "female",
+                      img: "https://images.pexels.com/photos/5414817/pexels-photo-5414817.jpeg?auto=compress&cs=tinysrgb&w=1200",
+                    }}
+                  />
+                )}
+              </div>
               <p className="text-sm text-gray-100">
                 Lorem ipsum, dolor sit amet consectetur adipisicing elit.
               </p>

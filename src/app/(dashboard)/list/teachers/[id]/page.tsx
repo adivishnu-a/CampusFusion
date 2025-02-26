@@ -1,8 +1,10 @@
 import Announcements from "@/components/Announcements";
 import BigCalendar from "@/components/BigCalendar";
+import FormModal from "@/components/FormModal";
 import Performance from "@/components/Performance";
+import { role } from "@/lib/data";
 import Image from "next/image";
-import Link from 'next/link';
+import Link from "next/link";
 
 const SingleTeacherPage = () => {
   return (
@@ -23,7 +25,29 @@ const SingleTeacherPage = () => {
               />
             </div>
             <div className="w-2/3 flex flex-col justify-between gap-4">
-              <h1 className="text-xl text-white font-semibold">Leonard Snyder</h1>
+              <div className="flex items-center gap-4">
+                <h1 className="text-xl text-white font-semibold">Leonard Snyder</h1>
+                {role === "admin" && (
+                  <FormModal
+                    table="teacher"
+                    type="update"
+                    data={{
+                      id: 1,
+                      username: "deanguerrero",
+                      email: "deanguerrero@gmail.com",
+                      password: "password",
+                      firstName: "Dean",
+                      lastName: "Guerrero",
+                      phone: "+1 234 567 89",
+                      address: "1234 Main St, Anytown, USA",
+                      bloodType: "A+",
+                      birthday: "2000-01-01",
+                      gender: "male",
+                      img: "https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=1200",
+                    }}
+                  />
+                )}
+              </div>
               <p className="text-sm text-gray-100">
                 Lorem ipsum, dolor sit amet consectetur adipisicing elit.
               </p>
@@ -118,19 +142,34 @@ const SingleTeacherPage = () => {
         <div className="bg-white shadow-sm p-4 rounded-md">
           <h1 className="text-xl font-semibold">Shortcuts</h1>
           <div className="mt-4 flex gap-4 flex-wrap text-xs text-gray-600">
-            <Link className="p-3 shadow-sm rounded-md bg-campDarwinPastelCobaltBlue" href="/">
+            <Link
+              className="p-3 shadow-sm rounded-md bg-campDarwinPastelCobaltBlue"
+              href="/"
+            >
               Teacher&apos;s Classes
             </Link>
-            <Link className="p-3 shadow-sm rounded-md bg-campDarwinPastelZincYellow" href="/">
+            <Link
+              className="p-3 shadow-sm rounded-md bg-campDarwinPastelZincYellow"
+              href="/"
+            >
               Teacher&apos;s Students
             </Link>
-            <Link className="p-3 shadow-sm rounded-md bg-campDarwinPastelOrange" href="/">
+            <Link
+              className="p-3 shadow-sm rounded-md bg-campDarwinPastelOrange"
+              href="/"
+            >
               Teacher&apos;s Lessons
             </Link>
-            <Link className="p-3 shadow-sm rounded-md bg-campDarwinPastelCandyPeach" href="/">
+            <Link
+              className="p-3 shadow-sm rounded-md bg-campDarwinPastelCandyPeach"
+              href="/"
+            >
               Teacher&apos;s Exams
             </Link>
-            <Link className="p-3 shadow-sm rounded-md bg-campDarwinPastelCobaltBlue" href="/">
+            <Link
+              className="p-3 shadow-sm rounded-md bg-campDarwinPastelCobaltBlue"
+              href="/"
+            >
               Teacher&apos;s Assignments
             </Link>
           </div>

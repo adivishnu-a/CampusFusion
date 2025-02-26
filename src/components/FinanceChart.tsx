@@ -94,7 +94,7 @@ const FinanceChart = () => {
             bottom: 5,
           }}
         >
-          <CartesianGrid strokeDasharray="3 3" stroke="#ddd" />
+          <CartesianGrid strokeDasharray="3 3" stroke="#ccc" />
           <XAxis
             dataKey="name"
             axisLine={false}
