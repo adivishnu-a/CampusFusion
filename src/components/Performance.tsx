@@ -3,16 +3,16 @@ import Image from "next/image";
 import { PieChart, Pie, Sector, Cell, ResponsiveContainer } from "recharts";
 
 const data = [
-  { name: "Group A", value: 92, fill: "#C3EBFA" },
-  { name: "Group B", value: 8, fill: "#FAE27C" },
+  { name: "Group A", value: 92, fill: "#0183ff" },
+  { name: "Group B", value: 8, fill: "#Fc6a6b" },
 ];
 
 const Performance = () => {
   return (
-    <div className="bg-white p-4 rounded-md h-80 relative">
+    <div className="bg-white p-4 shadow-sm rounded-md h-80 relative">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Performance</h1>
-        <Image src="/moreDark.png" alt="" width={16} height={16} />
+        <Image src="/moreDark.png" alt="" width={20} height={20} />
       </div>
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
@@ -32,7 +32,7 @@ const Performance = () => {
         <h1 className="text-3xl font-bold">9.2</h1>
         <p className="text-sm text-gray-500">out of 10</p>
       </div>
-      <h2 className="font-medium absolute bottom-16 left-0 right-0 m-auto text-center">1st Semester - 2nd Semester</h2>
+      <h2 className="font-medium absolute bottom-16 left-0 right-0 m-auto text-center">Academic Year: 2024 - 25</h2>
     </div>
   );
 };

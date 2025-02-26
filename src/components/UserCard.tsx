@@ -6,7 +6,7 @@ const UserCard = ({ type }: { type: string }) => {
         <span className="text-[10px] bg-white px-2 py-1 rounded-full text-green-800">
           2024/25
         </span>
-        <Image src="/more.png" alt="" width={18} height={18} />
+        <Image src="/more.png" alt="" width={20} height={20} />
       </div>
       <h1 className="text-2xl font-semibold my-4 text-white">1,234</h1>
       {/* If the type is Parent, then the h2 should be visible as Parent Logins*/}

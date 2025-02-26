@@ -31,8 +31,8 @@ const FormModal = ({
     type === "create"
       ? "bg-campDarwinCobaltBlue"
       : type === "update"
-      ? "bg-campSky"
-      : "bg-campPurple";
+      ? "bg-campDarwinCobaltBlue"
+      : "bg-campDarwinCandyPeach";
 
   const [open, setOpen] = useState(false);
 
