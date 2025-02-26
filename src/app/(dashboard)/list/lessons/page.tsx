@@ -63,10 +63,10 @@ const LessonListPage = () => {
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-campDarwinCobaltBlue">
-              <Image src="/filter.png" alt="" width={14} height={14} />
+              <Image src="/filter.png" alt="" width={20} height={20} />
             </button>
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-campDarwinCobaltBlue">
-              <Image src="/sort.png" alt="" width={14} height={14} />
+              <Image src="/sort.png" alt="" width={20} height={20} />
             </button>
             {role === "admin" && <FormModal table="lesson" type="create" />}
           </div>
