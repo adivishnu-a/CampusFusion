@@ -5,6 +5,7 @@ import Image from "next/image";
 import { role, teachersData } from "@/lib/data";
 import Link from "next/link";
 import FormModal from "@/components/FormModal";
+import React from "react";
 
 type Teacher = {
   id: number;
@@ -58,7 +59,7 @@ const TeachersListPage = () => {
   const renderRow = (item: Teacher) => (
     <tr
       key={item.id}
-      className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-campPurpleLight"
+      className="border-b border-gray-200 even:bg-campDarwinPastelSlateGray text-sm hover:bg-campDarwinPastelBlue"
     >
       <td className="flex items-center gap-4 p-4">
         <Image
@@ -81,7 +82,7 @@ const TeachersListPage = () => {
       <td>
         <div className="flex items-center gap-2">
           <Link href={`/list/teachers/${item.id}`}>
-            <button className="w-7 h-7 flex items-center justify-center rounded-full bg-campSky">
+            <button className="w-7 h-7 flex items-center justify-center rounded-full bg-campDarwinCobaltBlue">
               <Image src="/view.png" alt="" width={16} height={16} />
             </button>
           </Link>
@@ -96,7 +97,7 @@ const TeachersListPage = () => {
     </tr>
   );
   return (
-    <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
+    <div className="bg-white p-4 rounded-xl shadow-sm flex-1 m-4 mt-0">
       {/* Top */}
       <div className="flex items-center justify-between">
         <h1 className="hidden md:block text-lg font-semibold">All Teachers</h1>
@@ -119,7 +120,7 @@ const TeachersListPage = () => {
         </div>
       </div>
       {/* List */}
-      <Table columns={columns} renderRow={renderRow} data={teachersData} />{" "}
+      <Table columns={columns} renderRow={renderRow} data={teachersData} />
       {/* Pagination */}
       <Pagination />
     </div>
