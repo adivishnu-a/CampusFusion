@@ -143,31 +143,31 @@ const SingleTeacherPage = () => {
           <h1 className="text-xl font-semibold">Shortcuts</h1>
           <div className="mt-4 flex gap-4 flex-wrap text-xs text-gray-600">
             <Link
-              className="p-3 shadow-sm rounded-md bg-campDarwinPastelCobaltBlue"
+              className="p-3 shadow-sm rounded-md bg-campDarwinPastelCobaltBlue hover:bg-campDarwinPastelCobaltBlueHover"
               href="/"
             >
               Teacher&apos;s Classes
             </Link>
             <Link
-              className="p-3 shadow-sm rounded-md bg-campDarwinPastelZincYellow"
+              className="p-3 shadow-sm rounded-md bg-campDarwinPastelZincYellow hover:bg-campDarwinPastelZincYellowHover"
               href="/"
             >
               Teacher&apos;s Students
             </Link>
             <Link
-              className="p-3 shadow-sm rounded-md bg-campDarwinPastelOrange"
+              className="p-3 shadow-sm rounded-md bg-campDarwinPastelOrange hover:bg-campDarwinPastelOrangeHover"
               href="/"
             >
               Teacher&apos;s Lessons
             </Link>
             <Link
-              className="p-3 shadow-sm rounded-md bg-campDarwinPastelCandyPeach"
+              className="p-3 shadow-sm rounded-md bg-campDarwinPastelCandyPeach hover:bg-campDarwinPastelCandyPeachHover"
               href="/"
             >
               Teacher&apos;s Exams
             </Link>
             <Link
-              className="p-3 shadow-sm rounded-md bg-campDarwinPastelCobaltBlue"
+              className="p-3 shadow-sm rounded-md bg-campDarwinPastelCobaltBlue hover:bg-campDarwinPastelCobaltBlueHover"
               href="/"
             >
               Teacher&apos;s Assignments

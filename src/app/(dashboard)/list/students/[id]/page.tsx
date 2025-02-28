@@ -142,19 +142,19 @@ const SingleStudentPage = () => {
         <div className="bg-white p-4 shadow-sm rounded-md">
           <h1 className="text-xl font-semibold">Shortcuts</h1>
           <div className="mt-4 flex gap-4 flex-wrap text-xs text-gray-600">
-            <Link className="p-3 shadow-sm rounded-md bg-campDarwinPastelCobaltBlue" href="/">
+            <Link className="p-3 shadow-sm rounded-md bg-campDarwinPastelCobaltBlue hover:bg-campDarwinPastelCobaltBlueHover" href="/">
               Student&apos;s Lessons
             </Link>
-            <Link className="p-3 shadow-sm rounded-md bg-campDarwinPastelZincYellow" href="/">
+            <Link className="p-3 shadow-sm rounded-md bg-campDarwinPastelZincYellow hover:bg-campDarwinPastelZincYellowHover" href="/">
               Student&apos;s Teachers
             </Link>
-            <Link className="p-3 shadow-sm rounded-md bg-campDarwinPastelOrange" href="/">
+            <Link className="p-3 shadow-sm rounded-md bg-campDarwinPastelOrange hover:bg-campDarwinPastelOrangeHover" href="/">
               Student&apos;s Exams
             </Link>
-            <Link className="p-3 shadow-sm rounded-md bg-campDarwinPastelCandyPeach" href="/">
+            <Link className="p-3 shadow-sm rounded-md bg-campDarwinPastelCandyPeach hover:bg-campDarwinPastelCandyPeachHover" href="/">
               Student&apos;s Assignments
             </Link>
-            <Link className="p-3 shadow-sm rounded-md bg-campDarwinPastelCobaltBlue" href="/">
+            <Link className="p-3 shadow-sm rounded-md bg-campDarwinPastelCobaltBlue hover:bg-campDarwinPastelCobaltBlueHover" href="/">
               Student&apos;s Results
             </Link>
           </div>
