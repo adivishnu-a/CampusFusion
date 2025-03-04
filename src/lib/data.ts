@@ -1060,18 +1060,19 @@ export const announcementsData = [
 //     end: new Date(2025, 2, 28, 14, 45),
 //   },
 // ];
-const today = new Date(2025, 1, 24); // Monday, Feb 24, 2025
+// Get today's date
+const today = new Date();
+
+// Get the day index (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+const dayOfWeek = today.getDay();
+
+// Calculate the Monday of the current week
+const monday = new Date(today);
+monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
 
 const calendarEvents: any = [];
 
-const subjects = [
-  "Math",
-  "English",
-  "Biology",
-  "Physics",
-  "Chemistry",
-  "History",
-];
+const subjects = ["Math", "English", "Biology", "Physics", "Chemistry", "History"];
 const timings = [
   { start: [8, 0], end: [8, 45] },
   { start: [9, 0], end: [9, 45] },
@@ -1083,8 +1084,8 @@ const timings = [
 
 // Generate events for the next 6 days (Monday to Saturday)
 for (let i = 0; i < 6; i++) {
-  let eventDate = new Date(today);
-  eventDate.setDate(today.getDate() + i); // Move to next day
+  let eventDate = new Date(monday);
+  eventDate.setDate(monday.getDate() + i); // Move to next day
 
   subjects.forEach((subject, index) => {
     const { start, end } = timings[index];

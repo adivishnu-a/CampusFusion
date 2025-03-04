@@ -12,7 +12,7 @@ const StudentPage = () => {
         </div>
       </div>
       {/* Right */}
-      <div className="w-full lg:w-1/3 flex flex-col gap-4">
+      <div className="w-full xl:w-1/3 flex flex-col gap-4">
         <EventCalendar />
         <Announcements />
       </div>
