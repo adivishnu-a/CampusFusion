@@ -1,3 +1,6 @@
+// npx prisma db push - To Sync MongoDB Atlas to Current Schema
+// npx prisma studio - To Check the Data in a Seperate Port by Prisma
+// npx prisma generate - To Generate Prisma Client
 generator client {
   provider = "prisma-client-js"
 }
