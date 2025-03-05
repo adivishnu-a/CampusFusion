@@ -150,7 +150,7 @@ const SingleTeacherPage = () => {
             </Link>
             <Link
               className="p-3 shadow-sm rounded-md bg-campDarwinPastelZincYellow hover:bg-campDarwinPastelZincYellowHover"
-              href="/"
+              href={`/list/students?teacherId=67c817a8e76edc30ec337013`}
             >
               Teacher&apos;s Students
             </Link>

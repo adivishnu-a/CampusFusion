@@ -145,7 +145,7 @@ const SingleStudentPage = () => {
             <Link className="p-3 shadow-sm rounded-md bg-campDarwinPastelCobaltBlue hover:bg-campDarwinPastelCobaltBlueHover" href="/">
               Student&apos;s Lessons
             </Link>
-            <Link className="p-3 shadow-sm rounded-md bg-campDarwinPastelZincYellow hover:bg-campDarwinPastelZincYellowHover" href="/">
+            <Link className="p-3 shadow-sm rounded-md bg-campDarwinPastelZincYellow hover:bg-campDarwinPastelZincYellowHover" href={`/list/teachers?classId=67c817a5e76edc30ec336ff9`}>
               Student&apos;s Teachers
             </Link>
             <Link className="p-3 shadow-sm rounded-md bg-campDarwinPastelOrange hover:bg-campDarwinPastelOrangeHover" href="/">
