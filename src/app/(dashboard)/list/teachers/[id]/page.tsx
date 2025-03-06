@@ -144,7 +144,7 @@ const SingleTeacherPage = () => {
           <div className="mt-4 flex gap-4 flex-wrap text-xs text-gray-600">
             <Link
               className="p-3 shadow-sm rounded-md bg-campDarwinPastelCobaltBlue hover:bg-campDarwinPastelCobaltBlueHover"
-              href="/"
+              href={`/list/classes?supervisorId=67c817a8e76edc30ec337013`}
             >
               Teacher&apos;s Classes
             </Link>
@@ -156,19 +156,19 @@ const SingleTeacherPage = () => {
             </Link>
             <Link
               className="p-3 shadow-sm rounded-md bg-campDarwinPastelOrange hover:bg-campDarwinPastelOrangeHover"
-              href="/"
+              href={`/list/lessons?teacherId=67c817a8e76edc30ec337013`}
             >
               Teacher&apos;s Lessons
             </Link>
             <Link
               className="p-3 shadow-sm rounded-md bg-campDarwinPastelCandyPeach hover:bg-campDarwinPastelCandyPeachHover"
-              href="/"
+              href={`/list/exams?teacherId=67c817a8e76edc30ec337013`}
             >
               Teacher&apos;s Exams
             </Link>
             <Link
               className="p-3 shadow-sm rounded-md bg-campDarwinPastelCobaltBlue hover:bg-campDarwinPastelCobaltBlueHover"
-              href="/"
+              href={`/list/assignments?teacherId=67c817a8e76edc30ec337013`}
             >
               Teacher&apos;s Assignments
             </Link>
