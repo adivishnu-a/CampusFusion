@@ -13,11 +13,13 @@ datasource db {
 model Admin {
   id       String @id @default(auto()) @map("_id") @db.ObjectId
   username String @unique
+  password String
 }
 
 model Student {
   id          String       @id @default(auto()) @map("_id") @db.ObjectId
   username    String       @unique
+  password    String
   name        String
   surname     String
   email       String?      @unique
@@ -41,6 +43,7 @@ model Student {
 model Teacher {
   id         String     @id @default(auto()) @map("_id") @db.ObjectId
   username   String     @unique
+  password   String
   name       String
   surname    String
   email      String?    @unique
@@ -60,6 +63,7 @@ model Teacher {
 model Parent {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
   username  String    @unique
+  password  String
   name      String
   surname   String
   email     String?   @unique
