@@ -1,16 +1,22 @@
 import { PrismaClient, UserGender, Day } from "@prisma/client";
-import * as bcrypt from "bcrypt";
+import bcryptjs from "bcryptjs";  // Changed from bcrypt to bcryptjs
 
 const prisma = new PrismaClient();
 
 // Function to hash passwords
 async function hashPassword(password: string): Promise<string> {
-  return await bcrypt.hash(password, 10);
+  const saltRounds = process.env.BCRYPT_SALT_ROUNDS ? 
+    parseInt(process.env.BCRYPT_SALT_ROUNDS) : 
+    10;
+  return await bcryptjs.hash(password, saltRounds);
 }
 
 async function main(): Promise<void> {
   try {
     console.log("Seeding database...");
+
+    // Clear existing data
+    await prisma.admin.deleteMany();
 
     // ADMIN
     const admin = await prisma.admin.create({

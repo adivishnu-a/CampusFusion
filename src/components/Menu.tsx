@@ -1,6 +1,9 @@
-import { role } from "@/lib/data";
-import Image from "next/image";
-import Link from "next/link";
+'use client'
+
+import Image from "next/image"
+import Link from "next/link"
+import { useEffect, useState } from 'react'
+import type { AuthToken } from '@/lib/server-auth'
 
 const menuItems = [
   {
@@ -118,6 +121,83 @@ const menuItems = [
 ];
 
 const Menu = () => {
+  const [session, setSession] = useState<AuthToken | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchSession = async () => {
+      try {
+        console.log('Fetching session...')
+        const res = await fetch('/api/auth/session')
+        console.log('Session response:', res.status)
+        
+        if (!res.ok) {
+          throw new Error(`Session fetch failed: ${res.status}`)
+        }
+
+        const data = await res.json()
+        // console.log('Session data:', data)
+
+        if (!data) {
+          throw new Error('No session data received')
+        }
+
+        setSession(data)
+        setError(null)
+      } catch (error) {
+        console.error('Session error:', error)
+        setError(error instanceof Error ? error.message : 'Failed to load menu')
+        setSession(null)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchSession()
+  }, [])
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="p-4 text-sm text-gray-600">
+        Loading menu...
+      </div>
+    )
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="p-4 text-sm text-red-600">
+        {error}
+      </div>
+    )
+  }
+
+  // Show no session state
+  if (!session || !session.role) {
+    return (
+      <div className="p-4 text-sm text-yellow-600">
+        Please log in to view the menu
+      </div>
+    )
+  }
+
+  const handleLogout = async () => {
+    try {
+      const res = await fetch('/api/auth/logout', { 
+        method: 'POST',
+        credentials: 'include'
+      })
+      if (res.ok) {
+        window.location.href = '/sign-in'
+      }
+    } catch (error) {
+      console.error('Logout failed:', error)
+    }
+  }
+
   return (
     <div className="text-sm">
       {menuItems.map((i) => (
@@ -126,7 +206,19 @@ const Menu = () => {
             {i.title}
           </span>
           {i.items.map((item) => {
-            if (item.visible.includes(role)) {
+            if (item.visible.includes(session.role)) {
+              if (item.label === "Logout") {
+                return (
+                  <button
+                    onClick={handleLogout}
+                    key={item.label}
+                    className="w-full flex items-center justify-center lg:justify-start gap-4 text-gray-600 py-2 md:px-2 rounded-md hover:bg-campDarwinPastelBlue"
+                  >
+                    <Image src={item.icon} alt="" width={20} height={20} />
+                    <span className="hidden lg:block">{item.label}</span>
+                  </button>
+                )
+              }
               return (
                 <Link
                   href={item.href}
@@ -136,13 +228,14 @@ const Menu = () => {
                   <Image src={item.icon} alt="" width={20} height={20} />
                   <span className="hidden lg:block">{item.label}</span>
                 </Link>
-              );
+              )
             }
+            return null
           })}
         </div>
       ))}
     </div>
-  );
-};
+  )
+}
 
-export default Menu;
+export default Menu
