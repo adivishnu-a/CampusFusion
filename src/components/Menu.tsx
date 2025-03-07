@@ -3,7 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useEffect, useState } from 'react'
-import type { AuthToken } from '@/lib/server-auth'
+import { getClientToken } from '@/lib/get-client-token'
 
 const menuItems = [
   {
@@ -121,69 +121,37 @@ const menuItems = [
 ];
 
 const Menu = () => {
-  const [session, setSession] = useState<AuthToken | null>(null)
+  const [role, setRole] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const fetchSession = async () => {
+    const loadRole = async () => {
       try {
-        console.log('Fetching session...')
-        const res = await fetch('/api/auth/session')
-        console.log('Session response:', res.status)
-        
-        if (!res.ok) {
-          throw new Error(`Session fetch failed: ${res.status}`)
-        }
-
-        const data = await res.json()
-        // console.log('Session data:', data)
-
-        if (!data) {
-          throw new Error('No session data received')
-        }
-
-        setSession(data)
-        setError(null)
+        const token = await getClientToken()
+        setRole(token?.role || null)
       } catch (error) {
-        console.error('Session error:', error)
-        setError(error instanceof Error ? error.message : 'Failed to load menu')
-        setSession(null)
+        console.error('Failed to load role:', error)
       } finally {
         setLoading(false)
       }
     }
 
-    fetchSession()
+    loadRole()
   }, [])
 
-  // Show loading state
   if (loading) {
-    return (
-      <div className="p-4 text-sm text-gray-600">
-        Loading menu...
-      </div>
-    )
+    return <div className="p-4 text-sm text-gray-600">Loading menu...</div>
   }
-
-  // Show error state
-  if (error) {
-    return (
-      <div className="p-4 text-sm text-red-600">
-        {error}
-      </div>
-    )
+  if (!role) {
+    // Call logout endpoint to clear auth token before redirecting
+    fetch('/api/auth/logout', { 
+      method: 'POST',
+      credentials: 'include'
+    }).finally(() => {
+      window.location.href = '/sign-in'
+    })
+    return null
   }
-
-  // Show no session state
-  if (!session || !session.role) {
-    return (
-      <div className="p-4 text-sm text-yellow-600">
-        Please log in to view the menu
-      </div>
-    )
-  }
-
   const handleLogout = async () => {
     try {
       const res = await fetch('/api/auth/logout', { 
@@ -206,7 +174,7 @@ const Menu = () => {
             {i.title}
           </span>
           {i.items.map((item) => {
-            if (item.visible.includes(session.role)) {
+            if (item.visible.includes(role)) {
               if (item.label === "Logout") {
                 return (
                   <button

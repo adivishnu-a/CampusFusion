@@ -24,10 +24,9 @@ export function middleware(request: NextRequest) {
 
   const authToken = request.cookies.get('auth-token')
   const isAuthPage = request.nextUrl.pathname === '/sign-in'
-  const isHomePage = request.nextUrl.pathname === '/'
 
-  // Handle auth page and home page separately
-  if (isAuthPage || isHomePage) {
+  // Handle sign-in page separately
+  if (isAuthPage) {
     if (authToken) {
       const decoded = validateToken(authToken.value)
       if (decoded) {
@@ -62,5 +61,9 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)']
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.png$).*)',
+    '/',
+    '/sign-in'
+  ]
 }
