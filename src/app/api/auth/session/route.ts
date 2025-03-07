@@ -13,7 +13,6 @@ export async function GET() {
     }
 
     const session = verifyToken(token)
-    console.log('Session data:', session)
 
     if (!session) {
       console.log('Invalid token in session request')
