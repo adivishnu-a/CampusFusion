@@ -3,7 +3,31 @@
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { useRouter } from "next/navigation";
 
-const Pagination = ({ page, count }: { page: number; count: number }) => {
+const Pagination = ({ page, count }: { page: number; count: number | null }) => {
+  if(count===null){
+    return (
+      <div className="p-4 flex items-center justify-between text-gray-500">
+      <button
+        disabled={true}
+        className="py-2 px-4 rounded-md bg-slate-200 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+        onClick={() => {
+          changePage(page - 1);
+        }}
+      >
+        Prev
+      </button>
+      <button
+        className="py-2 px-4 rounded-md bg-slate-200 text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled={true}
+        onClick={() => {
+          changePage(page + 1);
+        }}
+      >
+        Next
+      </button>
+    </div>
+    )
+  }
   const router = useRouter();
 
   const hasPrev = ITEM_PER_PAGE * (page - 1) > 0;
