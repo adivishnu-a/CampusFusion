@@ -8,7 +8,8 @@ const AttendanceChartContainer = async () => {
   const daysSinceMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
 
   const lastMonday = new Date(today);
-  lastMonday.setDate(today.getDate() - daysSinceMonday - 1);
+  lastMonday.setDate(today.getDate() - daysSinceMonday);
+  lastMonday.setHours(0, 0, 0, 0);
   //   console.log(today.getDate(), today.getDay(), daysSinceMonday, lastMonday);
 
   const resData = await prisma.attendance.findMany({
@@ -57,7 +58,7 @@ const AttendanceChartContainer = async () => {
     absent: attendanceMap[day].absent,
   }));
 
-  console.log(data);
+  // console.log(data);
 
   return (
     <div className="bg-white rounded-lg p-4 h-full">
