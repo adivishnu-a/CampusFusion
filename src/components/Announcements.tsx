@@ -2,8 +2,10 @@ import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 
 const Announcements = async () => {
-  const { userId, sessionClaims } = await auth();
+  const { sessionClaims } = await auth();
   const role = (sessionClaims?.metadata as { role?: string })?.role;
+  const userId = (sessionClaims?.metadata as { userId?: string })?.userId;
+  const currentUserId = userId;
 
   const roleConditions = {
     teacher: { lessons: { some: { teacherId: userId! } } },
@@ -49,9 +51,7 @@ const Announcements = async () => {
                 {new Intl.DateTimeFormat("en-IN").format(data[1].date)}
               </span>
             </div>
-            <p className="text-sm text-gray-500 mt-1">
-            {data[1].description}
-            </p>
+            <p className="text-sm text-gray-500 mt-1">{data[1].description}</p>
           </div>
         )}
         {data[2] && (
@@ -59,7 +59,7 @@ const Announcements = async () => {
             <div className="flex items-center justify-between">
               <h2 className="font-medium">{data[2].title}</h2>
               <span className="text-xs text-gray-500 bg-white rounded-md px-1 py-1">
-              {new Intl.DateTimeFormat("en-IN").format(data[2].date)}
+                {new Intl.DateTimeFormat("en-IN").format(data[2].date)}
               </span>
             </div>
             <p className="text-sm text-gray-500 mt-1">{data[2].description}</p>
