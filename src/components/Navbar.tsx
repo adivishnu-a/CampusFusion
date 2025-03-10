@@ -27,7 +27,7 @@ const Navbar = async () => {
         </div>
         <div className="flex flex-col">
           <span className="text-sm leading-3 font-medium">John Doe</span>
-          <span className="text-[12px] text-gray-500 text-right">{user?.publicMetadata.role as string}</span>
+          <span className="text-[12px] text-gray-500 text-right capitalize">{user?.publicMetadata.role as string}</span>
         </div>
         {/* <Image src="/avatar.png" alt="" width={36} height={36} className="rounded-full"/> */}
         <UserButton/>
