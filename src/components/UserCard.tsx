@@ -24,7 +24,7 @@ const UserCard = async ({
         <Image src="/more.png" alt="" width={20} height={20} />
       </div>
       <h1 className="text-2xl font-semibold my-4 text-white">{data}</h1>
-      <h2 className="capitalize font-semibold text-sm text-white">{type}s</h2>
+      {type==="parent"?(<h2 className="capitalize font-semibold text-sm text-white">{type} Accounts</h2>):(<h2 className="capitalize font-semibold text-sm text-white">{type}s</h2>)}
     </div>
   );
 };
