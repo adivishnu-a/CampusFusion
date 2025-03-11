@@ -1,6 +1,4 @@
-import EventCalendar from "@/components/EventCalendar";
 import Announcements from "@/components/Announcements";
-import BigCalendar from '@/components/BigCalendar';
 import { auth } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
@@ -20,6 +18,8 @@ const StudentPage = async ({
       students: { some: { id: userId! } },
     },
   });
+  console.log(classItem);
+
   return (
     <div className='p-4 flex gap-4 flex-col xl:flex-row'>
       {/* Left */}

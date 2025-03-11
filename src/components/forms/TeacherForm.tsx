@@ -149,7 +149,7 @@ const TeacherForm = ({
           </label>
           <input type="file" id="img" {...register("img")} className="hidden" />
           {errors.img?.message && (
-            <p className="text-xs text-red-400">
+            <p className="text-xs text-campDarwinCandyPeach">
               {errors.img.message.toString()}
             </p>
           )}

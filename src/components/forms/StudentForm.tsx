@@ -134,7 +134,7 @@ const StudentForm = ({
             <option value="female">Female</option>
           </select>
           {errors.gender?.message && (
-            <p className="text-xs text-red-400">
+            <p className="text-xs text-campDarwinCandyPeach">
               {errors.gender.message.toString()}
             </p>
           )}
