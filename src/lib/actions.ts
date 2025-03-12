@@ -174,14 +174,13 @@ export const createTeacher = async (
         },
       },
     });
-    const user = (await clerkClient()).users.createUser({
+    const user=(await clerkClient()).users.createUser({
       username: data.username,
       password: data.password,
       firstName: data.name,
       lastName: data.surname,
-      publicMetadata: { role: "teacher", userId: "${teacherId.id}" },
+      publicMetadata: { role: "teacher", userId: `${teacherId.id}` },
     });
-
     // revalidatePath("/list/teachers");
     return { success: true, error: false };
   } catch (err) {

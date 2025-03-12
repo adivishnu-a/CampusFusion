@@ -73,7 +73,6 @@ const TeacherForm = ({
     const submitData = new FormData();
     submitData.append('data', JSON.stringify({
       ...formData,
-      gender: formData.gender.toUpperCase(),
     }));
     if (imageFile) {
       submitData.append('file', imageFile);
