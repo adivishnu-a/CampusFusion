@@ -186,7 +186,7 @@ const TeacherForm = ({
           <select
             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
             {...register("gender")}
-            defaultValue={data?.gender || "MALE"}
+            defaultValue={data?.gender}
           >
             <option value="MALE">Male</option>
             <option value="FEMALE">Female</option>

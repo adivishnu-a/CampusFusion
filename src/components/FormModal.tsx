@@ -71,7 +71,7 @@ const FormModal = ({
   data,
   id,
   relatedData
-}: FormContainerProps & {relatedData:any}) => {
+}: FormContainerProps & {relatedData?:any}) => {
   const size = type === "create" ? "w-8 h-8" : "w-7 h-7";
   const bgColor =
     type === "create"
