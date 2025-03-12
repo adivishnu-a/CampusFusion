@@ -2,6 +2,7 @@
 
 import {
   ClassSchema,
+  StudentSchema,
   SubjectSchema,
   TeacherSchema,
 } from "./formValidationSchemas";
@@ -288,6 +289,170 @@ export const deleteTeacher = async (
     }
 
     await prisma.teacher.delete({
+      where: {
+        id: uid,
+      },
+    });
+
+    // revalidatePath("/list/teachers");
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+export const createStudent = async (
+  currentState: CurrentState,
+  formData: FormData
+) => {
+  try {
+    let imageUrl = null;
+    const file = formData.get("file") as File;
+    const data = JSON.parse(formData.get("data") as string) as StudentSchema;
+    const classItem = await prisma.class.findUnique({
+      where: { id: data.classId },
+      include: { _count: { select: { students: true } } },
+    });
+
+    if (classItem && classItem.capacity === classItem._count.students) {
+      return { success: false, error: true };
+    }
+    if (file) {
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${data.username}.${fileExt}`;
+      imageUrl = await uploadToS3(buffer, fileName, file.type, "students");
+    }
+
+    const studentId = await prisma.student.create({
+      data: {
+        username: data.username,
+        name: data.name,
+        surname: data.surname,
+        email: data.email || null,
+        phone: data.phone || null,
+        address: data.address,
+        img: imageUrl || null,
+        bloodType: data.bloodType,
+        gender: data.gender,
+        birthday: data.birthday,
+        gradeId: data.gradeId,
+        classId: data.classId,
+        parentId: data.parentId,
+      },
+    });
+    const user = (await clerkClient()).users.createUser({
+      username: data.username,
+      password: data.password,
+      firstName: data.name,
+      lastName: data.surname,
+      publicMetadata: { role: "student", userId: `${studentId.id}` },
+    });
+    // revalidatePath("/list/students");
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const updateStudent = async (
+  currentState: CurrentState,
+  formData: FormData
+) => {
+  try {
+    let imageUrl = null;
+    const file: any = formData.get("file") as File;
+    const data: any = JSON.parse(
+      formData.get("data") as string
+    ) as StudentSchema;
+    if (!data.id) {
+      return { success: false, error: true };
+    }
+    console.log(data.id);
+    if (file) {
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${data.username}.${fileExt}`;
+      imageUrl = await uploadToS3(buffer, fileName, file.type, "students");
+    }
+    const clerkData: any = Clerk({ apiKey: process.env.CLERK_SECRET_KEY });
+    const allUsers: any = await clerkData.users.getUserList();
+    if (!allUsers) {
+      console.log("Clerk allUsers data is undefined or null");
+      return { success: false, error: true };
+    }
+    const userClerk: any = await allUsers.filter(
+      (user: any) => user.publicMetadata?.userId === data.id
+    );
+    if (userClerk.length > 0) {
+      const user = (await clerkClient()).users.updateUser(userClerk[0].id, {
+        username: data.username,
+        ...(data.password !== "" && { password: data.password }),
+        firstName: data.name,
+        lastName: data.surname,
+      });
+    }
+
+    await prisma.student.update({
+      where: {
+        id: data.id,
+      },
+      data: {
+        username: data.username,
+        name: data.name,
+        surname: data.surname,
+        email: data.email || null,
+        phone: data.phone || null,
+        address: data.address,
+        ...(imageUrl!==null && {img: imageUrl || null}),
+        bloodType: data.bloodType,
+        gender: data.gender,
+        birthday: data.birthday,
+        gradeId: data.gradeId,
+        classId: data.classId,
+        parentId: data.parentId,
+      },
+    });
+    // revalidatePath("/list/students");
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const deleteStudent = async (
+  currentState: CurrentState,
+  formData: FormData
+) => {
+  try {
+    const uid = formData.get("id") as string;
+    const clerkData: any = Clerk({ apiKey: process.env.CLERK_SECRET_KEY });
+    const allUsers: any = await clerkData.users.getUserList();
+    if (!allUsers) {
+      console.log("Clerk allUsers data is undefined or null");
+      return { success: false, error: true };
+    }
+    console.log(allUsers);
+    const userClerk: any[] = await allUsers.filter(
+      (user: any) => user.publicMetadata?.userId === uid
+    );
+    if (userClerk.length > 0) {
+      (await clerkClient()).users.deleteUser(userClerk[0].id);
+    }
+
+    const deletingUser: any = await prisma.student.findUnique({
+      where: {
+        id: uid,
+      },
+    });
+    if (deletingUser.img) {
+      deletingUser.img = deletingUser.img.split("/").pop();
+      await deleteObjectFromS3("students", deletingUser.img);
+    }
+
+    await prisma.student.delete({
       where: {
         id: uid,
       },
