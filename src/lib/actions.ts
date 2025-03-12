@@ -7,6 +7,7 @@ import {
 } from "./formValidationSchemas";
 import prisma from "./prisma";
 import { clerkClient } from "@clerk/nextjs/server";
+import { uploadToS3 } from "./s3";
 
 type CurrentState = { success: boolean; error: boolean };
 
@@ -141,9 +142,19 @@ export const deleteClass = async (
 
 export const createTeacher = async (
   currentState: CurrentState,
-  data: TeacherSchema
+  formData: FormData
 ) => {
   try {
+    let imageUrl = null;
+    const file = formData.get('file') as File;
+    const data = JSON.parse(formData.get('data') as string) as TeacherSchema;
+    if (file) {
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${data.username}.${fileExt}`;
+      imageUrl = await uploadToS3(buffer, fileName, file.type, 'teachers');
+    }
+
     const teacherId = await prisma.teacher.create({
       data: {
         username: data.username,
@@ -152,7 +163,7 @@ export const createTeacher = async (
         email: data.email || null,
         phone: data.phone || null,
         address: data.address || "",
-        img: data.img || null,
+        img: imageUrl || null,
         bloodType: data.bloodType,
         gender: data.gender,
         birthday: data.birthday,
@@ -181,15 +192,21 @@ export const createTeacher = async (
 
 export const updateTeacher = async (
   currentState: CurrentState,
-  data: TeacherSchema
+  formData: FormData
 ) => {
-  if (!data.id) {
-    return { success: false, error: true };
-  }
   try {
+    let imageUrl = null;
+    const file = formData.get('file') as File;
+    const data = JSON.parse(formData.get('data') as string) as TeacherSchema;
+    if (file) {
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${data.username}.${fileExt}`;
+      imageUrl = await uploadToS3(buffer, fileName, file.type, 'teachers');
+    }
     const allUsers: any = (await clerkClient()).users.getUserList();
     const userClerk: any[] = await allUsers.data.filter(
-      (user:any) => user.publicMetadata?.userId === data.id
+      (user: any) => user.publicMetadata?.userId === data.id
     );
     const user = (await clerkClient()).users.updateUser(userClerk[0].id, {
       username: data.username,
@@ -237,7 +254,7 @@ export const deleteTeacher = async (
   try {
     const allUsers: any = (await clerkClient()).users.getUserList();
     const userClerk: any[] = await allUsers.data.filter(
-      (user:any) => user.publicMetadata?.userId === id
+      (user: any) => user.publicMetadata?.userId === id
     );
     (await clerkClient()).users.deleteUser(userClerk[0].id);
 

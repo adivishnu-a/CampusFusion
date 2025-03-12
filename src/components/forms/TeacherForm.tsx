@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import InputField from "../InputField";
 import Image from "next/image";
 import { TeacherSchema, teacherSchema } from "../../lib/formValidationSchemas";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState, useCallback } from "react";
 import { useFormState } from "react-dom";
 import { createTeacher, updateTeacher } from "@/lib/actions";
 import { useRouter } from "next/navigation";
@@ -30,19 +30,55 @@ const TeacherForm = ({
     resolver: zodResolver(teacherSchema),
   });
 
-  const [img, setImg] = useState<any>();
+  const [state, formAction] = useFormState<
+  { success: boolean; error: boolean },FormData
+>(type === "create" ? createTeacher : updateTeacher, {
+  success: false,
+  error: false,
+});
 
-  const [state, formAction] = useFormState(
-    type === "create" ? createTeacher : updateTeacher,
-    {
-      success: false,
-      error: false,
+  const validateImage = (file: File) => {
+    const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    const maxSize = 100 * 1024; // 100KB
+    if (!validTypes.includes(file.type)) {
+      return 'Only JPG, JPEG and PNG files are allowed';
     }
-  );
+    if (file.size > maxSize) {
+      return 'Image size should be less than 100KB';
+    }
+    return null;
+  };
 
-  const onSubmit = handleSubmit((data) => {
-    // console.log(data);
-    formAction({ ...data, img: img?.secure_url });
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageError, setImageError] = useState<string | null>(null);
+
+  const handleImageChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    setImageError(null);
+    if (file) {
+      const error = validateImage(file);
+      if (error) {
+        setImageError(error);
+        e.target.value = '';
+        return;
+      }
+      setImageFile(file);
+    }
+  }, []);
+
+  const onSubmit = handleSubmit((formData) => {
+    if (imageError) {
+      return;
+    }
+    const submitData = new FormData();
+    submitData.append('data', JSON.stringify({
+      ...formData,
+      gender: formData.gender.toUpperCase(),
+    }));
+    if (imageFile) {
+      submitData.append('file', imageFile);
+    }
+    formAction(submitData);
   });
 
   const router = useRouter();
@@ -151,10 +187,10 @@ const TeacherForm = ({
           <select
             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
             {...register("gender")}
-            defaultValue={data?.gender}
+            defaultValue={data?.gender || "MALE"}
           >
-            <option value="male">Male</option>
-            <option value="female">Female</option>
+            <option value="MALE">Male</option>
+            <option value="FEMALE">Female</option>
           </select>
           {errors.gender?.message && (
             <p className="text-xs text-campDarwinCandyPeach">
@@ -190,11 +226,18 @@ const TeacherForm = ({
             <Image src="/upload.png" alt="" width={28} height={28} />
             <span>Upload your Picture</span>
           </label>
-          <input type="file" id="img" {...register("img")} className="hidden" />
-          {errors.img?.message && (
-            <p className="text-xs text-campDarwinCandyPeach">
-              {errors.img.message.toString()}
-            </p>
+          <input 
+            type="file" 
+            id="img" 
+            accept="image/png,image/jpeg,image/jpg"
+            onChange={handleImageChange}
+            className="hidden" 
+          />
+          {imageError && (
+            <p className="text-xs text-campDarwinCandyPeach">{imageError}</p>
+          )}
+          {imageFile && (
+            <p className="text-xs text-green-600">Image selected: {imageFile.name}</p>
           )}
         </div>
       </div>
