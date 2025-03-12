@@ -2,12 +2,13 @@
 
 import {
   ClassSchema,
+  ExamSchema,
   StudentSchema,
   SubjectSchema,
   TeacherSchema,
 } from "./formValidationSchemas";
 import prisma from "./prisma";
-import { clerkClient } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import { deleteObjectFromS3, uploadToS3 } from "./s3";
 import { Clerk } from "@clerk/clerk-sdk-node";
 
@@ -239,7 +240,7 @@ export const updateTeacher = async (
         email: data.email || null,
         phone: data.phone || null,
         address: data.address,
-        ...(imageUrl!==null && {img: imageUrl || null}),
+        ...(imageUrl !== null && { img: imageUrl || null }),
         bloodType: data.bloodType,
         gender: data.gender,
         birthday: data.birthday,
@@ -405,7 +406,7 @@ export const updateStudent = async (
         email: data.email || null,
         phone: data.phone || null,
         address: data.address,
-        ...(imageUrl!==null && {img: imageUrl || null}),
+        ...(imageUrl !== null && { img: imageUrl || null }),
         bloodType: data.bloodType,
         gender: data.gender,
         birthday: data.birthday,
@@ -458,7 +459,109 @@ export const deleteStudent = async (
       },
     });
 
-    // revalidatePath("/list/teachers");
+    // revalidatePath("/list/students");
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const createExam = async (
+  currentState: CurrentState,
+  data: ExamSchema
+) => {
+  try {
+    const { sessionClaims } = await auth();
+    const role = (sessionClaims?.metadata as { role?: string })?.role;
+    const userId = (sessionClaims?.metadata as { userId?: string })?.userId;
+    const currentUserId = userId;
+    if (role === "teacher") {
+      const teacherLesson = await prisma.lesson.findFirst({
+        where: {
+          teacherId: currentUserId!,
+          id: data.lessonId,
+        },
+      });
+      if (!teacherLesson) {
+        return { success: false, error: true };
+      }
+    }
+    await prisma.exam.create({
+      data: {
+        title: data.title,
+        startTime: data.startTime,
+        endTime: data.endTime,
+        lessonId: data.lessonId,
+      },
+    });
+
+    // revalidatePath("/list/exams");
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const updateExam = async (
+  currentState: CurrentState,
+  data: ExamSchema
+) => {
+  try {
+    const { sessionClaims } = await auth();
+    const role = (sessionClaims?.metadata as { role?: string })?.role;
+    const userId = (sessionClaims?.metadata as { userId?: string })?.userId;
+    const currentUserId = userId;
+    if (role === "teacher") {
+      const teacherLesson = await prisma.lesson.findFirst({
+        where: {
+          teacherId: currentUserId!,
+          id: data.lessonId,
+        },
+      });
+      if (!teacherLesson) {
+        return { success: false, error: true };
+      }
+    }
+    await prisma.exam.update({
+      where:{
+        id:data.id,
+      },
+      data: {
+        title: data.title,
+        startTime: data.startTime,
+        endTime: data.endTime,
+        lessonId: data.lessonId,
+      },
+    });
+
+    // revalidatePath("/list/exams");
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const deleteExam = async (
+  currentState: CurrentState,
+  data: FormData
+) => {
+  try {
+    const { sessionClaims } = await auth();
+    const role = (sessionClaims?.metadata as { role?: string })?.role;
+    const userId = (sessionClaims?.metadata as { userId?: string })?.userId;
+    const currentUserId = userId;
+    const id = data.get("id") as string;
+    await prisma.exam.delete({
+      where: {
+        id: id,
+        ...(role === "teacher" ? { lesson: { teacherId: currentUserId } } : {}),
+      },
+    });
+
+    // revalidatePath("/list/exams");
     return { success: true, error: false };
   } catch (err) {
     console.log(err);
