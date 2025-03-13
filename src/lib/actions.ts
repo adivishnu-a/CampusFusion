@@ -86,11 +86,14 @@ export const createClass = async (
   data: ClassSchema
 ) => {
   try {
+    if (!data.supervisorId) {
+      delete data.supervisorId;
+    }
+    
     await prisma.class.create({
-      data,
+      data
     });
 
-    // revalidatePath("/list/class");
     return { success: true, error: false };
   } catch (err) {
     console.log(err);
@@ -103,19 +106,16 @@ export const updateClass = async (
   data: ClassSchema
 ) => {
   try {
+    const { id, ...updateData } = data;
+    if (!updateData.supervisorId) {
+      delete updateData.supervisorId;
+    }
+
     await prisma.class.update({
-      where: {
-        id: data.id,
-      },
-      data: {
-        name: data.name,
-        capacity: data.capacity,
-        gradeId: data.gradeId,
-        supervisorId: data.supervisorId,
-      },
+      where: { id },
+      data: updateData,
     });
 
-    // revalidatePath("/list/class");
     return { success: true, error: false };
   } catch (err) {
     console.log(err);
@@ -125,17 +125,35 @@ export const updateClass = async (
 
 export const deleteClass = async (
   currentState: CurrentState,
-  data: FormData
+  formData: FormData
 ) => {
-  const id = data.get("id") as string;
+  const id = formData.get("id") as string;
   try {
-    await prisma.class.delete({
-      where: {
-        id: id,
+    const classToDelete = await prisma.class.findUnique({
+      where: { id },
+      include: {
+        _count: {
+          select: {
+            students: true,
+            lessons: true,
+          },
+        },
       },
     });
 
-    // revalidatePath("/list/class");
+    if (!classToDelete) {
+      return { success: false, error: true };
+    }
+
+    // Check if class has any students or lessons
+    if ((classToDelete._count?.students ?? 0) > 0 || (classToDelete._count?.lessons ?? 0) > 0) {
+      return { success: false, error: true };
+    }
+
+    await prisma.class.delete({
+      where: { id },
+    });
+
     return { success: true, error: false };
   } catch (err) {
     console.log(err);

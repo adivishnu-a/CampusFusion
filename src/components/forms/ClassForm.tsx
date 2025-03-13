@@ -7,8 +7,7 @@ import { useFormState } from "react-dom";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import { Dispatch } from "react";
-import { SetStateAction } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { classSchema, ClassSchema } from "@/lib/formValidationSchemas";
 import { createClass, updateClass } from "@/lib/actions";
 
@@ -40,7 +39,6 @@ const ClassForm = ({
   );
 
   const onSubmit = handleSubmit((data) => {
-    console.log(data);
     formAction(data);
   });
 
@@ -52,7 +50,7 @@ const ClassForm = ({
       setOpen(false);
       router.refresh();
     }
-  }, [state, type, setOpen]);
+  }, [state, router, type, setOpen]);
 
   const { teachers, grades } = relatedData;
 
@@ -72,9 +70,10 @@ const ClassForm = ({
         <InputField
           label="Capacity"
           name="capacity"
+          type="number"
           defaultValue={data?.capacity}
           register={register}
-          error={errors?.name}
+          error={errors?.capacity}
         />
         {data && (
           <InputField
@@ -87,44 +86,41 @@ const ClassForm = ({
           />
         )}
         <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-sm text-gray-600">Supervisor</label>
-          <select
-            className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
-            {...register("supervisorId")}
-            defaultValue={data?.teachers}
-          >
-            {teachers.map(
-              (teacher: { id: string; name: string; surname: string }) => (
-                <option value={teacher.id} key={teacher.id} selected={data && teacher.id == data.supervisorId}>
-                  {teacher.name + " " + teacher.surname}
-                </option>
-              )
-            )}
-          </select>
-          {errors.supervisorId?.message && (
-            <p className="text-xs text-campDarwinCandyPeach">
-              {errors.supervisorId.message.toString()}
-            </p>
-          )}
-        </div>
-        <div className="flex flex-col gap-2 w-full md:w-1/4">
           <label className="text-sm text-gray-600">Grade</label>
           <select
             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
             {...register("gradeId")}
             defaultValue={data?.gradeId}
           >
-            {grades.map(
-              (grade: { id: string; level: string; }) => (
-                <option value={grade.id} key={grade.id} selected={data && grade.id == data.gradeId}>
-                  {grade.level}
-                </option>
-              )
-            )}
+            {grades.map((grade: { id: string; level: number }) => (
+              <option value={grade.id} key={grade.id}>
+                {grade.level}
+              </option>
+            ))}
           </select>
           {errors.gradeId?.message && (
             <p className="text-xs text-campDarwinCandyPeach">
               {errors.gradeId.message.toString()}
+            </p>
+          )}
+        </div>
+        <div className="flex flex-col gap-2 w-full md:w-1/4">
+          <label className="text-sm text-gray-600">Supervisor</label>
+          <select
+            className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
+            {...register("supervisorId")}
+            defaultValue={data?.supervisorId}
+          >
+            <option value="">Select Supervisor (Optional)</option>
+            {teachers.map((teacher: { id: string; name: string; surname: string }) => (
+              <option value={teacher.id} key={teacher.id}>
+                {teacher.name + " " + teacher.surname}
+              </option>
+            ))}
+          </select>
+          {errors.supervisorId?.message && (
+            <p className="text-xs text-campDarwinCandyPeach">
+              {errors.supervisorId.message.toString()}
             </p>
           )}
         </div>
