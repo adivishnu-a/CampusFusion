@@ -1,74 +1,203 @@
 # CampusFusion
 
-CampusFusion is an ERP application designed to streamline key school operations. With an intuitive interface, it ensures that educators and students can efficiently access essential information, making daily activities more organized and seamless.
+CampusFusion is a modern school ERP (Enterprise Resource Planning) application designed to streamline educational institution operations. It provides a comprehensive management system with role-based access control, making daily administrative and academic activities more organized and efficient.
 
 ## Overview
 
-CampusFusion is a comprehensive school management system built with Next.js, Tailwind CSS, and TypeScript. The application provides role-specific dashboards for administrators, teachers, students, and parents, allowing each user type to access relevant information and perform role-specific tasks.
+CampusFusion is built using modern web technologies including Next.js 14 with App Router, TypeScript, and Tailwind CSS. The system features role-specific dashboards for administrators, teachers, students, and parents, each tailored to their unique needs. Authentication is handled securely through Clerk, while file storage is managed using AWS S3.
 
-## Roles
+## Roles and Access Control
 
-- **Admin**: Manages all users, classes, subjects, and school activities
-- **Teacher**: Manages classes, lessons, exams, assignments, and student performance
-- **Student**: Views schedule, assignments, exams, and personal performance
-- **Parent**: Monitors their children's academic progress, attendance, and school announcements
+- **Admin**: Complete system control with access to all management functions
+  - User management (students, teachers, parents)
+  - Academic configuration (classes, subjects, assignments)
+  - System-wide announcements and events
+  - Performance monitoring and analytics
+
+- **Teacher**: Academic management and student monitoring
+  - Class and subject management
+  - Exam and assignment creation
+  - Attendance tracking
+  - Student performance assessment
+  - Grade and result management
+
+- **Student**: Personal academic portal
+  - Class schedule and timetable view
+  - Assignment submission
+  - Exam schedule and results
+  - Attendance records
+  - Performance tracking
+
+- **Parent**: Student progress monitoring
+  - Ward's academic performance
+  - Attendance tracking
+  - Exam results and assignments
+  - School announcements and events
 
 ## Core Features
 
-- **Centralized Dashboard Overview**: Role-specific dashboards with tailored information
-- **User Management**: Administration of teachers, students, and parents
-- **Class & Subject Management**: Organization of educational structure
-- **Schedule Management**: Lesson planning and calendar integration
-- **Assessment Tools**: Exams, assignments, and results tracking
-- **Attendance Tracking**: Student presence monitoring system
-- **Event Calendar**: School-wide and class-specific events
-- **Announcements System**: Important notifications for the school community
-- **Performance Analytics**: Visual representation of attendance and academic performance
-- **Finance Tracking**: Revenue and expense monitoring (admin)
-- **Student Demographics**: Visual representation of student body composition
+### User Management
+- Role-based user creation and management
+- Secure authentication via Clerk
+- Profile management with image upload capabilities
+- Detailed user profiles with essential information
+  - Blood type
+  - Contact details
+  - Academic records
+  - Profile photos (stored in AWS S3)
+
+### Academic Management
+- Class Management
+  - Grade-wise class organization
+  - Dynamic capacity management
+  - Teacher supervision assignment
+  - Student enrollment tracking
+
+- Subject Management
+  - Subject-teacher mapping
+  - Class-wise subject allocation
+  - Curriculum tracking
+
+- Examination System
+  - Exam scheduling and management
+  - Result recording and analysis
+  - Performance tracking
+  - Grade calculation
+
+- Assignment System
+  - Assignment creation and distribution
+  - Due date management
+  - Class-wise assignment tracking
+  - Result recording
+
+### Scheduling
+- Class Timetable Management
+  - Weekly schedule visualization
+  - Teacher availability tracking
+  - Subject-wise time slots
+  - Conflict prevention
+
+- Event Calendar
+  - School event scheduling
+  - Class-specific events
+  - Visual calendar interface
+  - Date-based event filtering
+
+### Attendance System
+- Daily attendance tracking
+- Class-wise attendance management
+- Attendance analytics and reporting
+- Visual attendance statistics
+
+### Communication
+- Announcement System
+  - School-wide announcements
+  - Class-specific notifications
+  - Date-based announcement tracking
+  
+- Event Management
+  - School event creation
+  - Event scheduling
+  - Target audience specification
+  - Calendar integration
 
 ## Technology Stack
 
-- **Frontend**: Next.js, React, TypeScript
-- **Styling**: Tailwind CSS
-- **Data Visualization**: Recharts
-- **Calendar**: React Big Calendar, React Calendar
-- **Database Schema**: Prisma with MongoDB (planned)
+### Frontend
+- Next.js 14 with App Router
+- React 18 with Server Components
+- TypeScript for type safety
+- Tailwind CSS for styling
+- React Hook Form for form management
+- Zod for schema validation
+
+### Backend & Database
+- MongoDB with Prisma ORM
+- Clerk Authentication
+- AWS S3 for file storage
+- Server Actions for API endpoints
+
+### UI Components
+- React Big Calendar for scheduling
+- React Calendar for date picking
+- Recharts for data visualization
+- React Toastify for notifications
+- Custom reusable components
 
 ## Getting Started
 
 ### Prerequisites
-
 - Node.js (version 18 or above)
 - npm or yarn
+- MongoDB database
+- AWS S3 bucket for file storage
+- Clerk account for authentication
 
-### Installation
+### Environment Setup
 
-1. Clone the repository:
+1. Clone the repository
 ```bash
 git clone https://github.com/adivishnu-a/CampusFusion.git
 cd CampusFusion
 ```
 
-2. Install dependencies:
+2. Configure environment variables in .env:
+```env
+MONGO_DATABASE_URL="your_mongodb_url"
+CLERK_SECRET_KEY="your_clerk_secret"
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="your_clerk_publishable_key"
+NEXT_PUBLIC_CLERK_SIGN_IN_URL="/sign-in"
+NEXT_PUBLIC_CLERK_SIGN_UP_URL="/sign-up"
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL="/"
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL="/"
+AWS_ACCESS_KEY="your_aws_access_key"
+AWS_SECRET_KEY="your_aws_secret_key"
+AWS_REGION="your_aws_region"
+AWS_BUCKET_NAME="your_s3_bucket_name"
+```
+
+3. Install dependencies:
 ```bash
 npm install
-# or
-yarn install
 ```
 
-3. Run the development server:
+4. Set up the database:
+```bash
+npx prisma generate
+npx prisma db push
+```
+
+5. (Optional) Seed the database:
+```bash
+npx prisma db seed
+```
+
+6. Start the development server:
 ```bash
 npm run dev
-# or
-yarn dev
 ```
-
-4. Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
 
 ## Project Structure
 
-- (dashboard): Dashboard pages for different roles
-- components: Reusable UI components
-- lib: Utility functions and temporary data
-- prisma: Database schema and configurations
+```
+src/
+├── app/                    # Next.js app directory
+│   ├── (dashboard)/       # Protected dashboard routes
+│   │   ├── admin/        # Admin dashboard
+│   │   ├── teacher/      # Teacher dashboard
+│   │   ├── student/      # Student dashboard
+│   │   ├── parent/       # Parent dashboard
+│   │   └── list/         # List views for entities
+│   ├── api/              # API routes
+│   └── [...auth]/        # Auth routes
+├── components/            # Reusable React components
+│   ├── forms/            # Form components
+│   └── ui/               # UI components
+├── lib/                  # Utility functions
+│   ├── actions.ts        # Server actions
+│   ├── prisma.ts         # Database client
+│   ├── s3.ts            # AWS S3 utilities
+│   └── utils.ts          # Helper functions
+└── prisma/               # Database schema and migrations
+```
+
