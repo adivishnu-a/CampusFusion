@@ -16,45 +16,45 @@ model Admin {
 }
 
 model Student {
-  id          String       @id @default(auto()) @map("_id") @db.ObjectId
-  username    String       @unique
-  name        String
-  surname     String
-  email       String?      @unique
-  phone       String?      @unique
-  address     String
-  img         String?
-  bloodType   String
-  gender      UserGender
-  birthday    DateTime
-  createdAt   DateTime     @default(now())
-  parentId    String       @db.ObjectId
-  parent      Parent       @relation(fields: [parentId], references: [id], onDelete: Cascade)
-  classId     String       @db.ObjectId
-  class       Class        @relation(fields: [classId], references: [id], onDelete: Cascade)
-  gradeId     String       @db.ObjectId
-  grade       Grade        @relation(fields: [gradeId], references: [id], onDelete: Cascade)
-  attendances Attendance[]
-  results     Result[]
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  username  String     @unique
+  name      String
+  surname   String
+  email     String?    @unique
+  phone     String?    @unique
+  address   String
+  img       String?
+  bloodType String
+  gender    UserGender
+  birthday  DateTime
+  createdAt DateTime   @default(now())
+  parentId  String     @db.ObjectId
+  parent    Parent     @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  classId   String     @db.ObjectId
+  class     Class      @relation(fields: [classId], references: [id], onDelete: Cascade)
+  gradeId   String     @db.ObjectId
+  grade     Grade      @relation(fields: [gradeId], references: [id], onDelete: Cascade)
+  results   Result[]
 }
 
 model Teacher {
-  id         String     @id @default(auto()) @map("_id") @db.ObjectId
-  username   String     @unique
-  name       String
-  surname    String
-  email      String?    @unique
-  phone      String?    @unique
-  address    String
-  img        String?
-  bloodType  String
-  gender     UserGender
-  birthday   DateTime
-  createdAt  DateTime   @default(now())
-  subjects   Subject[]  @relation(fields: [subjectIds], references: [id])
-  subjectIds String[]   @db.ObjectId
-  lessons    Lesson[]
-  classes    Class[] // Supervisor for these classes
+  id             String           @id @default(auto()) @map("_id") @db.ObjectId
+  username       String           @unique
+  name           String
+  surname        String
+  email          String?          @unique
+  phone          String?          @unique
+  address        String
+  img            String?
+  bloodType      String
+  gender         UserGender
+  birthday       DateTime
+  createdAt      DateTime         @default(now())
+  subjects       Subject[]        @relation(fields: [subjectIds], references: [id])
+  subjectIds     String[]         @db.ObjectId
+  lessons        Lesson[]
+  classes        Class[] // Supervisor for these classes
+  TimeTableEntry TimeTableEntry[]
 }
 
 model Parent {
@@ -88,6 +88,9 @@ model Class {
   grade         Grade          @relation(fields: [gradeId], references: [id], onDelete: Cascade)
   events        Event[]
   announcements Announcement[]
+  attendances   Attendance[]
+  timeTableId   String?        @db.ObjectId
+  timeTable     TimeTable?     @relation(fields: [timeTableId], references: [id], onDelete: Cascade)
 }
 
 model Subject {
@@ -96,6 +99,8 @@ model Subject {
   teachers   Teacher[] @relation(fields: [teacherIds], references: [id])
   teacherIds String[]  @db.ObjectId
   lessons    Lesson[]
+
+  TimeTableEntry TimeTableEntry[]
 }
 
 model Lesson {
@@ -112,7 +117,6 @@ model Lesson {
   teacher     Teacher      @relation(fields: [teacherId], references: [id], onDelete: Cascade)
   exams       Exam[]
   assignments Assignment[]
-  attendances Attendance[]
 }
 
 model Exam {
@@ -147,13 +151,13 @@ model Result {
 }
 
 model Attendance {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  date      DateTime
-  present   Boolean
-  studentId String   @db.ObjectId
-  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  lessonId  String   @db.ObjectId
-  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  date              DateTime
+  classId           String   @db.ObjectId
+  class             Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  presentStudentIds String[] @db.ObjectId
+
+  @@unique([classId, date])
 }
 
 model Event {
@@ -173,6 +177,28 @@ model Announcement {
   date        DateTime
   classId     String?  @db.ObjectId
   class       Class?   @relation(fields: [classId], references: [id], onDelete: Cascade)
+}
+
+model TimeTable {
+  id      String           @id @default(auto()) @map("_id") @db.ObjectId
+  classId String           @unique
+  Class   Class[]
+  entries TimeTableEntry[]
+}
+
+model TimeTableEntry {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  timetableId String    @db.ObjectId
+  timetable   TimeTable @relation(fields: [timetableId], references: [id], onDelete: Cascade)
+  day         Day
+  startTime   DateTime // Use a dummy date for time-of-day representation
+  endTime     DateTime
+  subjectId   String    @db.ObjectId
+  subject     Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  teacherId   String    @db.ObjectId
+  teacher     Teacher   @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  @@unique([timetableId, day, startTime])
 }
 
 enum UserGender {
