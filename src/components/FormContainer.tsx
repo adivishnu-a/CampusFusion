@@ -7,9 +7,9 @@ export type FormContainerProps = {
     | "teacher"
     | "student"
     | "parent"
-    | "subject"
+    | "department"
     | "class"
-    | "lesson"
+    | "subject"
     | "exam"
     | "assignment"
     | "result"
@@ -31,11 +31,11 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
 
   if (type !== "delete") {
     switch (table) {
-      case "subject":
-        const subjectTeachers = await prisma.teacher.findMany({
+      case "department":
+        const departmentTeachers = await prisma.teacher.findMany({
           select: { id: true, name: true, surname: true },
         });
-        relatedData = { teachers: subjectTeachers };
+        relatedData = { teachers: departmentTeachers };
         break;
       case "class":
         const classGrades = await prisma.grade.findMany({
@@ -47,10 +47,10 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
         relatedData = { teachers: classTeachers, grades: classGrades };
         break;
       case "teacher":
-        const teacherSubjects = await prisma.subject.findMany({
+        const teacherDepartments = await prisma.department.findMany({
           select: { id: true, name: true },
         });
-        relatedData = { subjects: teacherSubjects };
+        relatedData = { departments: teacherDepartments };
         break;
       case "student":
         const studentGrades = await prisma.grade.findMany({
@@ -62,13 +62,13 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
         relatedData = { classes: studentClasses, grades: studentGrades };
         break;
       case "exam":
-        const examLessons = await prisma.lesson.findMany({
+        const examSubjects = await prisma.subject.findMany({
           where: {
             ...(role === "teacher" ? { teacherId: currentUserId! } : {}),
           },
           select: { id: true, name: true },
         });
-        relatedData = { lessons: examLessons };
+        relatedData = { subjects: examSubjects };
         break;
 
       default:

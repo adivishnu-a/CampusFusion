@@ -5,12 +5,12 @@ import Image from "next/image";
 import Link from "next/link";
 import FormContainer from "@/components/FormContainer";
 import React from "react";
-import { Teacher, Subject, Class, Prisma } from "@prisma/client";
+import { Teacher, Department, Class, Prisma } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { auth } from "@clerk/nextjs/server";
 
-type TeacherList = Teacher & { subjects: Subject[] } & { classes: Class[] };
+type TeacherList = Teacher & { departments: Department[] } & { classes: Class[] };
 
 const TeachersListPage = async ({
   searchParams,
@@ -33,8 +33,8 @@ const TeachersListPage = async ({
       className: "hidden md:table-cell",
     },
     {
-      header: "Subjects",
-      accessor: "subjects",
+      header: "Departments",
+      accessor: "departments",
       className: "hidden md:table-cell",
     },
     {
@@ -81,7 +81,7 @@ const TeachersListPage = async ({
         </div>
       </td>
       <td className="hidden md:table-cell">{item.username}</td>
-      <td className="hidden md:table-cell">{item.subjects.map((subjectItem)=>subjectItem.name).join(",")}</td>
+      <td className="hidden md:table-cell">{item.departments.map((departmentItem)=>departmentItem.name).join(",")}</td>
       <td className="hidden md:table-cell">{item.classes.map((classItem)=>classItem.name).join(",")}</td>
       <td className="hidden md:table-cell">{item.phone}</td>
       <td className="hidden md:table-cell">{item.address}</td>
@@ -111,7 +111,7 @@ const TeachersListPage = async ({
       if (value !== undefined) {
         switch (key) {
           case "classId":
-            query.lessons = {
+            query.subjects = {
               some: {
                 classId: value,
               },
@@ -131,7 +131,7 @@ const TeachersListPage = async ({
     prisma.teacher.findMany({
       where: query,
       include: {
-        subjects: true,
+        departments: true,
         classes: true,
       },
       take: ITEM_PER_PAGE,

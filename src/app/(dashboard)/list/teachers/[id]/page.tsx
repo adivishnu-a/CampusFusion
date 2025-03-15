@@ -22,15 +22,15 @@ const SingleTeacherPage = async ({
 
   const teacher:
     | (Teacher & {
-        _count: { subjects: number; lessons: number; classes: number };
+        _count: { departments: number; subjects: number; classes: number };
       })
     | null = await prisma.teacher.findUnique({
     where: { id },
     include: {
       _count: {
         select: {
+          departments: true,
           subjects: true,
-          lessons: true,
           classes: true,
         },
       },
@@ -69,16 +69,16 @@ const SingleTeacherPage = async ({
               </div>
               <p className="text-sm text-gray-100">
                 {teacher &&
-                  teacher.subjectIds.map(
+                  teacher.departmentIds.map(
                     (id: string, index: number, arr: string[]) => {
                       return (
                         <span key={id}>
-                          {prisma.subject
+                          {prisma.department
                             .findUnique({ where: { id: id } })
-                            .then((subject: any) => {
-                              // Check if it's the last subject in the array
+                            .then((department: any) => {
+                              // Check if it's the last department in the array
                               const isLast = index === arr.length - 1;
-                              return `${subject.name}${isLast ? "" : ", "}`;
+                              return `${department.name}${isLast ? "" : ", "}`;
                             })}
                         </span>
                       );
@@ -134,7 +134,7 @@ const SingleTeacherPage = async ({
               />
               <div className="">
                 <h1 className="text-xl font-semibold">
-                  {teacher._count.subjects}
+                  {teacher._count.departments}
                 </h1>
                 <span className="text-sm text-gray-500">Branches</span>
               </div>
@@ -142,7 +142,7 @@ const SingleTeacherPage = async ({
             {/* Card */}
             <div className="bg-white shadow-sm p-4 rounded-md flex gap-4 w-full md:w-[48%] xl:w-[45%] 2xl:w-[48%]">
               <Image
-                src="/singleLesson.png"
+                src="/singleSubject.png"
                 alt=""
                 width={24}
                 height={24}
@@ -150,9 +150,9 @@ const SingleTeacherPage = async ({
               />
               <div className="">
                 <h1 className="text-xl font-semibold">
-                  {teacher._count.lessons}
+                  {teacher._count.subjects}
                 </h1>
-                <span className="text-sm text-gray-500">Lessons</span>
+                <span className="text-sm text-gray-500">Subjects</span>
               </div>
             </div>
             {/* Card */}
@@ -198,9 +198,9 @@ const SingleTeacherPage = async ({
             </Link>
             <Link
               className="p-3 shadow-sm rounded-md bg-campDarwinPastelOrange hover:bg-campDarwinPastelOrangeHover"
-              href={`/list/lessons?teacherId=${teacher.id}`}
+              href={`/list/subjects?teacherId=${teacher.id}`}
             >
-              Teacher&apos;s Lessons
+              Teacher&apos;s Subjects
             </Link>
             <Link
               className="p-3 shadow-sm rounded-md bg-campDarwinPastelCandyPeach hover:bg-campDarwinPastelCandyPeachHover"

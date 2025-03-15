@@ -8,7 +8,7 @@ const Announcements = async () => {
   const currentUserId = userId;
 
   const roleConditions = {
-    teacher: { lessons: { some: { teacherId: userId! } } },
+    teacher: { subjects: { some: { teacherId: userId! } } },
     student: { students: { some: { id: userId! } } },
     parent: { students: { some: { parentId: userId! } } },
   };

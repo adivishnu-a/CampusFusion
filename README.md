@@ -10,12 +10,12 @@ CampusFusion is built using modern web technologies including Next.js 14 with Ap
 
 - **Admin**: Complete system control with access to all management functions
   - User management (students, teachers, parents)
-  - Academic configuration (classes, subjects, assignments)
+  - Academic configuration (classes, departments, assignments)
   - System-wide announcements and events
   - Performance monitoring and analytics
 
 - **Teacher**: Academic management and student monitoring
-  - Class and subject management
+  - Class and department management
   - Exam and assignment creation
   - Attendance tracking
   - Student performance assessment
@@ -53,9 +53,9 @@ CampusFusion is built using modern web technologies including Next.js 14 with Ap
   - Teacher supervision assignment
   - Student enrollment tracking
 
-- Subject Management
-  - Subject-teacher mapping
-  - Class-wise subject allocation
+- Department Management
+  - Department-teacher mapping
+  - Class-wise department allocation
   - Curriculum tracking
 
 - Examination System
@@ -74,7 +74,7 @@ CampusFusion is built using modern web technologies including Next.js 14 with Ap
 - Class Timetable Management
   - Weekly schedule visualization
   - Teacher availability tracking
-  - Subject-wise time slots
+  - Department-wise time slots
   - Conflict prevention
 
 - Event Calendar

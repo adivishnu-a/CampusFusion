@@ -54,7 +54,7 @@ const ExamForm = ({
     }
   }, [state, type, setOpen]);
 
-  const { lessons } = relatedData;
+  const { subjects } = relatedData;
 
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
@@ -96,23 +96,23 @@ const ExamForm = ({
           />
         )}
         <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-sm text-gray-600">Lessons</label>
+          <label className="text-sm text-gray-600">Subjects</label>
           <select
             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
-            {...register("lessonId")}
-            defaultValue={data?.lessonId}
+            {...register("subjectId")}
+            defaultValue={data?.subjectId}
           >
-            {lessons.map(
-              (lesson: { id: string; name: string; }) => (
-                <option value={lesson.id} key={lesson.id}>
-                  {lesson.name}
+            {subjects.map(
+              (subject: { id: string; name: string; }) => (
+                <option value={subject.id} key={subject.id}>
+                  {subject.name}
                 </option>
               )
             )}
           </select>
-          {errors.lessonId?.message && (
+          {errors.subjectId?.message && (
             <p className="text-xs text-campDarwinCandyPeach">
-              {errors.lessonId.message.toString()}
+              {errors.subjectId.message.toString()}
             </p>
           )}
         </div>

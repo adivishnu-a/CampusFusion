@@ -1,11 +1,11 @@
 import { z } from "zod";
-export const subjectSchema = z.object({
+export const departmentSchema = z.object({
   id: z.coerce.string().optional(),
-  name: z.string().min(1, { message: "Subject name is required" }),
+  name: z.string().min(1, { message: "Department name is required" }),
   teachers: z.array(z.string()), //teacher id's
 });
 
-export type SubjectSchema = z.infer<typeof subjectSchema>;
+export type DepartmentSchema = z.infer<typeof departmentSchema>;
 
 export const classSchema = z.object({
   id: z.string().optional(),
@@ -44,7 +44,7 @@ export const teacherSchema = z.object({
   bloodType: z.string().min(1, { message: "Blood Type is required!" }),
   birthday: z.coerce.date({ message: "Birthday is required!" }),
   gender: z.enum(["MALE", "FEMALE"], { message: "Gender is required!" }),
-  subjects: z.array(z.string()).optional(), //store subject id's
+  departments: z.array(z.string()).optional(), //store department id's
 });
 
 export type TeacherSchema = z.infer<typeof teacherSchema>;
@@ -85,7 +85,7 @@ export const examSchema = z.object({
   title: z.string().min(1, { message: "Exam Title is required" }),
   startTime: z.coerce.date({message:"Start Time is required"}),
   endTime: z.coerce.date({message:"End Time is required"}),
-  lessonId: z.coerce.string().min(1, { message: "Lesson ID is required" }),
+  subjectId: z.coerce.string().min(1, { message: "Subject ID is required" }),
 });
 
 export type ExamSchema = z.infer<typeof examSchema>;

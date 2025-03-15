@@ -50,9 +50,9 @@ model Teacher {
   gender         UserGender
   birthday       DateTime
   createdAt      DateTime         @default(now())
-  subjects       Subject[]        @relation(fields: [subjectIds], references: [id])
-  subjectIds     String[]         @db.ObjectId
-  lessons        Lesson[]
+  departments       Department[]        @relation(fields: [departmentIds], references: [id])
+  departmentIds     String[]         @db.ObjectId
+  subjects        Subject[]
   classes        Class[] // Supervisor for these classes
   TimeTableEntry TimeTableEntry[]
 }
@@ -82,7 +82,7 @@ model Class {
   capacity      Int
   supervisorId  String?        @db.ObjectId
   supervisor    Teacher?       @relation(fields: [supervisorId], references: [id], onDelete: Cascade)
-  lessons       Lesson[]
+  subjects       Subject[]
   students      Student[]
   gradeId       String         @db.ObjectId
   grade         Grade          @relation(fields: [gradeId], references: [id], onDelete: Cascade)
@@ -93,24 +93,24 @@ model Class {
   timeTable     TimeTable?     @relation(fields: [timeTableId], references: [id], onDelete: Cascade)
 }
 
-model Subject {
+model Department {
   id         String    @id @default(auto()) @map("_id") @db.ObjectId
   name       String    @unique
   teachers   Teacher[] @relation(fields: [teacherIds], references: [id])
   teacherIds String[]  @db.ObjectId
-  lessons    Lesson[]
+  subjects    Subject[]
 
   TimeTableEntry TimeTableEntry[]
 }
 
-model Lesson {
+model Subject {
   id          String       @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   day         Day
   startTime   DateTime
   endTime     DateTime
-  subjectId   String       @db.ObjectId
-  subject     Subject      @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  departmentId   String       @db.ObjectId
+  department     Department      @relation(fields: [departmentId], references: [id], onDelete: Cascade)
   classId     String       @db.ObjectId
   class       Class        @relation(fields: [classId], references: [id], onDelete: Cascade)
   teacherId   String       @db.ObjectId
@@ -124,8 +124,8 @@ model Exam {
   title     String
   startTime DateTime
   endTime   DateTime
-  lessonId  String   @db.ObjectId
-  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  subjectId  String   @db.ObjectId
+  subject    Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   results   Result[]
 }
 
@@ -134,8 +134,8 @@ model Assignment {
   title     String
   startDate DateTime
   dueDate   DateTime
-  lessonId  String   @db.ObjectId
-  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  subjectId  String   @db.ObjectId
+  subject    Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   results   Result[]
 }
 
@@ -193,8 +193,8 @@ model TimeTableEntry {
   day         Day
   startTime   DateTime // Use a dummy date for time-of-day representation
   endTime     DateTime
-  subjectId   String    @db.ObjectId
-  subject     Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  departmentId   String    @db.ObjectId
+  department     Department   @relation(fields: [departmentId], references: [id], onDelete: Cascade)
   teacherId   String    @db.ObjectId
   teacher     Teacher   @relation(fields: [teacherId], references: [id], onDelete: Cascade)
 

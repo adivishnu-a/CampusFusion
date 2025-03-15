@@ -14,7 +14,7 @@ type ClassList = Class & {
   grade: Grade;
   _count: {
     students: number;
-    lessons: number;
+    subjects: number;
   };
 };
 
@@ -44,8 +44,8 @@ const ClassListPage = async ({
       className: "hidden md:table-cell",
     },
     {
-      header: "Lessons",
-      accessor: "lessons",
+      header: "Subjects",
+      accessor: "subjects",
       className: "hidden md:table-cell",
     },
     {
@@ -76,7 +76,7 @@ const ClassListPage = async ({
       </td>
       <td className="hidden md:table-cell">{item.capacity}</td>
       <td className="hidden md:table-cell">{item._count.students}</td>
-      <td className="hidden md:table-cell">{item._count.lessons}</td>
+      <td className="hidden md:table-cell">{item._count.subjects}</td>
       <td className="hidden md:table-cell">
         {item.supervisor
           ? item.supervisor.name + " " + item.supervisor.surname
@@ -136,7 +136,7 @@ const ClassListPage = async ({
     case "teacher":
       query.OR = [
         { supervisorId: currentUserId },
-        { lessons: { some: { teacherId: currentUserId } } },
+        { subjects: { some: { teacherId: currentUserId } } },
       ];
       break;
     case "student":
@@ -158,7 +158,7 @@ const ClassListPage = async ({
         _count: {
           select: {
             students: true,
-            lessons: true,
+            subjects: true,
           },
         },
       },

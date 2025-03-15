@@ -23,12 +23,12 @@ const SingleStudentPage = async ({
 
   const student:
     | (Student & {
-        class: Class & { _count: { lessons: number } };
+        class: Class & { _count: { subjects: number } };
       })
     | null = await prisma.student.findUnique({
     where: { id },
     include: {
-      class: { include: { _count: { select: { lessons: true } } } },
+      class: { include: { _count: { select: { subjects: true } } } },
     },
   });
 
@@ -115,15 +115,15 @@ const SingleStudentPage = async ({
             {/* CARD */}
             <div className="bg-white p-4 shadow-sm rounded-md flex gap-4 w-full md:w-[48%] xl:w-[45%] 2xl:w-[48%]">
               <Image
-                src="/singleLesson.png"
+                src="/singleSubject.png"
                 alt=""
                 width={24}
                 height={24}
                 className="w-6 h-6"
               />
               <div className="">
-                <h1 className="text-xl font-semibold">{student.class._count.lessons}</h1>
-                <span className="text-sm text-gray-500">Lessons</span>
+                <h1 className="text-xl font-semibold">{student.class._count.subjects}</h1>
+                <span className="text-sm text-gray-500">Subjects</span>
               </div>
             </div>
             {/* CARD */}
@@ -153,8 +153,8 @@ const SingleStudentPage = async ({
         <div className="bg-white p-4 shadow-sm rounded-md">
           <h1 className="text-xl font-semibold">Shortcuts</h1>
           <div className="mt-4 flex gap-4 flex-wrap text-xs text-gray-600">
-            <Link className="p-3 shadow-sm rounded-md bg-campDarwinPastelCobaltBlue hover:bg-campDarwinPastelCobaltBlueHover" href={`/list/lessons?classId=${student.class.id}`}>
-              Student&apos;s Lessons
+            <Link className="p-3 shadow-sm rounded-md bg-campDarwinPastelCobaltBlue hover:bg-campDarwinPastelCobaltBlueHover" href={`/list/subjects?classId=${student.class.id}`}>
+              Student&apos;s Subjects
             </Link>
             <Link className="p-3 shadow-sm rounded-md bg-campDarwinPastelZincYellow hover:bg-campDarwinPastelZincYellowHover" href={`/list/teachers?classId=${student.class.id}`}>
               Student&apos;s Teachers

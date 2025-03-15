@@ -11,7 +11,7 @@ export const teachersData = [
     photo:
       "https://images.pexels.com/photos/2888150/pexels-photo-2888150.jpeg?auto=compress&cs=tinysrgb&w=1200",
     phone: "1234567890",
-    subjects: ["Math", "Geometry"],
+    departments: ["Math", "Geometry"],
     classes: ["1B", "2A", "3C"],
     address: "123 Main St, Anytown, USA",
   },
@@ -23,7 +23,7 @@ export const teachersData = [
     photo:
       "https://images.pexels.com/photos/936126/pexels-photo-936126.jpeg?auto=compress&cs=tinysrgb&w=1200",
     phone: "1234567890",
-    subjects: ["Physics", "Chemistry"],
+    departments: ["Physics", "Chemistry"],
     classes: ["5A", "4B", "3C"],
     address: "123 Main St, Anytown, USA",
   },
@@ -35,7 +35,7 @@ export const teachersData = [
     photo:
       "https://images.pexels.com/photos/428328/pexels-photo-428328.jpeg?auto=compress&cs=tinysrgb&w=1200",
     phone: "1234567890",
-    subjects: ["Biology"],
+    departments: ["Biology"],
     classes: ["5A", "4B", "3C"],
     address: "123 Main St, Anytown, USA",
   },
@@ -47,7 +47,7 @@ export const teachersData = [
     photo:
       "https://images.pexels.com/photos/1187765/pexels-photo-1187765.jpeg?auto=compress&cs=tinysrgb&w=1200",
     phone: "1234567890",
-    subjects: ["History"],
+    departments: ["History"],
     classes: ["5A", "4B", "3C"],
     address: "123 Main St, Anytown, USA",
   },
@@ -59,7 +59,7 @@ export const teachersData = [
     photo:
       "https://images.pexels.com/photos/1102341/pexels-photo-1102341.jpeg?auto=compress&cs=tinysrgb&w=1200",
     phone: "1234567890",
-    subjects: ["Music", "History"],
+    departments: ["Music", "History"],
     classes: ["5A", "4B", "3C"],
     address: "123 Main St, Anytown, USA",
   },
@@ -71,7 +71,7 @@ export const teachersData = [
     photo:
       "https://images.pexels.com/photos/712513/pexels-photo-712513.jpeg?auto=compress&cs=tinysrgb&w=1200",
     phone: "1234567890",
-    subjects: ["Physics"],
+    departments: ["Physics"],
     classes: ["5A", "4B", "3C"],
     address: "123 Main St, Anytown, USA",
   },
@@ -83,7 +83,7 @@ export const teachersData = [
     photo:
       "https://images.pexels.com/photos/1438081/pexels-photo-1438081.jpeg?auto=compress&cs=tinysrgb&w=1200",
     phone: "1234567890",
-    subjects: ["English", "Spanish"],
+    departments: ["English", "Spanish"],
     classes: ["5A", "4B", "3C"],
     address: "123 Main St, Anytown, USA",
   },
@@ -95,7 +95,7 @@ export const teachersData = [
     photo:
       "https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=1200",
     phone: "1234567890",
-    subjects: ["Math", "Geometry"],
+    departments: ["Math", "Geometry"],
     classes: ["5A", "4B", "3C"],
     address: "123 Main St, Anytown, USA",
   },
@@ -107,7 +107,7 @@ export const teachersData = [
     photo:
       "https://images.pexels.com/photos/842980/pexels-photo-842980.jpeg?auto=compress&cs=tinysrgb&w=1200",
     phone: "1234567890",
-    subjects: ["Literature", "English"],
+    departments: ["Literature", "English"],
     classes: ["5A", "4B", "3C"],
     address: "123 Main St, Anytown, USA",
   },
@@ -119,7 +119,7 @@ export const teachersData = [
     photo:
       "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=1200",
     phone: "1234567890",
-    subjects: ["Biology"],
+    departments: ["Biology"],
     classes: ["5A", "4B", "3C"],
     address: "123 Main St, Anytown, USA",
   },
@@ -331,7 +331,7 @@ export const parentsData = [
   },
 ];
 
-export const subjectsData = [
+export const departmentsData = [
   {
     id: 1,
     name: "Math",
@@ -457,64 +457,64 @@ export const classesData = [
   },
 ];
 
-export const lessonsData = [
+export const subjectsData = [
   {
     id: 1,
-    subject: "Math",
+    department: "Math",
     class: "1A",
     teacher: "Tommy Wise",
   },
   {
     id: 2,
-    subject: "English",
+    department: "English",
     class: "2A",
     teacher: "Rhoda Frank",
   },
   {
     id: 3,
-    subject: "Science",
+    department: "Science",
     class: "3A",
     teacher: "Della Dunn",
   },
   {
     id: 4,
-    subject: "Social Studies",
+    department: "Social Studies",
     class: "1B",
     teacher: "Bruce Rodriguez",
   },
   {
     id: 5,
-    subject: "Art",
+    department: "Art",
     class: "4A",
     teacher: "Birdie Butler",
   },
   {
     id: 6,
-    subject: "Music",
+    department: "Music",
     class: "5A",
     teacher: "Bettie Oliver",
   },
   {
     id: 7,
-    subject: "History",
+    department: "History",
     class: "6A",
     teacher: "Herman Howard",
   },
   {
     id: 8,
-    subject: "Geography",
+    department: "Geography",
     class: "6B",
     teacher: "Lucinda Thomas",
   },
   {
     id: 9,
-    subject: "Physics",
+    department: "Physics",
     class: "6C",
     teacher: "Ronald Roberts",
   },
   {
     id: 10,
-    subject: "Chemistry",
+    department: "Chemistry",
     class: "4B",
     teacher: "Julia Pittman",
   },
@@ -523,70 +523,70 @@ export const lessonsData = [
 export const examsData = [
   {
     id: 1,
-    subject: "Math",
+    department: "Math",
     class: "1A",
     teacher: "Martha Morris",
     date: "2025-01-01",
   },
   {
     id: 2,
-    subject: "English",
+    department: "English",
     class: "2A",
     teacher: "Randall Garcia",
     date: "2025-01-01",
   },
   {
     id: 3,
-    subject: "Science",
+    department: "Science",
     class: "3A",
     teacher: "Myrtie Scott",
     date: "2025-01-01",
   },
   {
     id: 4,
-    subject: "Social Studies",
+    department: "Social Studies",
     class: "1B",
     teacher: "Alvin Swanson",
     date: "2025-01-01",
   },
   {
     id: 5,
-    subject: "Art",
+    department: "Art",
     class: "4A",
     teacher: "Mabelle Wallace",
     date: "2025-01-01",
   },
   {
     id: 6,
-    subject: "Music",
+    department: "Music",
     class: "5A",
     teacher: "Dale Thompson",
     date: "2025-01-01",
   },
   {
     id: 7,
-    subject: "History",
+    department: "History",
     class: "6A",
     teacher: "Allie Conner",
     date: "2025-01-01",
   },
   {
     id: 8,
-    subject: "Geography",
+    department: "Geography",
     class: "6B",
     teacher: "Hunter Fuller",
     date: "2025-01-01",
   },
   {
     id: 9,
-    subject: "Physics",
+    department: "Physics",
     class: "7A",
     teacher: "Lois Lindsey",
     date: "2025-01-01",
   },
   {
     id: 10,
-    subject: "Chemistry",
+    department: "Chemistry",
     class: "8A",
     teacher: "Vera Soto",
     date: "2025-01-01",
@@ -596,70 +596,70 @@ export const examsData = [
 export const assignmentsData = [
   {
     id: 1,
-    subject: "Math",
+    department: "Math",
     class: "1A",
     teacher: "Anthony Boone",
     dueDate: "2025-01-01",
   },
   {
     id: 2,
-    subject: "English",
+    department: "English",
     class: "2A",
     teacher: "Clifford Bowen",
     dueDate: "2025-01-01",
   },
   {
     id: 3,
-    subject: "Science",
+    department: "Science",
     class: "3A",
     teacher: "Catherine Malone",
     dueDate: "2025-01-01",
   },
   {
     id: 4,
-    subject: "Social Studies",
+    department: "Social Studies",
     class: "1B",
     teacher: "Willie Medina",
     dueDate: "2025-01-01",
   },
   {
     id: 5,
-    subject: "Art",
+    department: "Art",
     class: "4A",
     teacher: "Jose Ruiz",
     dueDate: "2025-01-01",
   },
   {
     id: 6,
-    subject: "Music",
+    department: "Music",
     class: "5A",
     teacher: "Katharine Owens",
     dueDate: "2025-01-01",
   },
   {
     id: 7,
-    subject: "History",
+    department: "History",
     class: "6A",
     teacher: "Shawn Norman",
     dueDate: "2025-01-01",
   },
   {
     id: 8,
-    subject: "Geography",
+    department: "Geography",
     class: "6B",
     teacher: "Don Holloway",
     dueDate: "2025-01-01",
   },
   {
     id: 9,
-    subject: "Physics",
+    department: "Physics",
     class: "7A",
     teacher: "Franklin Gregory",
     dueDate: "2025-01-01",
   },
   {
     id: 10,
-    subject: "Chemistry",
+    department: "Chemistry",
     class: "8A",
     teacher: "Danny Nguyen",
     dueDate: "2025-01-01",
@@ -669,7 +669,7 @@ export const assignmentsData = [
 export const resultsData = [
   {
     id: 1,
-    subject: "Math",
+    department: "Math",
     class: "1A",
     teacher: "John Doe",
     student: "John Doe",
@@ -679,7 +679,7 @@ export const resultsData = [
   },
   {
     id: 2,
-    subject: "English",
+    department: "English",
     class: "2A",
     teacher: "John Doe",
     student: "John Doe",
@@ -689,7 +689,7 @@ export const resultsData = [
   },
   {
     id: 3,
-    subject: "Science",
+    department: "Science",
     class: "3A",
     teacher: "John Doe",
     student: "John Doe",
@@ -699,7 +699,7 @@ export const resultsData = [
   },
   {
     id: 4,
-    subject: "Social Studies",
+    department: "Social Studies",
     class: "1B",
     teacher: "John Doe",
     student: "John Doe",
@@ -709,7 +709,7 @@ export const resultsData = [
   },
   {
     id: 5,
-    subject: "Art",
+    department: "Art",
     class: "4A",
     teacher: "John Doe",
     student: "John Doe",
@@ -719,7 +719,7 @@ export const resultsData = [
   },
   {
     id: 6,
-    subject: "Music",
+    department: "Music",
     class: "5A",
     teacher: "John Doe",
     student: "John Doe",
@@ -729,7 +729,7 @@ export const resultsData = [
   },
   {
     id: 7,
-    subject: "History",
+    department: "History",
     class: "6A",
     teacher: "John Doe",
     student: "John Doe",
@@ -739,7 +739,7 @@ export const resultsData = [
   },
   {
     id: 8,
-    subject: "Geography",
+    department: "Geography",
     class: "6B",
     teacher: "John Doe",
     student: "John Doe",
@@ -749,7 +749,7 @@ export const resultsData = [
   },
   {
     id: 9,
-    subject: "Physics",
+    department: "Physics",
     class: "7A",
     teacher: "John Doe",
     student: "John Doe",
@@ -759,7 +759,7 @@ export const resultsData = [
   },
   {
     id: 10,
-    subject: "Chemistry",
+    department: "Chemistry",
     class: "8A",
     teacher: "John Doe",
     student: "John Doe",
@@ -1072,7 +1072,7 @@ monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
 
 const calendarEvents: any = [];
 
-const subjects = ["Math", "English", "Biology", "Physics", "Chemistry", "History"];
+const departments = ["Math", "English", "Biology", "Physics", "Chemistry", "History"];
 const timings = [
   { start: [8, 0], end: [8, 45] },
   { start: [9, 0], end: [9, 45] },
@@ -1087,11 +1087,11 @@ for (let i = 0; i < 6; i++) {
   let eventDate = new Date(monday);
   eventDate.setDate(monday.getDate() + i); // Move to next day
 
-  subjects.forEach((subject, index) => {
+  departments.forEach((department, index) => {
     const { start, end } = timings[index];
 
     calendarEvents.push({
-      title: subject,
+      title: department,
       allDay: false,
       start: new Date(
         eventDate.getFullYear(),

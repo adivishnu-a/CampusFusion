@@ -31,9 +31,9 @@ const menuItems = [
         visible: ["admin", "teacher"],
       },
       {
-        icon: "/subject.png",
-        label: "Subjects",
-        href: "/list/subjects",
+        icon: "/department.png",
+        label: "Departments",
+        href: "/list/departments",
         visible: ["admin"],
       },
       {
@@ -43,9 +43,9 @@ const menuItems = [
         visible: ["admin", "teacher"],
       },
       {
-        icon: "/lesson.png",
-        label: "Lessons",
-        href: "/list/lessons",
+        icon: "/subject.png",
+        label: "Subjects",
+        href: "/list/subjects",
         visible: ["admin", "teacher"],
       },
       {

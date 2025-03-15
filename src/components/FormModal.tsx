@@ -1,6 +1,6 @@
 "use client";
 
-import { deleteClass, deleteExam, deleteStudent, deleteSubject, deleteTeacher } from "@/lib/actions";
+import { deleteClass, deleteExam, deleteStudent, deleteDepartment, deleteTeacher } from "@/lib/actions";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -9,24 +9,24 @@ import { useFormState } from "react-dom";
 import { toast } from "react-toastify";
 import { FormContainerProps } from "./FormContainer";
 // import ClassForm from "./forms/ClassForm";
-// import SubjectForm from "./forms/SubjectForm";
+// import DepartmentForm from "./forms/DepartmentForm";
 // import TeacherForm from "./forms/TeacherForm";
 // import StudentForm from "./forms/StudentForm";
 
 const deleteActionMap:any = {
-  subject: deleteSubject,
+  department: deleteDepartment,
   class: deleteClass,
   teacher: deleteTeacher,
   student: deleteStudent,
   exam: deleteExam,
 // TODO: OTHER DELETE ACTIONS
-  parent: deleteSubject,
-  lesson: deleteSubject,
-  assignment: deleteSubject,
-  result: deleteSubject,
-  attendance: deleteSubject,
-  event: deleteSubject,
-  announcement: deleteSubject,
+  parent: deleteDepartment,
+  subject: deleteDepartment,
+  assignment: deleteDepartment,
+  result: deleteDepartment,
+  attendance: deleteDepartment,
+  event: deleteDepartment,
+  announcement: deleteDepartment,
 };
 
 // USE LAZY LOADING
@@ -36,7 +36,7 @@ const TeacherForm = dynamic(() => import("./forms/TeacherForm"), {
 const StudentForm = dynamic(() => import("./forms/StudentForm"), {
   loading: () => <h1>Loading...</h1>,
 });
-const SubjectForm = dynamic(() => import("./forms/SubjectForm"), {
+const DepartmentForm = dynamic(() => import("./forms/DepartmentForm"), {
   loading: () => <h1>Loading...</h1>,
 });
 const ClassForm = dynamic(() => import("./forms/ClassForm"), {
@@ -54,8 +54,8 @@ const forms: {
     relatedData?: any
   ) => JSX.Element;
 } = {
-  subject: (setOpen, type, data, relatedData) => (
-    <SubjectForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />
+  department: (setOpen, type, data, relatedData) => (
+    <DepartmentForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />
   ),
   class: (setOpen, type, data, relatedData) => (
     <ClassForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />

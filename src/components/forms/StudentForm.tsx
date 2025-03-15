@@ -105,7 +105,7 @@ const StudentForm = ({
 
   const { grades, classes } = relatedData;
 
-  const { subjects } = relatedData;
+  const { departments } = relatedData;
 
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>

@@ -3,16 +3,16 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import InputField from "../InputField";
-import { subjectSchema, SubjectSchema } from "@/lib/formValidationSchemas";
+import { departmentSchema, DepartmentSchema } from "@/lib/formValidationSchemas";
 import { useFormState } from "react-dom";
-import { createSubject, updateSubject } from "@/lib/actions";
+import { createDepartment, updateDepartment } from "@/lib/actions";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { Dispatch } from "react";
 import { SetStateAction } from "react";
 
-const SubjectForm = ({
+const DepartmentForm = ({
   type,
   data,
   setOpen,
@@ -27,12 +27,12 @@ const SubjectForm = ({
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<SubjectSchema>({
-    resolver: zodResolver(subjectSchema),
+  } = useForm<DepartmentSchema>({
+    resolver: zodResolver(departmentSchema),
   });
 
   const [state, formAction] = useFormState(
-    type === "create" ? createSubject : updateSubject,
+    type === "create" ? createDepartment : updateDepartment,
     {
       success: false,
       error: false,
@@ -48,7 +48,7 @@ const SubjectForm = ({
 
   useEffect(() => {
     if (state.success) {
-      toast(`Subject has been ${type === "create" ? "created" : "updated"}!`);
+      toast(`Department has been ${type === "create" ? "created" : "updated"}!`);
       setOpen(false);
       router.refresh();
     }
@@ -59,11 +59,11 @@ const SubjectForm = ({
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
       <h1 className="text-xl font-semibold">
-        {type === "create" ? "Create a New Subject" : "Update the Subject"}
+        {type === "create" ? "Create a New Department" : "Update the Department"}
       </h1>
       <div className="flex justify-between flex-wrap gap-4">
         <InputField
-          label="Subject Name"
+          label="Department Name"
           name="name"
           defaultValue={data?.name}
           register={register}
@@ -111,4 +111,4 @@ const SubjectForm = ({
   );
 };
 
-export default SubjectForm;
+export default DepartmentForm;

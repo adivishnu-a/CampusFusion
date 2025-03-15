@@ -132,8 +132,8 @@ const ResultListPage = async ({
       break;
     case "teacher":
       query.OR = [
-        { exam: { lesson: { teacherId: currentUserId! } } },
-        { assignment: { lesson: { teacherId: currentUserId! } } },
+        { exam: { subject: { teacherId: currentUserId! } } },
+        { assignment: { subject: { teacherId: currentUserId! } } },
       ];
       break;
 
@@ -157,7 +157,7 @@ const ResultListPage = async ({
         student: { select: { name: true, surname: true } },
         exam: {
           include: {
-            lesson: {
+            subject: {
               select: {
                 class: { select: { name: true } },
                 teacher: { select: { name: true, surname: true } },
@@ -167,7 +167,7 @@ const ResultListPage = async ({
         },
         assignment: {
           include: {
-            lesson: {
+            subject: {
               select: {
                 class: { select: { name: true } },
                 teacher: { select: { name: true, surname: true } },
@@ -194,10 +194,10 @@ const ResultListPage = async ({
       title: assessment.title,
       studentName: item.student.name,
       studentSurname: item.student.surname,
-      teacherName: assessment.lesson.teacher.name,
-      teacherSurname: assessment.lesson.teacher.surname,
+      teacherName: assessment.subject.teacher.name,
+      teacherSurname: assessment.subject.teacher.surname,
       score: item.score,
-      className: assessment.lesson.class.name,
+      className: assessment.subject.class.name,
       startTime: isExam ? assessment.startTime : assessment.startDate,
     };
   });

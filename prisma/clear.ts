@@ -15,13 +15,13 @@ async function main() {
   await prisma.timeTableEntry.deleteMany({});
   await prisma.announcement.deleteMany({});
   await prisma.event.deleteMany({});
-  await prisma.lesson.deleteMany({});
+  await prisma.subject.deleteMany({});
   await prisma.timeTable.deleteMany({});
   await prisma.student.deleteMany({});
   await prisma.class.deleteMany({});
   await prisma.parent.deleteMany({});
   await prisma.teacher.deleteMany({});
-  await prisma.subject.deleteMany({});
+  await prisma.department.deleteMany({});
   await prisma.grade.deleteMany({});
   await prisma.admin.deleteMany({});
 
