@@ -7,6 +7,7 @@ import {
   StudentSchema,
   DepartmentSchema,
   TeacherSchema,
+  SubjectSchema,
 } from "./formValidationSchemas";
 import prisma from "./prisma";
 import { auth, clerkClient } from "@clerk/nextjs/server";
@@ -718,6 +719,66 @@ export const deleteExam = async (
     });
 
     // revalidatePath("/list/exams");
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const createSubject = async (
+  currentState: CurrentState,
+  data: SubjectSchema
+) => {
+  try {
+    await prisma.subject.create({
+      data: {
+        name: data.name,
+        day: data.day,
+        startTime: data.startTime,
+        endTime: data.endTime,
+        departmentId: data.departmentId,
+        classId: data.classId,
+        teacherId: data.teacherId,
+      },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const updateSubject = async (
+  currentState: CurrentState,
+  data: SubjectSchema
+) => {
+  try {
+    const { id, ...updateData } = data;
+    
+    await prisma.subject.update({
+      where: { id },
+      data: updateData,
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const deleteSubject = async (
+  currentState: CurrentState,
+  formData: FormData
+) => {
+  const id = formData.get("id") as string;
+  try {
+    await prisma.subject.delete({
+      where: { id },
+    });
+
     return { success: true, error: false };
   } catch (err) {
     console.log(err);

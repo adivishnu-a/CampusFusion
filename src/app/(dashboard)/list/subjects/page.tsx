@@ -22,6 +22,26 @@ const SubjectListPage = async ({
   const userId = (sessionClaims?.metadata as { userId?: string })?.userId;
   const currentUserId = userId;
 
+  // Fetch related data for the form dropdowns
+  const classes = await prisma.class.findMany({
+    select: { id: true, name: true },
+  });
+  
+  const departments = await prisma.department.findMany({
+    select: { id: true, name: true },
+  });
+  
+  const teachers = await prisma.teacher.findMany({
+    select: { id: true, name: true, surname: true },
+  });
+  
+  // Combined related data for the form
+  const formRelatedData = {
+    classes,
+    departments,
+    teachers,
+  };
+
   const columns = [
     {
       header: "Department Name",
@@ -60,7 +80,7 @@ const SubjectListPage = async ({
         <div className="flex items-center gap-2">
           {role === "admin" && (
             <>
-              <FormModal table="subject" type="update" data={item} />
+              <FormModal table="subject" type="update" data={item} relatedData={formRelatedData} />
               <FormModal table="subject" type="delete" id={item.id} />
             </>
           )}
@@ -127,7 +147,7 @@ const SubjectListPage = async ({
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-campDarwinCobaltBlue">
               <Image src="/sort.png" alt="" width={20} height={20} />
             </button>
-            {role === "admin" && <FormModal table="subject" type="create" />}
+            {role === "admin" && <FormModal table="subject" type="create" relatedData={formRelatedData} />}
           </div>
         </div>
       </div>
