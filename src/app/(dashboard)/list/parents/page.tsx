@@ -1,14 +1,16 @@
-import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import Image from "next/image";
+import Link from "next/link";
+import FormContainer from "@/components/FormContainer";
+import React from "react";
+import { Parent, Prisma } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { Parent, Prisma, Student } from "@prisma/client";
 import { auth } from "@clerk/nextjs/server";
 
-type ParentList = Parent & { students: Student[] };
+type ParentList = Parent & { _count: { students: number } };
 
 const ParentListPage = async ({
   searchParams,
@@ -26,7 +28,12 @@ const ParentListPage = async ({
       accessor: "info",
     },
     {
-      header: "Student Names",
+      header: "Username",
+      accessor: "username",
+      className: "hidden md:table-cell",
+    },
+    {
+      header: "Students",
       accessor: "students",
       className: "hidden md:table-cell",
     },
@@ -49,7 +56,7 @@ const ParentListPage = async ({
         ]
       : []),
   ];
-
+  
   const renderRow = (item: ParentList) => (
     <tr
       key={item.id}
@@ -57,33 +64,31 @@ const ParentListPage = async ({
     >
       <td className="flex items-center gap-4 p-4">
         <div className="flex flex-col">
-          <h3 className="font-semibold">{item.name}</h3>
+          <h3 className="font-semibold">{`${item.name} ${item.surname}`}</h3>
           <p className="text-xs text-gray-500">{item?.email}</p>
         </div>
       </td>
-      <td className="hidden md:table-cell">
-        {item.students.map((student) => student.name).join(",")}
-      </td>
+      <td className="hidden md:table-cell">{item.username}</td>
+      <td className="hidden md:table-cell">{item._count.students}</td>
       <td className="hidden md:table-cell">{item.phone}</td>
       <td className="hidden md:table-cell">{item.address}</td>
       <td>
         <div className="flex items-center gap-2">
           {role === "admin" && (
             <>
-              <FormModal table="parent" type="update" data={item} />
-              <FormModal table="parent" type="delete" id={item.id} />
+              <FormContainer table="parent" type="update" data={item} />
+              <FormContainer table="parent" type="delete" id={item.id} />
             </>
           )}
         </div>
       </td>
     </tr>
   );
+
   const { page, ...queryParams } = searchParams;
-
   const p = page ? parseInt(page) : 1;
-
+  
   // URL PARAMS CONDITION
-
   const query: Prisma.ParentWhereInput = {};
 
   if (queryParams) {
@@ -91,7 +96,11 @@ const ParentListPage = async ({
       if (value !== undefined) {
         switch (key) {
           case "search":
-            query.name = { contains: value, mode: "insensitive" };
+            query.OR = [
+              { name: { contains: value, mode: "insensitive" } },
+              { surname: { contains: value, mode: "insensitive" } },
+              { username: { contains: value, mode: "insensitive" } },
+            ];
             break;
           default:
             break;
@@ -99,12 +108,16 @@ const ParentListPage = async ({
       }
     }
   }
-
+  
   const [data, count] = await prisma.$transaction([
     prisma.parent.findMany({
       where: query,
       include: {
-        students: true,
+        _count: {
+          select: {
+            students: true
+          }
+        }
       },
       take: ITEM_PER_PAGE,
       skip: ITEM_PER_PAGE * (p - 1),
@@ -113,8 +126,8 @@ const ParentListPage = async ({
   ]);
 
   return (
-    <div className="bg-white p-4 rounded-md shadow-sm flex-1 m-4 mt-0">
-      {/* TOP */}
+    <div className="bg-white p-4 rounded-xl shadow-sm flex-1 m-4 mt-0">
+      {/* Top */}
       <div className="flex items-center justify-between">
         <h1 className="hidden md:block text-lg font-semibold">All Parents</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
@@ -126,13 +139,13 @@ const ParentListPage = async ({
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-campDarwinCobaltBlue">
               <Image src="/sort.png" alt="" width={20} height={20} />
             </button>
-            {role === "admin" && <FormModal table="parent" type="create" />}
+            {role === "admin" && <FormContainer table="parent" type="create" />}
           </div>
         </div>
       </div>
-      {/* LIST */}
+      {/* List */}
       <Table columns={columns} renderRow={renderRow} data={data} />
-      {/* PAGINATION */}
+      {/* Pagination */}
       <Pagination page={p} count={count} />
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { deleteClass, deleteExam, deleteStudent, deleteDepartment, deleteTeacher } from "@/lib/actions";
+import { deleteClass, deleteExam, deleteParent, deleteStudent, deleteDepartment, deleteTeacher } from "@/lib/actions";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -8,19 +8,15 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useFormState } from "react-dom";
 import { toast } from "react-toastify";
 import { FormContainerProps } from "./FormContainer";
-// import ClassForm from "./forms/ClassForm";
-// import DepartmentForm from "./forms/DepartmentForm";
-// import TeacherForm from "./forms/TeacherForm";
-// import StudentForm from "./forms/StudentForm";
 
 const deleteActionMap:any = {
   department: deleteDepartment,
   class: deleteClass,
   teacher: deleteTeacher,
   student: deleteStudent,
+  parent: deleteParent,
   exam: deleteExam,
-// TODO: OTHER DELETE ACTIONS
-  parent: deleteDepartment,
+  // TODO: OTHER DELETE ACTIONS
   subject: deleteDepartment,
   assignment: deleteDepartment,
   result: deleteDepartment,
@@ -34,6 +30,9 @@ const TeacherForm = dynamic(() => import("./forms/TeacherForm"), {
   loading: () => <h1>Loading...</h1>,
 });
 const StudentForm = dynamic(() => import("./forms/StudentForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+const ParentForm = dynamic(() => import("./forms/ParentForm"), {
   loading: () => <h1>Loading...</h1>,
 });
 const DepartmentForm = dynamic(() => import("./forms/DepartmentForm"), {
@@ -65,6 +64,9 @@ const forms: {
   ),
   student: (setOpen, type, data, relatedData) => (
     <StudentForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />
+  ),
+  parent: (setOpen, type, data, relatedData) => (
+    <ParentForm type={type} data={data} setOpen={setOpen} />
   ),
   exam: (setOpen, type, data, relatedData) => (
     <ExamForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />

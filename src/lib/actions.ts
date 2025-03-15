@@ -3,6 +3,7 @@
 import {
   ClassSchema,
   ExamSchema,
+  ParentSchema,
   StudentSchema,
   DepartmentSchema,
   TeacherSchema,
@@ -478,6 +479,143 @@ export const deleteStudent = async (
     });
 
     // revalidatePath("/list/students");
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const createParent = async (
+  currentState: CurrentState,
+  formData: FormData
+) => {
+  try {
+    const data = JSON.parse(formData.get("data") as string) as ParentSchema;
+
+    const parentId = await prisma.parent.create({
+      data: {
+        username: data.username,
+        name: data.name,
+        surname: data.surname,
+        email: data.email || null,
+        phone: data.phone,
+        address: data.address,
+      },
+    });
+
+    const user = (await clerkClient()).users.createUser({
+      username: data.username,
+      password: data.password,
+      firstName: data.name,
+      lastName: data.surname,
+      publicMetadata: { role: "parent", userId: `${parentId.id}` },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const updateParent = async (
+  currentState: CurrentState,
+  formData: FormData
+) => {
+  try {
+    const data = JSON.parse(formData.get("data") as string) as ParentSchema;
+    
+    if (!data.id) {
+      return { success: false, error: true };
+    }
+
+    const clerkData: any = Clerk({ apiKey: process.env.CLERK_SECRET_KEY });
+    const allUsers: any = await clerkData.users.getUserList();
+    
+    if (!allUsers) {
+      console.log("Clerk allUsers data is undefined or null");
+      return { success: false, error: true };
+    }
+    
+    const userClerk: any = await allUsers.filter(
+      (user: any) => user.publicMetadata?.userId === data.id
+    );
+    
+    if (userClerk.length > 0) {
+      const user = (await clerkClient()).users.updateUser(userClerk[0].id, {
+        username: data.username,
+        ...(data.password !== "" && { password: data.password }),
+        firstName: data.name,
+        lastName: data.surname,
+      });
+    }
+
+    await prisma.parent.update({
+      where: {
+        id: data.id,
+      },
+      data: {
+        username: data.username,
+        name: data.name,
+        surname: data.surname,
+        email: data.email || null,
+        phone: data.phone,
+        address: data.address,
+      },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const deleteParent = async (
+  currentState: CurrentState,
+  formData: FormData
+) => {
+  try {
+    const uid = formData.get("id") as string;
+    
+    // Check if parent has any associated students
+    const parentWithStudents = await prisma.parent.findUnique({
+      where: { id: uid },
+      include: { _count: { select: { students: true } } },
+    });
+
+    if (!parentWithStudents) {
+      return { success: false, error: true };
+    }
+
+    // Prevent deletion if parent has students
+    if ((parentWithStudents._count?.students ?? 0) > 0) {
+      return { success: false, error: true };
+    }
+    
+    const clerkData: any = Clerk({ apiKey: process.env.CLERK_SECRET_KEY });
+    const allUsers: any = await clerkData.users.getUserList();
+    
+    if (!allUsers) {
+      console.log("Clerk allUsers data is undefined or null");
+      return { success: false, error: true };
+    }
+    
+    const userClerk: any[] = await allUsers.filter(
+      (user: any) => user.publicMetadata?.userId === uid
+    );
+    
+    if (userClerk.length > 0) {
+      (await clerkClient()).users.deleteUser(userClerk[0].id);
+    }
+
+    await prisma.parent.delete({
+      where: {
+        id: uid,
+      },
+    });
+
     return { success: true, error: false };
   } catch (err) {
     console.log(err);
