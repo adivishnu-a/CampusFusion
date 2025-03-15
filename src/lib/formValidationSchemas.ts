@@ -128,3 +128,13 @@ export const subjectSchema = z.object({
 });
 
 export type SubjectSchema = z.infer<typeof subjectSchema>;
+
+export const assignmentSchema = z.object({
+  id: z.string().optional(),
+  title: z.string().min(1, { message: "Assignment title is required!" }),
+  startDate: z.coerce.date({ message: "Start date is required!" }),
+  dueDate: z.coerce.date({ message: "Due date is required!" }),
+  subjectId: z.string().min(1, { message: "Subject is required!" }),
+});
+
+export type AssignmentSchema = z.infer<typeof assignmentSchema>;

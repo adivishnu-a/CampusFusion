@@ -8,6 +8,7 @@ import {
   DepartmentSchema,
   TeacherSchema,
   SubjectSchema,
+  AssignmentSchema,
 } from "./formValidationSchemas";
 import prisma from "./prisma";
 import { auth, clerkClient } from "@clerk/nextjs/server";
@@ -777,6 +778,112 @@ export const deleteSubject = async (
   try {
     await prisma.subject.delete({
       where: { id },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const createAssignment = async (
+  currentState: CurrentState,
+  data: AssignmentSchema
+) => {
+  try {
+    const { sessionClaims } = await auth();
+    const role = (sessionClaims?.metadata as { role?: string })?.role;
+    const userId = (sessionClaims?.metadata as { userId?: string })?.userId;
+    const currentUserId = userId;
+    
+    // For teacher role, check if the teacher owns the subject
+    if (role === "teacher") {
+      const teacherSubject = await prisma.subject.findFirst({
+        where: {
+          teacherId: currentUserId!,
+          id: data.subjectId,
+        },
+      });
+      if (!teacherSubject) {
+        return { success: false, error: true };
+      }
+    }
+    
+    await prisma.assignment.create({
+      data: {
+        title: data.title,
+        startDate: data.startDate,
+        dueDate: data.dueDate,
+        subjectId: data.subjectId,
+      },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const updateAssignment = async (
+  currentState: CurrentState,
+  data: AssignmentSchema
+) => {
+  try {
+    const { sessionClaims } = await auth();
+    const role = (sessionClaims?.metadata as { role?: string })?.role;
+    const userId = (sessionClaims?.metadata as { userId?: string })?.userId;
+    const currentUserId = userId;
+    
+    // For teacher role, check if the teacher owns the subject
+    if (role === "teacher") {
+      const teacherSubject = await prisma.subject.findFirst({
+        where: {
+          teacherId: currentUserId!,
+          id: data.subjectId,
+        },
+      });
+      if (!teacherSubject) {
+        return { success: false, error: true };
+      }
+    }
+    
+    await prisma.assignment.update({
+      where: {
+        id: data.id,
+      },
+      data: {
+        title: data.title,
+        startDate: data.startDate,
+        dueDate: data.dueDate,
+        subjectId: data.subjectId,
+      },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const deleteAssignment = async (
+  currentState: CurrentState,
+  data: FormData
+) => {
+  try {
+    const { sessionClaims } = await auth();
+    const role = (sessionClaims?.metadata as { role?: string })?.role;
+    const userId = (sessionClaims?.metadata as { userId?: string })?.userId;
+    const currentUserId = userId;
+    const id = data.get("id") as string;
+    
+    await prisma.assignment.delete({
+      where: {
+        id: id,
+        ...(role === "teacher" ? { subject: { teacherId: currentUserId } } : {}),
+      },
     });
 
     return { success: true, error: false };
