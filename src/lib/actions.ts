@@ -9,6 +9,7 @@ import {
   TeacherSchema,
   SubjectSchema,
   AssignmentSchema,
+  ResultSchema,
 } from "./formValidationSchemas";
 import prisma from "./prisma";
 import { auth, clerkClient } from "@clerk/nextjs/server";
@@ -884,6 +885,139 @@ export const deleteAssignment = async (
         id: id,
         ...(role === "teacher" ? { subject: { teacherId: currentUserId } } : {}),
       },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const createResult = async (
+  currentState: CurrentState,
+  data: ResultSchema
+) => {
+  try {
+    const { sessionClaims } = await auth();
+    const role = (sessionClaims?.metadata as { role?: string })?.role;
+    const userId = (sessionClaims?.metadata as { userId?: string })?.userId;
+    
+    // For teacher role, validate they can create results for this exam/assignment
+    if (role === "teacher") {
+      // Check if the teacher owns the exam's subject or assignment's subject
+      let isAuthorized = false;
+      
+      if (data.assessmentType === "exam" && data.examId) {
+        const exam = await prisma.exam.findUnique({
+          where: { id: data.examId },
+          include: { subject: true }
+        });
+        isAuthorized = exam?.subject.teacherId === userId;
+      } else if (data.assessmentType === "assignment" && data.assignmentId) {
+        const assignment = await prisma.assignment.findUnique({
+          where: { id: data.assignmentId },
+          include: { subject: true }
+        });
+        isAuthorized = assignment?.subject.teacherId === userId;
+      }
+      
+      if (!isAuthorized) {
+        return { success: false, error: true };
+      }
+    }
+    
+    await prisma.result.create({
+      data: {
+        score: data.score,
+        studentId: data.studentId,
+        ...(data.assessmentType === "exam" && data.examId ? { examId: data.examId } : {}),
+        ...(data.assessmentType === "assignment" && data.assignmentId ? { assignmentId: data.assignmentId } : {})
+      }
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const updateResult = async (
+  currentState: CurrentState,
+  data: ResultSchema
+) => {
+  try {
+    const { sessionClaims } = await auth();
+    const role = (sessionClaims?.metadata as { role?: string })?.role;
+    const userId = (sessionClaims?.metadata as { userId?: string })?.userId;
+    
+    if (!data.id) {
+      return { success: false, error: true };
+    }
+    
+    // For teacher role, validate they can update this result
+    if (role === "teacher") {
+      const result = await prisma.result.findUnique({
+        where: { id: data.id.toString() },
+        include: { 
+          exam: { include: { subject: true } },
+          assignment: { include: { subject: true } }
+        }
+      });
+      
+      const teacherId = result?.exam?.subject.teacherId || result?.assignment?.subject.teacherId;
+      if (teacherId !== userId) {
+        return { success: false, error: true };
+      }
+    }
+    
+    await prisma.result.update({
+      where: { id: data.id },
+      data: {
+        score: data.score,
+        studentId: data.studentId,
+        ...(data.assessmentType === "exam" && data.examId 
+          ? { examId: data.examId, assignmentId: null } 
+          : { assignmentId: data.assignmentId, examId: null })
+      }
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const deleteResult = async (
+  currentState: CurrentState,
+  data: FormData
+) => {
+  try {
+    const { sessionClaims } = await auth();
+    const role = (sessionClaims?.metadata as { role?: string })?.role;
+    const userId = (sessionClaims?.metadata as { userId?: string })?.userId;
+    const id = data.get("id") as string;
+    
+    // For teacher role, validate they can delete this result
+    if (role === "teacher") {
+      const result = await prisma.result.findUnique({
+        where: { id },
+        include: { 
+          exam: { include: { subject: true } },
+          assignment: { include: { subject: true } }
+        }
+      });
+      
+      const teacherId = result?.exam?.subject.teacherId || result?.assignment?.subject.teacherId;
+      if (teacherId !== userId) {
+        return { success: false, error: true };
+      }
+    }
+    
+    await prisma.result.delete({
+      where: { id }
     });
 
     return { success: true, error: false };

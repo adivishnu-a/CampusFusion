@@ -1,4 +1,4 @@
-import FormModal from "@/components/FormModal";
+import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
@@ -9,7 +9,7 @@ import { Prisma } from "@prisma/client";
 import { auth } from "@clerk/nextjs/server";
 
 type ResultList = {
-  id: number;
+  id: string;
   title: string;
   studentName: string;
   studentSurname: string;
@@ -18,6 +18,9 @@ type ResultList = {
   score: number;
   className: string;
   startTime: Date;
+  studentId: string;
+  examId?: string;
+  assignmentId?: string;
 };
 
 const ResultListPage = async ({
@@ -75,7 +78,7 @@ const ResultListPage = async ({
       className="border-b border-gray-200 even:bg-campDarwinPastelSlateGray text-sm hover:bg-campDarwinPastelBlue"
     >
       <td className="flex items-center gap-4 p-4">{item.title}</td>
-      <td>{item.studentName + " " + item.studentName}</td>
+      <td>{item.studentName + " " + item.studentSurname}</td>
       <td className="hidden md:table-cell">{item.score}</td>
       <td className="hidden md:table-cell">
         {item.teacherName + " " + item.teacherSurname}
@@ -88,8 +91,18 @@ const ResultListPage = async ({
         <div className="flex items-center gap-2">
           {(role === "admin" || role === "teacher") && (
             <>
-              <FormModal table="result" type="update" data={item} />
-              <FormModal table="result" type="delete" id={item.id} />
+              <FormContainer 
+                table="result" 
+                type="update" 
+                data={{
+                  id: item.id,
+                  score: item.score,
+                  studentId: item.studentId,
+                  examId: item.examId,
+                  assignmentId: item.assignmentId
+                }} 
+              />
+              <FormContainer table="result" type="delete" id={item.id} />
             </>
           )}
         </div>
@@ -116,6 +129,7 @@ const ResultListPage = async ({
             query.OR = [
               { exam: { title: { contains: value, mode: "insensitive" } } },
               { student: { name: { contains: value, mode: "insensitive" } } },
+              { assignment: { title: { contains: value, mode: "insensitive" } } },
             ];
             break;
           default:
@@ -199,8 +213,11 @@ const ResultListPage = async ({
       score: item.score,
       className: assessment.subject.class.name,
       startTime: isExam ? assessment.startTime : assessment.startDate,
+      studentId: item.studentId,
+      examId: item.examId || undefined,
+      assignmentId: item.assignmentId || undefined
     };
-  });
+  }).filter(Boolean) as ResultList[];
 
   return (
     <div className="bg-white p-4 rounded-md shadow-sm flex-1 m-4 mt-0">
@@ -217,7 +234,7 @@ const ResultListPage = async ({
               <Image src="/sort.png" alt="" width={20} height={20} />
             </button>
             {(role === "admin" || role === "teacher") && (
-              <FormModal table="result" type="create" />
+              <FormContainer table="result" type="create" />
             )}
           </div>
         </div>

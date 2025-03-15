@@ -138,3 +138,28 @@ export const assignmentSchema = z.object({
 });
 
 export type AssignmentSchema = z.infer<typeof assignmentSchema>;
+
+export const resultSchema = z.object({
+  id: z.string().optional(),
+  score: z.coerce.number()
+    .min(0, { message: "Score cannot be negative" })
+    .max(100, { message: "Score cannot exceed 100" }),
+  studentId: z.string().min(1, { message: "Student is required!" }),
+  examId: z.string().optional(),
+  assignmentId: z.string().optional(),
+  assessmentType: z.enum(["exam", "assignment"], { 
+    message: "Assessment type must be either exam or assignment" 
+  }),
+}).refine(data => {
+  // Either exam ID or assignment ID must be provided
+  if (data.assessmentType === "exam") {
+    return !!data.examId;
+  } else {
+    return !!data.assignmentId;
+  }
+}, {
+  message: "You must select an exam or assignment based on assessment type",
+  path: ["examId"] // This will highlight the exam field if validation fails
+});
+
+export type ResultSchema = z.infer<typeof resultSchema>;
