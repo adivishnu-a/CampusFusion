@@ -140,7 +140,27 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
         
         relatedData = { students, exams, assignments };
         break;
-
+      case "event":
+        console.log("Fetching classes for event form");
+        
+        // Fetch all classes with clear select statement
+        const eventClasses = await prisma.class.findMany({
+          select: { 
+            id: true, 
+            name: true 
+          }
+        });
+        
+        console.log("Classes found:", JSON.stringify(eventClasses));
+        
+        // Make sure relatedData has the right structure
+        relatedData = { 
+          classes: eventClasses.map(cls => ({
+            id: cls.id,
+            name: cls.name
+          }))
+        };
+        break;
       default:
         break;
     }
