@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import InputField from "../InputField";
 import { useFormState } from "react-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction } from "react";
@@ -15,40 +15,70 @@ const EventForm = ({
   type,
   data,
   setOpen,
-  relatedData = {},
+  relatedData,
 }: {
   type: "create" | "update";
   data?: any;
   setOpen: Dispatch<SetStateAction<boolean>>;
   relatedData?: any;
 }) => {
+  const router = useRouter();
+  const [classes, setClasses] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  
   // Format date-time for inputs
   const formatDateTime = (dateTimeString?: string | Date): string | undefined => {
     if (!dateTimeString) return undefined;
     const date = new Date(dateTimeString);
     return isNaN(date.getTime()) ? undefined : date.toISOString().slice(0, 16);
   };
-  
-  // Safe access to relatedData with fallbacks - similar to SubjectForm approach
-  const classes = relatedData?.classes || [];
-  
-  console.log("EventForm relatedData:", relatedData);
-  console.log("Classes available:", classes);
-  
+
+  // Fetch classes if not provided in relatedData
+  useEffect(() => {
+    const loadClasses = async () => {
+      try {
+        if (relatedData?.classes && relatedData.classes.length > 0) {
+          // Use classes from relatedData if available
+          console.log("Using classes from relatedData:", relatedData.classes.length);
+          setClasses(relatedData.classes);
+        } else {
+          // Otherwise fetch classes directly
+          console.log("Fetching classes directly");
+          const response = await fetch('/api/classes');
+          if (response.ok) {
+            const classData = await response.json();
+            console.log("Fetched classes:", classData.length);
+            setClasses(classData);
+          } else {
+            console.error("Failed to fetch classes:", response.statusText);
+          }
+        }
+      } catch (err) {
+        console.error("Error loading classes:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadClasses();
+  }, [relatedData]);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<EventSchema>({
     resolver: zodResolver(eventSchema),
-    defaultValues: type === "update" ? {
-      id: data?.id,
-      title: data?.title || "",
-      description: data?.description || "",
-      classId: data?.classId || "",
-      startTime: data?.startTime ? new Date(data.startTime) : undefined,
-      endTime: data?.endTime ? new Date(data.endTime) : undefined,
-    } : undefined
+    defaultValues: type === "update" 
+      ? {
+          id: data?.id,
+          title: data?.title || "",
+          description: data?.description || "",
+          classId: data?.classId || "",
+          startTime: data?.startTime ? new Date(data.startTime) : undefined,
+          endTime: data?.endTime ? new Date(data.endTime) : undefined,
+        } 
+      : undefined
   });
 
   const [state, formAction] = useFormState(
@@ -60,11 +90,8 @@ const EventForm = ({
   );
 
   const onSubmit = handleSubmit((data) => {
-    console.log("Submitting event form with data:", data);
     formAction(data);
   });
-
-  const router = useRouter();
 
   useEffect(() => {
     if (state.success) {
@@ -131,19 +158,29 @@ const EventForm = ({
             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
             {...register("classId")}
             defaultValue={data?.classId || ""}
+            disabled={loading}
           >
             <option value="">All Classes (School-wide event)</option>
-            {classes && classes.map((classItem: { id: string; name: string }) => (
-              <option value={classItem.id} key={classItem.id}>
-                {classItem.name}
-              </option>
-            ))}
+            {loading ? (
+              <option value="" disabled>Loading classes...</option>
+            ) : classes && classes.length > 0 ? (
+              classes.map((classItem: any) => (
+                <option value={classItem.id} key={classItem.id}>
+                  {classItem.name}
+                </option>
+              ))
+            ) : (
+              <option value="" disabled>No classes available</option>
+            )}
           </select>
           {errors.classId?.message && (
             <p className="text-xs text-campDarwinCandyPeach">
               {errors.classId.message.toString()}
             </p>
           )}
+          <p className="text-xs text-gray-500">
+            {loading ? "Loading classes..." : `${classes.length} classes available`}
+          </p>
         </div>
       </div>
       {state.error && (
