@@ -1,6 +1,6 @@
 "use client";
 
-import { deleteClass, deleteExam, deleteParent, deleteStudent, deleteDepartment, deleteTeacher, deleteSubject, deleteAssignment, deleteResult, deleteEvent } from "@/lib/actions";
+import { deleteClass, deleteExam, deleteParent, deleteStudent, deleteDepartment, deleteTeacher, deleteSubject, deleteAssignment, deleteResult, deleteEvent, deleteAnnouncement } from "@/lib/actions";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -21,7 +21,7 @@ const deleteActionMap:any = {
   result: deleteResult,
   attendance: deleteDepartment,
   event: deleteEvent,
-  announcement: deleteDepartment,
+  announcement: deleteAnnouncement,
 };
 
 // USE LAZY LOADING
@@ -53,6 +53,9 @@ const ResultForm = dynamic(() => import("./forms/ResultForm"), {
   loading: () => <h1>Loading...</h1>,
 });
 const EventForm = dynamic(() => import("./forms/EventForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+const AnnouncementForm = dynamic(() => import("./forms/AnnouncementForm"), {
   loading: () => <h1>Loading...</h1>,
 });
 
@@ -93,6 +96,9 @@ const forms: {
   ),
   event: (setOpen, type, data, relatedData) => (
     <EventForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />
+  ),
+  announcement: (setOpen, type, data, relatedData) => (
+    <AnnouncementForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />
   ),
 };
 

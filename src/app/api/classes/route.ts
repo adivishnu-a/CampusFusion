@@ -3,10 +3,37 @@
 
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { auth } from '@clerk/nextjs/server';
 
 export async function GET() {
   try {
+    const { sessionClaims } = await auth();
+    const role = (sessionClaims?.metadata as { role?: string })?.role;
+    const userId = (sessionClaims?.metadata as { userId?: string })?.userId;
+    const currentUserId = userId;
+
+    // Define query conditions based on role
+    let query = {};
+    
+    if (role === "teacher") {
+      query = {
+        OR: [
+          { supervisorId: currentUserId },
+          { subjects: { some: { teacherId: currentUserId } } },
+        ]
+      };
+    } else if (role === "student") {
+      query = {
+        students: { some: { id: currentUserId } }
+      };
+    } else if (role === "parent") {
+      query = {
+        students: { some: { parentId: currentUserId } }
+      };
+    }
+
     const classes = await prisma.class.findMany({
+      where: query,
       select: { 
         id: true, 
         name: true 
@@ -16,7 +43,7 @@ export async function GET() {
       }
     });
     
-    console.log(`API: Found ${classes.length} classes`);
+    console.log(`API: Found ${classes.length} classes for ${role} ${currentUserId}`);
     return NextResponse.json(classes);
   } catch (error) {
     console.error('Error fetching classes:', error);

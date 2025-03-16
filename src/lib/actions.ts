@@ -10,7 +10,8 @@ import {
   SubjectSchema,
   AssignmentSchema,
   ResultSchema,
-  EventSchema, // Add this line
+  EventSchema,
+  AnnouncementSchema, // Add this line
 } from "./formValidationSchemas";
 import prisma from "./prisma";
 import { auth, clerkClient } from "@clerk/nextjs/server";
@@ -1086,6 +1087,75 @@ export const deleteEvent = async (
   const id = formData.get("id") as string;
   try {
     await prisma.event.delete({
+      where: {
+        id,
+      },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+// Announcement actions
+export const createAnnouncement = async (
+  currentState: CurrentState,
+  data: AnnouncementSchema
+) => {
+  try {
+    await prisma.announcement.create({
+      data: {
+        title: data.title,
+        description: data.description,
+        date: data.date,
+        ...(data.classId ? { class: { connect: { id: data.classId } } } : {}),
+      },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const updateAnnouncement = async (
+  currentState: CurrentState,
+  data: AnnouncementSchema
+) => {
+  try {
+    if (!data.id) {
+      return { success: false, error: true };
+    }
+
+    await prisma.announcement.update({
+      where: {
+        id: data.id,
+      },
+      data: {
+        title: data.title,
+        description: data.description,
+        date: data.date,
+        classId: data.classId || null,
+      },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const deleteAnnouncement = async (
+  currentState: CurrentState,
+  formData: FormData
+) => {
+  const id = formData.get("id") as string;
+  try {
+    await prisma.announcement.delete({
       where: {
         id,
       },

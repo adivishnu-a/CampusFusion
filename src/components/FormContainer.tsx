@@ -56,8 +56,18 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
         const studentGrades = await prisma.grade.findMany({
           select: { id: true, level: true },
         });
+        // Fix: Don't use both include and select together
         const studentClasses = await prisma.class.findMany({
-          include: { _count: { select: { students: true } } },
+          select: { 
+            id: true, 
+            name: true, 
+            capacity: true, 
+            _count: { 
+              select: { 
+                students: true 
+              } 
+            } 
+          },
         });
         relatedData = { classes: studentClasses, grades: studentGrades };
         break;
@@ -141,35 +151,61 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
         relatedData = { students, exams, assignments };
         break;
       case "event":
-        console.log("Fetching event classes...");
+        const eventClasses = await prisma.class.findMany({
+          select: { id: true, name: true },
+          ...(role === "teacher" ? {
+            where: {
+              OR: [
+                { supervisorId: currentUserId },
+                { subjects: { some: { teacherId: currentUserId } } },
+              ]
+            }
+          } : role === "student" ? {
+            where: {
+              students: { some: { id: currentUserId } }
+            }
+          } : role === "parent" ? {
+            where: {
+              students: { some: { parentId: currentUserId } }
+            }
+          } : {})
+        });
+        
+        relatedData = { classes: eventClasses };
+        break;
+      case "announcement":
         try {
-          // Since FormContainer is a server component, we can directly query the database
-          const eventClasses = await prisma.class.findMany({
+          console.log("Fetching classes for announcement form");
+          const announcementClasses = await prisma.class.findMany({
             select: { 
               id: true, 
               name: true 
             },
             orderBy: {
               name: 'asc'
-            }
+            },
+            ...(role === "teacher" ? {
+              where: {
+                OR: [
+                  { supervisorId: currentUserId },
+                  { subjects: { some: { teacherId: currentUserId } } },
+                ]
+              }
+            } : role === "student" ? {
+              where: {
+                students: { some: { id: currentUserId } }
+              }
+            } : role === "parent" ? {
+              where: {
+                students: { some: { parentId: currentUserId } }
+              }
+            } : {})
           });
           
-          console.log("Event classes fetched:", eventClasses);
-          
-          if (!eventClasses || eventClasses.length === 0) {
-            console.log("No classes found in database for events");
-          } else {
-            console.log(`Found ${eventClasses.length} classes for events`);
-          }
-          
-          // Use the correct format for relatedData
-          relatedData = { 
-            classes: eventClasses 
-          };
-          
-          console.log("Final relatedData for events:", relatedData);
+          console.log("Announcement classes found:", announcementClasses.length);
+          relatedData = { classes: announcementClasses };
         } catch (error) {
-          console.error("Error fetching classes for event form:", error);
+          console.error("Error fetching classes for announcement form:", error);
           relatedData = { classes: [] };
         }
         break;

@@ -8,7 +8,7 @@ import { auth } from "@clerk/nextjs/server";
 import { Announcement, Class, Prisma } from "@prisma/client";
 import Image from "next/image";
 
-type AnnouncementList = Announcement & { class: Class };
+type AnnouncementList = Announcement & { class: Class | null };
 
 const AnnouncementListPage = async ({
   searchParams,
@@ -24,6 +24,11 @@ const AnnouncementListPage = async ({
     {
       header: "Title",
       accessor: "title",
+    },
+    {
+      header: "Description",
+      accessor: "description",
+      className: "hidden md:table-cell",
     },
     {
       header: "Class",
@@ -50,20 +55,19 @@ const AnnouncementListPage = async ({
       className="border-b border-gray-200 even:bg-campDarwinPastelSlateGray text-sm hover:bg-campDarwinPastelBlue"
     >
       <td className="flex items-center gap-4 p-4">{item.title}</td>
-      <td>{item.class?.name || "-"}</td>
+      <td className="hidden md:table-cell">{item.description}</td>
+      <td>{item.class?.name || "School-wide"}</td>
       <td className="hidden md:table-cell">
         {new Intl.DateTimeFormat("en-IN").format(item.date)}
       </td>
-      <td>
-        <div className="flex items-center gap-2">
-          {role === "admin" && (
-            <>
-              <FormModal table="announcement" type="update" data={item} />
-              <FormModal table="announcement" type="delete" id={item.id} />
-            </>
-          )}
-        </div>
-      </td>
+      {role === "admin" && (
+        <td>
+          <div className="flex items-center gap-2">
+            <FormModal table="announcement" type="update" data={item} />
+            <FormModal table="announcement" type="delete" id={item.id} />
+          </div>
+        </td>
+      )}
     </tr>
   );
 
@@ -72,7 +76,6 @@ const AnnouncementListPage = async ({
   const p = page ? parseInt(page) : 1;
 
   // URL PARAMS CONDITION
-
   const query: Prisma.AnnouncementWhereInput = {};
 
   if (queryParams) {
@@ -82,6 +85,7 @@ const AnnouncementListPage = async ({
           case "search":
             query.OR = [
               { title: { contains: value, mode: "insensitive" } },
+              { description: { contains: value, mode: "insensitive" } },
               { class: { name: { contains: value, mode: "insensitive" } } },
             ];
             break;
@@ -93,63 +97,95 @@ const AnnouncementListPage = async ({
   }
 
   // ROLE CONDITIONS
+  if (role && role !== "admin") {
+    // For non-admin users, show school-wide announcements and class-specific announcements for their classes
+    query.OR = [
+      { classId: null }, // School-wide announcements
+    ];
+    
+    // Add class-specific condition based on role
+    if (role === "teacher") {
+      query.OR.push({
+        class: { 
+          OR: [
+            { supervisorId: currentUserId },
+            { subjects: { some: { teacherId: currentUserId } } },
+          ] 
+        }
+      });
+    } else if (role === "student") {
+      query.OR.push({
+        class: { students: { some: { id: currentUserId } } }
+      });
+    } else if (role === "parent") {
+      query.OR.push({
+        class: { students: { some: { parentId: currentUserId } } }
+      });
+    }
+  }
 
-  const roleConditions = {
-    teacher: { subjects: { some: { teacherId: currentUserId! } } },
-    student: { students: { some: { id: currentUserId! } } },
-    parent: { students: { some: { parentId: currentUserId! } } },
-  };
+  console.log("Announcement query:", JSON.stringify(query, null, 2));
 
-  query.OR = [
-    { classId: null },
-    {
-      class: roleConditions[role as keyof typeof roleConditions] || {},
-    },
-  ];
+  try {
+    // Get both data and count in a transaction
+    const [data, count] = await prisma.$transaction([
+      prisma.announcement.findMany({
+        where: query,
+        include: {
+          class: true,
+        },
+        orderBy: {
+          date: 'desc',
+        },
+        take: ITEM_PER_PAGE,
+        skip: ITEM_PER_PAGE * (p - 1),
+      }),
+      prisma.announcement.count({ where: query }),
+    ]);
 
-  const [data, count] = currentUserId?.length == 24
-    ? await prisma.$transaction([
-    prisma.announcement.findMany({
-      where: query,
-      include: {
-        class: true,
-      },
-      take: ITEM_PER_PAGE,
-      skip: ITEM_PER_PAGE * (p - 1),
-    }),
-    prisma.announcement.count({ where: query }),
-  ]):[[null],null];
+    console.log(`Found ${data.length} announcements`);
 
-  return (
-    <div className="bg-white p-4 rounded-md shadow-sm flex-1 m-4 mt-0">
-      {/* TOP */}
-      <div className="flex items-center justify-between">
-        <h1 className="hidden md:block text-lg font-semibold">
-          All Announcements
-        </h1>
-        <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-          <TableSearch />
-          <div className="flex items-center gap-4 self-end">
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-campDarwinCobaltBlue">
-              <Image src="/filter.png" alt="" width={20} height={20} />
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-campDarwinCobaltBlue">
-              <Image src="/sort.png" alt="" width={20} height={20} />
-            </button>
-            {role === "admin" && (
-              <FormModal table="announcement" type="create" />
-            )}
+    return (
+      <div className="bg-white p-4 rounded-md shadow-sm flex-1 m-4 mt-0">
+        {/* TOP */}
+        <div className="flex items-center justify-between">
+          <h1 className="hidden md:block text-lg font-semibold">
+            All Announcements
+          </h1>
+          <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
+            <TableSearch />
+            <div className="flex items-center gap-4 self-end">
+              <button className="w-8 h-8 flex items-center justify-center rounded-full bg-campDarwinCobaltBlue">
+                <Image src="/filter.png" alt="" width={20} height={20} />
+              </button>
+              <button className="w-8 h-8 flex items-center justify-center rounded-full bg-campDarwinCobaltBlue">
+                <Image src="/sort.png" alt="" width={20} height={20} />
+              </button>
+              {role === "admin" && (
+                <FormModal table="announcement" type="create" />
+              )}
+            </div>
           </div>
         </div>
-      </div>
-      {/* LIST */}
-      {currentUserId?.length == 24 && (
+        
+        {/* LIST */}
         <Table columns={columns} renderRow={renderRow} data={data} />
-      )}
-      {/* PAGINATION */}
-      <Pagination page={p} count={count} />
-    </div>
-  );
+        
+        {/* PAGINATION */}
+        <Pagination page={p} count={count} />
+      </div>
+    );
+  } catch (error) {
+    console.error("Error fetching announcements:", error);
+    return (
+      <div className="bg-white p-4 rounded-md shadow-sm flex-1 m-4 mt-0">
+        <div className="flex flex-col items-center justify-center p-8">
+          <h2 className="text-xl font-semibold text-red-500">Error loading announcements</h2>
+          <p className="text-gray-500">Please try again later</p>
+        </div>
+      </div>
+    );
+  }
 };
 
 export default AnnouncementListPage;
