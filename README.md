@@ -4,136 +4,47 @@ CampusFusion is a modern school ERP (Enterprise Resource Planning) application d
 
 ## Overview
 
-CampusFusion is built using modern web technologies including Next.js 14 with App Router, TypeScript, and Tailwind CSS. The system features role-specific dashboards for administrators, teachers, students, and parents, each tailored to their unique needs. Authentication is handled securely through Clerk, while file storage is managed using AWS S3.
+Built with Next.js 14, TypeScript, and Tailwind CSS, CampusFusion features role-specific dashboards for administrators, teachers, students, and parents. Authentication is handled through Clerk, with file storage managed by AWS S3.
 
 ## Roles and Access Control
 
-- **Admin**: Complete system control with access to all management functions
-  - User management (students, teachers, parents)
-  - Academic configuration (classes, departments, assignments)
-  - System-wide announcements and events
-  - Performance monitoring and analytics
-
-- **Teacher**: Academic management and student monitoring
-  - Class and department management
-  - Exam and assignment creation
-  - Attendance tracking
-  - Student performance assessment
-  - Grade and result management
-
-- **Student**: Personal academic portal
-  - Class schedule and timetable view
-  - Assignment submission
-  - Exam schedule and results
-  - Attendance records
-  - Performance tracking
-
-- **Parent**: Student progress monitoring
-  - Ward's academic performance
-  - Attendance tracking
-  - Exam results and assignments
-  - School announcements and events
+- **Admin**: Complete system control (user management, academic configuration, announcements, analytics)
+- **Teacher**: Academic management (classes, assignments, attendance, grades)
+- **Student**: Personal academic portal (schedules, assignments, exams, performance)
+- **Parent**: Student progress monitoring (performance, attendance, announcements)
 
 ## Core Features
 
 ### User Management
-- Role-based user creation and management
-- Secure authentication via Clerk
-- Profile management with image upload capabilities
-- Detailed user profiles with essential information
-  - Blood type
-  - Contact details
-  - Academic records
-  - Profile photos (stored in AWS S3)
+- Role-based access with Clerk authentication
+- Profile management with AWS S3 image storage
+- Comprehensive user profiles
 
 ### Academic Management
-- Class Management
-  - Grade-wise class organization
-  - Dynamic capacity management
-  - Teacher supervision assignment
-  - Student enrollment tracking
-
-- Department Management
-  - Department-teacher mapping
-  - Class-wise department allocation
-  - Curriculum tracking
-
-- Examination System
-  - Exam scheduling and management
-  - Result recording and analysis
-  - Performance tracking
-  - Grade calculation
-
-- Assignment System
-  - Assignment creation and distribution
-  - Due date management
-  - Class-wise assignment tracking
-  - Result recording
-
-### Scheduling
-- Class Timetable Management
-  - Weekly schedule visualization
-  - Teacher availability tracking
-  - Department-wise time slots
-  - Conflict prevention
-
-- Event Calendar
-  - School event scheduling
-  - Class-specific events
-  - Visual calendar interface
-  - Date-based event filtering
-
-### Attendance System
-- Daily attendance tracking
-- Class-wise attendance management
-- Attendance analytics and reporting
-- Visual attendance statistics
+- Class & Department organization
+- Examination & Assignment systems
+- Performance tracking
 
 ### Communication
-- Announcement System
-  - School-wide announcements
-  - Class-specific notifications
-  - Date-based announcement tracking
-  
-- Event Management
-  - School event creation
-  - Event scheduling
-  - Target audience specification
-  - Calendar integration
+- Announcements (school-wide or class-specific)
+- Event scheduling & calendar integration
+
+### Scheduling & Attendance
+- Class timetables & event calendars
+- Attendance tracking & reporting
 
 ## Technology Stack
 
-### Frontend
-- Next.js 14 with App Router
-- React 18 with Server Components
-- TypeScript for type safety
-- Tailwind CSS for styling
-- React Hook Form for form management
-- Zod for schema validation
-
-### Backend & Database
-- MongoDB with Prisma ORM
-- Clerk Authentication
-- AWS S3 for file storage
-- Server Actions for API endpoints
-
-### UI Components
-- React Big Calendar for scheduling
-- React Calendar for date picking
-- Recharts for data visualization
-- React Toastify for notifications
-- Custom reusable components
+- **Frontend**: Next.js 14, React 18, TypeScript, Tailwind CSS
+- **Backend**: MongoDB with Prisma ORM, Clerk Authentication, AWS S3
+- **UI Components**: React Big Calendar, Recharts, React Toastify
 
 ## Getting Started
 
 ### Prerequisites
-- Node.js (version 18 or above)
-- npm or yarn
-- MongoDB database
-- AWS S3 bucket for file storage
-- Clerk account for authentication
+- Node.js (v18+), npm/yarn, MongoDB, AWS S3 bucket, Clerk account
 
-### Environment Setup
+### Setup
 
 1. Clone the repository
 ```bash
@@ -156,24 +67,12 @@ AWS_REGION="your_aws_region"
 AWS_BUCKET_NAME="your_s3_bucket_name"
 ```
 
-3. Install dependencies:
+3. Installation and setup:
 ```bash
 npm install
-```
-
-4. Set up the database:
-```bash
 npx prisma generate
 npx prisma db push
-```
-
-5. (Optional) Seed the database:
-```bash
-npx prisma db seed
-```
-
-6. Start the development server:
-```bash
+npx prisma db seed  # Optional: seed the database
 npm run dev
 ```
 
@@ -181,23 +80,26 @@ npm run dev
 
 ```
 src/
-├── app/                    # Next.js app directory
+├── app/                   # Next.js app directory
 │   ├── (dashboard)/       # Protected dashboard routes
-│   │   ├── admin/        # Admin dashboard
-│   │   ├── teacher/      # Teacher dashboard
-│   │   ├── student/      # Student dashboard
-│   │   ├── parent/       # Parent dashboard
-│   │   └── list/         # List views for entities
-│   ├── api/              # API routes
-│   └── [...auth]/        # Auth routes
+│   │   ├── admin/         # Admin-specific pages
+│   │   ├── teacher/       # Teacher-specific pages
+│   │   ├── student/       # Student-specific pages
+│   │   ├── parent/        # Parent-specific pages
+│   │   └── list/          # Entity list views (assignments, announcements, etc.)
+│   ├── api/               # API endpoints
+│   └── (auth)/            # Authentication pages
 ├── components/            # Reusable React components
-│   ├── forms/            # Form components
-│   └── ui/               # UI components
-├── lib/                  # Utility functions
-│   ├── actions.ts        # Server actions
-│   ├── prisma.ts         # Database client
-│   ├── s3.ts            # AWS S3 utilities
-│   └── utils.ts          # Helper functions
-└── prisma/               # Database schema and migrations
+│   ├── forms/             # Form components for data entry
+│   ├── ui/                # UI elements and layout components
+│   └── charts/            # Data visualization components
+├── lib/                   # Utility functions
+│   ├── actions.ts         # Server actions for data operations
+│   ├── prisma.ts          # Database client configuration
+│   ├── s3.ts              # AWS S3 file storage utilities
+│   ├── data.ts            # Data structures and mock data
+│   └── formValidationSchemas.ts # Zod validation schemas
+└── prisma/                # Database configuration
+    ├── schema.prisma      # Prisma data model
+    └── seed.ts            # Database seeding script
 ```
-
