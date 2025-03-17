@@ -1,7 +1,6 @@
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import FilterModal from "@/components/FilterModal";
 import SortModal from "@/components/SortModal";
 import Image from "next/image";
 import Link from "next/link";
@@ -145,7 +144,7 @@ const ParentListPage = async ({
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
-            <FilterModal options={[]} />
+            {/* Removed FilterModal component */}
             <SortModal options={sortOptions} />
             {role === "admin" && <FormContainer table="parent" type="create" />}
           </div>

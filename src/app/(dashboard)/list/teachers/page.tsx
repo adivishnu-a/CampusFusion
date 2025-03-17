@@ -121,7 +121,9 @@ const TeachersListPage = async ({
   const sortOptions = [
     { label: 'Name', field: 'name' },
     { label: 'Username', field: 'username' },
-    { label: 'Phone', field: 'phone' }
+    { label: 'Phone', field: 'phone' },
+    { label: 'Class Count', field: 'classes._count' }, // Fixed format
+    { label: 'Department Count', field: 'departments._count' } // Fixed format
   ];
 
   const { page, sortField, sortOrder, ...queryParams } = searchParams;

@@ -151,7 +151,7 @@ const StudentListPage = async ({
             if (value.includes(',')) {
               // Handle multiple class IDs
               const classIds = parseFilterValues(value);
-              query.classId = { in: classIds };
+              query.OR = classIds.map(id => ({ classId: id }));
             } else {
               query.classId = value;
             }
@@ -160,7 +160,9 @@ const StudentListPage = async ({
             if (value.includes(',')) {
               // Handle multiple grade IDs
               const gradeIds = parseFilterValues(value);
-              query.class = { gradeId: { in: gradeIds } };
+              query.class = {
+                OR: gradeIds.map(id => ({ gradeId: id }))
+              };
             } else {
               query.class = { gradeId: value };
             }

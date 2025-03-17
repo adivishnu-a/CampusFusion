@@ -8,6 +8,19 @@ export function applySorting(sortField: string | undefined, sortOrder: string | 
 
   const order = sortOrder === 'desc' ? 'desc' : 'asc';
   
+  // Handle special cases for count sorting
+  if (sortField.startsWith('_count.')) {
+    // Extract the relationship name from _count.relationship
+    const relationName = sortField.split('.')[1];
+    
+    // Use the proper format for count sorting in Prisma
+    return {
+      [relationName]: {
+        _count: order
+      }
+    };
+  }
+  
   // Handle nested fields with dot notation (e.g., "subject.department.name")
   const fields = sortField.split('.');
   
@@ -59,13 +72,19 @@ export function buildFilterCondition(field: string, values: string[]): any {
       return { 
         OR: [
           { [field]: null },
-          { [field]: { in: otherValues } }
+          ...otherValues.map(value => ({ [field]: value }))
         ]
       };
     }
   }
   
-  return { [field]: { in: values } };
+  // Return OR conditions for each value instead of using 'in' operator
+  if (values.length > 1) {
+    return { OR: values.map(value => ({ [field]: value })) };
+  }
+  
+  // Single value case
+  return { [field]: values[0] };
 }
 
 // Helper to get filter options from a list of items

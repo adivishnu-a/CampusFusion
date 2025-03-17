@@ -9,7 +9,7 @@ import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Prisma, Department, Teacher } from "@prisma/client";
 import { auth } from "@clerk/nextjs/server";
-import { buildQueryOptions } from "@/lib/queryUtils";
+import { buildQueryOptions, parseFilterValues, buildFilterCondition } from "@/lib/queryUtils";
 
 type DepartmentList = Department & { teachers: Teacher[] };
 
@@ -82,7 +82,7 @@ const DepartmentListPage = async ({
   // Define sort options
   const sortOptions = [
     { label: 'Name', field: 'name' },
-    { label: 'Teacher Count', field: '_count.teachers' }
+    { label: 'Teacher Count', field: 'teachers._count' } // Fixed format
   ];
 
   const { page, sortField, sortOrder, ...queryParams } = searchParams;
@@ -96,11 +96,15 @@ const DepartmentListPage = async ({
       if (value !== undefined) {
         switch (key) {
           case "teacherId":
-            query.teachers = {
-              some: {
-                id: value
-              }
-            };
+            // Handle multiple teacher IDs with OR relationship
+            const teacherIds = parseFilterValues(value);
+            if (teacherIds.length > 0) {
+              query.teachers = {
+                some: {
+                  OR: teacherIds.map(id => ({ id }))
+                }
+              };
+            }
             break;
           case "search":
             query.name = { contains: value, mode: "insensitive" };

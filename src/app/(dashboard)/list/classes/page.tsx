@@ -10,7 +10,7 @@ import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Class, Grade, Prisma, Teacher } from "@prisma/client";
 import { auth } from "@clerk/nextjs/server";
-import { buildQueryOptions } from "@/lib/queryUtils";
+import { buildQueryOptions, parseFilterValues } from "@/lib/queryUtils";
 
 type ClassList = Class & {
   supervisor: Teacher | null;
@@ -130,7 +130,9 @@ const ClassListPage = async ({
   const sortOptions = [
     { label: 'Name', field: 'name' },
     { label: 'Capacity', field: 'capacity' },
-    { label: 'Grade Level', field: 'grade.level' }
+    { label: 'Grade Level', field: 'grade.level' },
+    { label: 'Student Count', field: 'students._count' }, // Fixed format
+    { label: 'Subject Count', field: 'subjects._count' }  // Fixed format
   ];
 
   const { page, sortField, sortOrder, ...queryParams } = searchParams;
@@ -144,10 +146,22 @@ const ClassListPage = async ({
       if (value !== undefined) {
         switch (key) {
           case "supervisorId":
-            query.supervisorId = value;
+            if (value.includes(',')) {
+              // Handle multiple supervisor IDs
+              const supervisorIds = parseFilterValues(value);
+              query.OR = supervisorIds.map(id => ({ supervisorId: id }));
+            } else {
+              query.supervisorId = value;
+            }
             break;
           case "gradeId":
-            query.gradeId = value;
+            if (value.includes(',')) {
+              // Handle multiple grade IDs
+              const gradeIds = parseFilterValues(value);
+              query.OR = gradeIds.map(id => ({ gradeId: id }));
+            } else {
+              query.gradeId = value;
+            }
             break;
           case "search":
             query.OR = [

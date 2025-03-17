@@ -8,6 +8,8 @@ import Image from "next/image";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Class, Subject, Prisma, Department, Teacher } from "@prisma/client";
+import { auth } from "@clerk/nextjs/server";
+import { buildQueryOptions, parseFilterValues } from "@/lib/queryUtils";
 
 type SubjectList = {
   id: string;
@@ -15,8 +17,6 @@ type SubjectList = {
   class: { name: string };
   teacher: { name: string; surname: string };
 };
-import { auth } from "@clerk/nextjs/server";
-import { buildQueryOptions } from "@/lib/queryUtils";
 
 const SubjectListPage = async ({
   searchParams,
@@ -133,13 +133,31 @@ const SubjectListPage = async ({
       if (value !== undefined) {
         switch (key) {
           case "classId":
-            query.classId = value;
+            if (value.includes(',')) {
+              // Handle multiple class IDs
+              const classIds = parseFilterValues(value);
+              query.OR = [...(query.OR || []), ...classIds.map(id => ({ classId: id }))];
+            } else {
+              query.classId = value;
+            }
             break;
           case "teacherId":
-            query.teacherId = value;
+            if (value.includes(',')) {
+              // Handle multiple teacher IDs
+              const teacherIds = parseFilterValues(value);
+              query.OR = [...(query.OR || []), ...teacherIds.map(id => ({ teacherId: id }))];
+            } else {
+              query.teacherId = value;
+            }
             break;
           case "departmentId":
-            query.departmentId = value;
+            if (value.includes(',')) {
+              // Handle multiple department IDs
+              const deptIds = parseFilterValues(value);
+              query.OR = [...(query.OR || []), ...deptIds.map(id => ({ departmentId: id }))];
+            } else {
+              query.departmentId = value;
+            }
             break;
           case "search":
             query.OR = [

@@ -9,7 +9,7 @@ import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Class, Exam, Prisma, Department, Teacher } from "@prisma/client";
 import { auth } from "@clerk/nextjs/server";
-import { buildQueryOptions } from "@/lib/queryUtils";
+import { buildQueryOptions, parseFilterValues } from "@/lib/queryUtils";
 
 type ExamList = Exam & {
   subject: {
@@ -125,21 +125,41 @@ const ExamListPage = async ({
   const p = page ? parseInt(page) : 1;
 
   // URL PARAMS CONDITION
+  // Use a properly typed subject object
   const query: Prisma.ExamWhereInput = {};
+  const subjectQuery: Prisma.SubjectWhereInput = {};
 
-  query.subject = {};
   if (queryParams) {
     for (const [key, value] of Object.entries(queryParams)) {
       if (value !== undefined) {
         switch (key) {
           case "classId":
-            query.subject.classId = value;
+            if (value.includes(',')) {
+              // Handle multiple class IDs
+              const classIds = parseFilterValues(value);
+              // Create proper nested query
+              subjectQuery.OR = classIds.map(id => ({ classId: id }));
+            } else {
+              subjectQuery.classId = value;
+            }
             break;
           case "teacherId":
-            query.subject.teacherId = value;
+            if (value.includes(',')) {
+              // Handle multiple teacher IDs
+              const teacherIds = parseFilterValues(value);
+              subjectQuery.OR = teacherIds.map(id => ({ teacherId: id }));
+            } else {
+              subjectQuery.teacherId = value;
+            }
             break;
           case "subjectId":
-            query.subjectId = value;
+            if (value.includes(',')) {
+              // Handle multiple subject IDs
+              const subjectIds = parseFilterValues(value);
+              query.OR = subjectIds.map(id => ({ subjectId: id }));
+            } else {
+              query.subjectId = value;
+            }
             break;
           case "search":
             query.OR = [
@@ -155,15 +175,14 @@ const ExamListPage = async ({
   }
 
   // ROLE CONDITIONS
-
   switch (role) {
     case "admin":
       break;
     case "teacher":
-      query.subject.teacherId = currentUserId!;
+      subjectQuery.teacherId = currentUserId!;
       break;
     case "student":
-      query.subject.class = {
+      subjectQuery.class = {
         students: {
           some: {
             id: currentUserId!,
@@ -172,7 +191,7 @@ const ExamListPage = async ({
       };
       break;
     case "parent":
-      query.subject.class = {
+      subjectQuery.class = {
         students: {
           some: {
             parentId: currentUserId!,
@@ -182,6 +201,11 @@ const ExamListPage = async ({
       break;
     default:
       break;
+  }
+
+  // Only add the subject query if we have conditions for it
+  if (Object.keys(subjectQuery).length > 0) {
+    query.subject = subjectQuery;
   }
 
   // Build query options with sorting
