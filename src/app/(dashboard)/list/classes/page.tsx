@@ -2,12 +2,15 @@ import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
+import FilterModal from "@/components/FilterModal";
+import SortModal from "@/components/SortModal";
 import Image from "next/image";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Class, Grade, Prisma, Teacher } from "@prisma/client";
 import { auth } from "@clerk/nextjs/server";
+import { buildQueryOptions } from "@/lib/queryUtils";
 
 type ClassList = Class & {
   supervisor: Teacher | null;
@@ -100,7 +103,37 @@ const ClassListPage = async ({
     </tr>
   );
 
-  const { page, ...queryParams } = searchParams;
+  // Fetch available grades and teachers for filters
+  const grades = await prisma.grade.findMany({
+    select: { id: true, level: true },
+  });
+
+  const teachers = await prisma.teacher.findMany({
+    select: { id: true, name: true, surname: true },
+  });
+
+  // Define filter options
+  const filterOptions = [
+    ...grades.map(grade => ({
+      label: `Grade ${grade.level}`,
+      value: grade.id,
+      field: 'gradeId'
+    })),
+    ...teachers.map(teacher => ({
+      label: `${teacher.name} ${teacher.surname}`,
+      value: teacher.id,
+      field: 'supervisorId'
+    }))
+  ];
+
+  // Define sort options
+  const sortOptions = [
+    { label: 'Name', field: 'name' },
+    { label: 'Capacity', field: 'capacity' },
+    { label: 'Grade Level', field: 'grade.level' }
+  ];
+
+  const { page, sortField, sortOrder, ...queryParams } = searchParams;
   const p = page ? parseInt(page) : 1;
 
   // URL PARAMS CONDITION
@@ -149,22 +182,25 @@ const ClassListPage = async ({
       break;
   }
 
-  const [data, count] = await prisma.$transaction([
-    prisma.class.findMany({
-      where: query,
-      include: {
-        supervisor: true,
-        grade: true,
-        _count: {
-          select: {
-            students: true,
-            subjects: true,
-          },
+  // Build query options with sorting
+  const queryOptions = buildQueryOptions(searchParams, {
+    where: query,
+    include: {
+      supervisor: true,
+      grade: true,
+      _count: {
+        select: {
+          students: true,
+          subjects: true,
         },
       },
-      take: ITEM_PER_PAGE,
-      skip: ITEM_PER_PAGE * (p - 1),
-    }),
+    },
+    take: ITEM_PER_PAGE,
+    skip: ITEM_PER_PAGE * (p - 1),
+  });
+
+  const [data, count] = await prisma.$transaction([
+    prisma.class.findMany(queryOptions),
     prisma.class.count({ where: query }),
   ]);
 
@@ -176,12 +212,8 @@ const ClassListPage = async ({
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-campDarwinCobaltBlue">
-              <Image src="/filter.png" alt="" width={20} height={20} />
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-campDarwinCobaltBlue">
-              <Image src="/sort.png" alt="" width={20} height={20} />
-            </button>
+            <FilterModal options={filterOptions} />
+            <SortModal options={sortOptions} />
             {role === "admin" && <FormContainer table="class" type="create" />}
           </div>
         </div>

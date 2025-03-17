@@ -1,6 +1,8 @@
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
+import FilterModal from "@/components/FilterModal";
+import SortModal from "@/components/SortModal";
 import Image from "next/image";
 import Link from "next/link";
 import FormContainer from "@/components/FormContainer";
@@ -9,6 +11,7 @@ import { Teacher, Department, Class, Prisma } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { auth } from "@clerk/nextjs/server";
+import { buildQueryOptions } from "@/lib/queryUtils";
 
 type TeacherList = Teacher & { departments: Department[] } & { classes: Class[] };
 
@@ -100,10 +103,31 @@ const TeachersListPage = async ({
     </tr>
   );
 
-  const { page, ...queryParams } = searchParams;
-  const p = page ? parseInt(page) : 1;
-  // URL PARAMS CONDITION
+  // Fetch available departments for filters
+  const departments = await prisma.department.findMany({
+    select: { id: true, name: true },
+  });
 
+  // Define filter options
+  const filterOptions = [
+    ...departments.map(dept => ({
+      label: dept.name,
+      value: dept.id,
+      field: 'departmentId'
+    }))
+  ];
+
+  // Define sort options
+  const sortOptions = [
+    { label: 'Name', field: 'name' },
+    { label: 'Username', field: 'username' },
+    { label: 'Phone', field: 'phone' }
+  ];
+
+  const { page, sortField, sortOrder, ...queryParams } = searchParams;
+  const p = page ? parseInt(page) : 1;
+  
+  // URL PARAMS CONDITION
   const query: Prisma.TeacherWhereInput = {};
 
   if (queryParams) {
@@ -117,8 +141,19 @@ const TeachersListPage = async ({
               },
             };
             break;
+          case "departmentId":
+            query.departments = {
+              some: {
+                id: value
+              }
+            };
+            break;
           case "search":
-            query.name = { contains: value, mode: "insensitive" };
+            query.OR = [
+              { name: { contains: value, mode: "insensitive" } },
+              { surname: { contains: value, mode: "insensitive" } },
+              { username: { contains: value, mode: "insensitive" } }
+            ];
             break;
           default:
             break;
@@ -127,16 +162,19 @@ const TeachersListPage = async ({
     }
   }
   
+  // Build query options with sorting
+  const queryOptions = buildQueryOptions(searchParams, {
+    where: query,
+    include: {
+      departments: true,
+      classes: true,
+    },
+    take: ITEM_PER_PAGE,
+    skip: ITEM_PER_PAGE * (p - 1),
+  });
+
   const [data, count] = await prisma.$transaction([
-    prisma.teacher.findMany({
-      where: query,
-      include: {
-        departments: true,
-        classes: true,
-      },
-      take: ITEM_PER_PAGE,
-      skip: ITEM_PER_PAGE * (p - 1),
-    }),
+    prisma.teacher.findMany(queryOptions),
     prisma.teacher.count({ where: query }),
   ]);
 
@@ -148,12 +186,8 @@ const TeachersListPage = async ({
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-campDarwinCobaltBlue">
-              <Image src="/filter.png" alt="" width={20} height={20} />
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-campDarwinCobaltBlue">
-              <Image src="/sort.png" alt="" width={20} height={20} />
-            </button>
+            <FilterModal options={filterOptions} />
+            <SortModal options={sortOptions} />
             {role === "admin" && <FormContainer table="teacher" type="create" />}
           </div>
         </div>

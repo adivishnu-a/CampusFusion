@@ -2,12 +2,15 @@ import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
+import FilterModal from "@/components/FilterModal";
+import SortModal from "@/components/SortModal";
 import { Class, Prisma, Student } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { auth } from "@clerk/nextjs/server";
+import { buildQueryOptions, parseFilterValues, buildFilterCondition } from "@/lib/queryUtils";
 
 type StudentList = Student & { class: Class };
 
@@ -93,12 +96,43 @@ const StudentListPage = async ({
     </tr>
   );
 
-  const { page, ...queryParams } = searchParams;
+  const { page, sortField, sortOrder, ...queryParams } = searchParams;
   const p = page ? parseInt(page) : 1;
 
   // URL PARAMS CONDITION
-
   const query: Prisma.StudentWhereInput = {};
+  
+  // Fetch available class data for filters
+  const classes = await prisma.class.findMany({
+    select: { id: true, name: true },
+  });
+
+  const grades = await prisma.grade.findMany({
+    select: { id: true, level: true },
+  });
+
+  // Define filter options
+  const filterOptions = [
+    ...classes.map(cls => ({
+      label: cls.name,
+      value: cls.id,
+      field: 'classId'
+    })),
+    ...grades.map(grade => ({
+      label: `Grade ${grade.level}`,
+      value: grade.id,
+      field: 'gradeId'
+    }))
+  ];
+
+  // Define sort options
+  const sortOptions = [
+    { label: 'Name', field: 'name' },
+    { label: 'Class', field: 'class.name' },
+    { label: 'Username', field: 'username' },
+    { label: 'Email', field: 'email' },
+    { label: 'Phone', field: 'phone' }
+  ];
 
   if (queryParams) {
     for (const [key, value] of Object.entries(queryParams)) {
@@ -113,24 +147,52 @@ const StudentListPage = async ({
               },
             };
             break;
+          case "classId":
+            if (value.includes(',')) {
+              // Handle multiple class IDs
+              const classIds = parseFilterValues(value);
+              query.classId = { in: classIds };
+            } else {
+              query.classId = value;
+            }
+            break;
+          case "gradeId":
+            if (value.includes(',')) {
+              // Handle multiple grade IDs
+              const gradeIds = parseFilterValues(value);
+              query.class = { gradeId: { in: gradeIds } };
+            } else {
+              query.class = { gradeId: value };
+            }
+            break;
           case "search":
-            query.name = { contains: value, mode: "insensitive" };
+            query.OR = [
+              { name: { contains: value, mode: "insensitive" } },
+              { surname: { contains: value, mode: "insensitive" } },
+              { username: { contains: value, mode: "insensitive" } },
+              { email: { contains: value, mode: "insensitive" } }
+            ];
             break;
           default:
             break;
         }
       }
     }
-    
+  }
+
+  // Build query options with sorting
+  const queryOptions = buildQueryOptions(searchParams, {
+    where: query,
+    include: {
+      class: true,
+    },
+    take: ITEM_PER_PAGE,
+    skip: ITEM_PER_PAGE * (p - 1),
+  });
+
+  try {
     const [data, count] = await prisma.$transaction([
-      prisma.student.findMany({
-        where: query,
-        include: {
-          class: true,
-        },
-        take: ITEM_PER_PAGE,
-        skip: ITEM_PER_PAGE * (p - 1),
-      }),
+      prisma.student.findMany(queryOptions),
       prisma.student.count({ where: query }),
     ]);
 
@@ -144,12 +206,8 @@ const StudentListPage = async ({
           <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
             <TableSearch />
             <div className="flex items-center gap-4 self-end">
-              <button className="w-8 h-8 flex items-center justify-center rounded-full bg-campDarwinCobaltBlue">
-                <Image src="/filter.png" alt="" width={20} height={20} />
-              </button>
-              <button className="w-8 h-8 flex items-center justify-center rounded-full bg-campDarwinCobaltBlue">
-                <Image src="/sort.png" alt="" width={20} height={20} />
-              </button>
+              <FilterModal options={filterOptions} />
+              <SortModal options={sortOptions} />
               {role === "admin" && <FormContainer table="student" type="create" />}
             </div>
           </div>
@@ -158,6 +216,13 @@ const StudentListPage = async ({
         <Table columns={columns} renderRow={renderRow} data={data} />
         {/* PAGINATION */}
         <Pagination page={p} count={count} />
+      </div>
+    );
+  } catch (error) {
+    console.error("Failed to fetch students:", error);
+    return (
+      <div className="bg-white p-4 rounded-md shadow-sm flex-1 m-4 mt-0">
+        <h1 className="text-lg font-semibold text-red-500">Failed to load students.</h1>
       </div>
     );
   }

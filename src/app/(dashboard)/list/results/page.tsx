@@ -2,11 +2,14 @@ import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
+import FilterModal from "@/components/FilterModal";
+import SortModal from "@/components/SortModal";
 import Image from "next/image";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Prisma } from "@prisma/client";
 import { auth } from "@clerk/nextjs/server";
+import { buildQueryOptions } from "@/lib/queryUtils";
 
 type ResultList = {
   id: string;
@@ -110,12 +113,56 @@ const ResultListPage = async ({
     </tr>
   );
 
-  const { page, ...queryParams } = searchParams;
+  // Fetch students and classes for filter options
+  const students = await prisma.student.findMany({
+    select: { 
+      id: true, 
+      name: true,
+      surname: true
+    },
+    ...(role === "teacher" ? {
+      where: {
+        class: {
+          subjects: {
+            some: {
+              teacherId: currentUserId!
+            }
+          }
+        }
+      }
+    } : {})
+  });
+
+  const classes = await prisma.class.findMany({
+    select: { id: true, name: true },
+  });
+
+  // Define filter options
+  const filterOptions = [
+    ...students.map(student => ({
+      label: `${student.name} ${student.surname}`,
+      value: student.id,
+      field: 'studentId'
+    })),
+    ...classes.map(cls => ({
+      label: cls.name,
+      value: cls.id,
+      field: 'classId'
+    }))
+  ];
+
+  // Define sort options
+  const sortOptions = [
+    { label: 'Score', field: 'score' },
+    { label: 'Date', field: 'exam.startTime' },
+    { label: 'Student Name', field: 'student.name' }
+  ];
+
+  const { page, sortField, sortOrder, ...queryParams } = searchParams;
 
   const p = page ? parseInt(page) : 1;
 
   // URL PARAMS CONDITION
-
   const query: Prisma.ResultWhereInput = {};
 
   if (queryParams) {
@@ -125,10 +172,17 @@ const ResultListPage = async ({
           case "studentId":
             query.studentId = value;
             break;
+          case "classId":
+            query.OR = [
+              { exam: { subject: { classId: value } } },
+              { assignment: { subject: { classId: value } } }
+            ];
+            break;
           case "search":
             query.OR = [
               { exam: { title: { contains: value, mode: "insensitive" } } },
               { student: { name: { contains: value, mode: "insensitive" } } },
+              { student: { surname: { contains: value, mode: "insensitive" } } },
               { assignment: { title: { contains: value, mode: "insensitive" } } },
             ];
             break;
@@ -164,35 +218,38 @@ const ResultListPage = async ({
       break;
   }
 
-  const [dataRes, count] = await prisma.$transaction([
-    prisma.result.findMany({
-      where: query,
-      include: {
-        student: { select: { name: true, surname: true } },
-        exam: {
-          include: {
-            subject: {
-              select: {
-                class: { select: { name: true } },
-                teacher: { select: { name: true, surname: true } },
-              },
-            },
-          },
-        },
-        assignment: {
-          include: {
-            subject: {
-              select: {
-                class: { select: { name: true } },
-                teacher: { select: { name: true, surname: true } },
-              },
+  // Build query options with sorting
+  const queryOptions = buildQueryOptions(searchParams, {
+    where: query,
+    include: {
+      student: { select: { name: true, surname: true } },
+      exam: {
+        include: {
+          subject: {
+            select: {
+              class: { select: { name: true } },
+              teacher: { select: { name: true, surname: true } },
             },
           },
         },
       },
-      take: ITEM_PER_PAGE,
-      skip: ITEM_PER_PAGE * (p - 1),
-    }),
+      assignment: {
+        include: {
+          subject: {
+            select: {
+              class: { select: { name: true } },
+              teacher: { select: { name: true, surname: true } },
+            },
+          },
+        },
+      },
+    },
+    take: ITEM_PER_PAGE,
+    skip: ITEM_PER_PAGE * (p - 1),
+  });
+
+  const [dataRes, count] = await prisma.$transaction([
+    prisma.result.findMany(queryOptions),
     prisma.result.count({ where: query }),
   ]);
 
@@ -227,12 +284,8 @@ const ResultListPage = async ({
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-campDarwinCobaltBlue">
-              <Image src="/filter.png" alt="" width={20} height={20} />
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-campDarwinCobaltBlue">
-              <Image src="/sort.png" alt="" width={20} height={20} />
-            </button>
+            <FilterModal options={filterOptions} />
+            <SortModal options={sortOptions} />
             {(role === "admin" || role === "teacher") && (
               <FormContainer table="result" type="create" />
             )}

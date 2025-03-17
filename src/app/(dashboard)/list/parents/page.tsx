@@ -1,6 +1,8 @@
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
+import FilterModal from "@/components/FilterModal";
+import SortModal from "@/components/SortModal";
 import Image from "next/image";
 import Link from "next/link";
 import FormContainer from "@/components/FormContainer";
@@ -9,6 +11,7 @@ import { Parent, Prisma } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { auth } from "@clerk/nextjs/server";
+import { buildQueryOptions } from "@/lib/queryUtils";
 
 type ParentList = Parent & { _count: { students: number } };
 
@@ -85,7 +88,13 @@ const ParentListPage = async ({
     </tr>
   );
 
-  const { page, ...queryParams } = searchParams;
+  // Define sort options - removed "Student Count" option
+  const sortOptions = [
+    { label: 'Name', field: 'name' },
+    { label: 'Username', field: 'username' }
+  ];
+
+  const { page, sortField, sortOrder, ...queryParams } = searchParams;
   const p = page ? parseInt(page) : 1;
   
   // URL PARAMS CONDITION
@@ -109,19 +118,22 @@ const ParentListPage = async ({
     }
   }
   
-  const [data, count] = await prisma.$transaction([
-    prisma.parent.findMany({
-      where: query,
-      include: {
-        _count: {
-          select: {
-            students: true
-          }
+  // Build query options with sorting
+  const queryOptions = buildQueryOptions(searchParams, {
+    where: query,
+    include: {
+      _count: {
+        select: {
+          students: true
         }
-      },
-      take: ITEM_PER_PAGE,
-      skip: ITEM_PER_PAGE * (p - 1),
-    }),
+      }
+    },
+    take: ITEM_PER_PAGE,
+    skip: ITEM_PER_PAGE * (p - 1),
+  });
+
+  const [data, count] = await prisma.$transaction([
+    prisma.parent.findMany(queryOptions),
     prisma.parent.count({ where: query }),
   ]);
 
@@ -133,12 +145,8 @@ const ParentListPage = async ({
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-campDarwinCobaltBlue">
-              <Image src="/filter.png" alt="" width={20} height={20} />
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-campDarwinCobaltBlue">
-              <Image src="/sort.png" alt="" width={20} height={20} />
-            </button>
+            <FilterModal options={[]} />
+            <SortModal options={sortOptions} />
             {role === "admin" && <FormContainer table="parent" type="create" />}
           </div>
         </div>

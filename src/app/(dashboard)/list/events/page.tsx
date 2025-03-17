@@ -2,11 +2,14 @@ import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
+import FilterModal from "@/components/FilterModal";
+import SortModal from "@/components/SortModal";
 import Image from "next/image";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Class, Event, Prisma } from "@prisma/client";
 import { auth } from "@clerk/nextjs/server";
+import { buildQueryOptions } from "@/lib/queryUtils";
 
 type EventList = Event & { class: Class | null };
 
@@ -95,7 +98,38 @@ const EventListPage = async ({
     </tr>
   );
 
-  const { page, ...queryParams } = searchParams;
+  // Fetch classes for filter options
+  const classes = await prisma.class.findMany({
+    select: { id: true, name: true },
+  });
+
+  // Define filter options
+  const filterOptions = [
+    {
+      label: 'School-wide events',
+      value: 'null',
+      field: 'scope'
+    },
+    {
+      label: 'Class-specific events',
+      value: 'class',
+      field: 'scope'
+    },
+    ...classes.map(cls => ({
+      label: cls.name,
+      value: cls.id,
+      field: 'classId'
+    }))
+  ];
+
+  // Define sort options
+  const sortOptions = [
+    { label: 'Title', field: 'title' },
+    { label: 'Date', field: 'startTime' },
+    { label: 'Class', field: 'class.name' }
+  ];
+
+  const { page, sortField, sortOrder, ...queryParams } = searchParams;
 
   const p = page ? parseInt(page) : 1;
 
@@ -106,6 +140,16 @@ const EventListPage = async ({
     for (const [key, value] of Object.entries(queryParams)) {
       if (value !== undefined) {
         switch (key) {
+          case "classId":
+            query.classId = value;
+            break;
+          case "scope":
+            if (value === 'null') {
+              query.classId = null;
+            } else if (value === 'class') {
+              query.classId = { not: null };
+            }
+            break;
           case "search":
             query.OR = [
               { title: { contains: value, mode: "insensitive" } },
@@ -137,18 +181,18 @@ const EventListPage = async ({
 
   console.log("Event query:", JSON.stringify(query, null, 2));
 
+  // Build query options with sorting
+  const queryOptions = buildQueryOptions(searchParams, {
+    where: query,
+    include: {
+      class: true,
+    },
+    take: ITEM_PER_PAGE,
+    skip: ITEM_PER_PAGE * (p - 1),
+  });
+
   const [data, count] = await prisma.$transaction([
-    prisma.event.findMany({
-      where: query,
-      include: {
-        class: true,
-      },
-      orderBy: {
-        startTime: 'desc',
-      },
-      take: ITEM_PER_PAGE,
-      skip: ITEM_PER_PAGE * (p - 1),
-    }),
+    prisma.event.findMany(queryOptions),
     prisma.event.count({ where: query }),
   ]);
 
@@ -162,12 +206,8 @@ const EventListPage = async ({
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-campDarwinCobaltBlue">
-              <Image src="/filter.png" alt="" width={20} height={20} />
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-campDarwinCobaltBlue">
-              <Image src="/sort.png" alt="" width={20} height={20} />
-            </button>
+            <FilterModal options={filterOptions} />
+            <SortModal options={sortOptions} />
             {role === "admin" && <FormModal table="event" type="create" />}
           </div>
         </div>

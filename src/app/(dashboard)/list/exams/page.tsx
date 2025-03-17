@@ -2,11 +2,14 @@ import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
+import FilterModal from "@/components/FilterModal";
+import SortModal from "@/components/SortModal";
 import Image from "next/image";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Class, Exam, Prisma, Department, Teacher } from "@prisma/client";
 import { auth } from "@clerk/nextjs/server";
+import { buildQueryOptions } from "@/lib/queryUtils";
 
 type ExamList = Exam & {
   subject: {
@@ -82,12 +85,46 @@ const ExamListPage = async ({
     </tr>
   );
 
-  const { page, ...queryParams } = searchParams;
+  // Fetch subjects and classes for filter options
+  const subjects = await prisma.subject.findMany({
+    select: { 
+      id: true, 
+      department: { select: { name: true } },
+      class: { select: { name: true } }
+    },
+  });
+
+  const classes = await prisma.class.findMany({
+    select: { id: true, name: true },
+  });
+
+  // Define filter options
+  const filterOptions = [
+    ...classes.map(cls => ({
+      label: cls.name,
+      value: cls.id,
+      field: 'classId'
+    })),
+    ...subjects.map(subject => ({
+      label: `${subject.department.name} (${subject.class.name})`,
+      value: subject.id,
+      field: 'subjectId'
+    }))
+  ];
+
+  // Define sort options
+  const sortOptions = [
+    { label: 'Title', field: 'title' },
+    { label: 'Date', field: 'startTime' },
+    { label: 'Department', field: 'subject.department.name' },
+    { label: 'Class', field: 'subject.class.name' }
+  ];
+
+  const { page, sortField, sortOrder, ...queryParams } = searchParams;
 
   const p = page ? parseInt(page) : 1;
 
   // URL PARAMS CONDITION
-
   const query: Prisma.ExamWhereInput = {};
 
   query.subject = {};
@@ -101,10 +138,14 @@ const ExamListPage = async ({
           case "teacherId":
             query.subject.teacherId = value;
             break;
+          case "subjectId":
+            query.subjectId = value;
+            break;
           case "search":
-            query.subject.department = {
-              name: { contains: value, mode: "insensitive" },
-            };
+            query.OR = [
+              { title: { contains: value, mode: "insensitive" } },
+              { subject: { department: { name: { contains: value, mode: "insensitive" } } } },
+            ];
             break;
           default:
             break;
@@ -143,21 +184,24 @@ const ExamListPage = async ({
       break;
   }
 
-  const [data, count] = await prisma.$transaction([
-    prisma.exam.findMany({
-      where: query,
-      include: {
-        subject: {
-          select: {
-            department: { select: { name: true } },
-            teacher: { select: { name: true, surname: true } },
-            class: { select: { name: true } },
-          },
+  // Build query options with sorting
+  const queryOptions = buildQueryOptions(searchParams, {
+    where: query,
+    include: {
+      subject: {
+        include: {
+          department: true,
+          teacher: { select: { name: true, surname: true } },
+          class: { select: { name: true } },
         },
       },
-      take: ITEM_PER_PAGE,
-      skip: ITEM_PER_PAGE * (p - 1),
-    }),
+    },
+    take: ITEM_PER_PAGE,
+    skip: ITEM_PER_PAGE * (p - 1),
+  });
+
+  const [data, count] = await prisma.$transaction([
+    prisma.exam.findMany(queryOptions),
     prisma.exam.count({ where: query }),
   ]);
 
@@ -169,12 +213,8 @@ const ExamListPage = async ({
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-campDarwinCobaltBlue">
-              <Image src="/filter.png" alt="" width={20} height={20} />
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-campDarwinCobaltBlue">
-              <Image src="/sort.png" alt="" width={20} height={20} />
-            </button>
+            <FilterModal options={filterOptions} />
+            <SortModal options={sortOptions} />
             {(role === "admin" || role === "teacher") && (
               <FormContainer table="exam" type="create" />
             )}
