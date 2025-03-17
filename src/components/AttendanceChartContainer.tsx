@@ -10,8 +10,8 @@ const AttendanceChartContainer = async () => {
   const lastMonday = new Date(today);
   lastMonday.setDate(today.getDate() - daysSinceMonday);
   lastMonday.setHours(0, 0, 0, 0);
-  //   console.log(today.getDate(), today.getDay(), daysSinceMonday, lastMonday);
  
+  // Get attendance data for the current week
   const resData = await prisma.attendance.findMany({
     where: {
       date: {
@@ -22,12 +22,12 @@ const AttendanceChartContainer = async () => {
       date: true,
       presentStudentIds: true,
       classId: true,
-
     },
   });
  
   const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
  
+  // Initialize attendance map with zero counts
   const attendanceMap: {
     [key: string]: { present: number; absent: number };
   } = {
@@ -39,32 +39,44 @@ const AttendanceChartContainer = async () => {
     Sat: { present: 0, absent: 0 },
   };
  
-  resData.forEach(async(item) => {
+  // Process each attendance record
+  for (const item of resData) {
     const itemDate = new Date(item.date);
     const dayOfWeek = itemDate.getDay();
  
     if (dayOfWeek >= 1 && dayOfWeek <= 6) {
       const dayName = daysOfWeek[dayOfWeek - 1];
-      attendanceMap[dayName].present += item.presentStudentIds.length;
-      const absent:any= await prisma.class.findFirst({
-        where:{
+      const presentCount = item.presentStudentIds.length;
+      attendanceMap[dayName].present += presentCount;
+      
+      // Get the actual student count in the class to calculate absent students
+      const classData = await prisma.class.findFirst({
+        where: {
           id: item.classId,
         },
-        select:{
-          capacity: true,
+        include: {
+          _count: {
+            select: {
+              students: true
+            }
+          }
         }
-      })
-      attendanceMap[dayName].absent += absent.capacity - attendanceMap[dayName].present;
+      });
+      
+      if (classData && classData._count.students > 0) {
+        const totalStudents = classData._count.students;
+        const absentCount = totalStudents - presentCount;
+        attendanceMap[dayName].absent += absentCount;
+      }
     }
-  });
+  }
  
+  // Format the data for the chart
   const data = daysOfWeek.map((day) => ({
     name: day,
     present: attendanceMap[day].present,
     absent: attendanceMap[day].absent,
   }));
- 
-  // console.log(data);
  
   return (
     <div className="bg-white rounded-lg p-4 h-full">
