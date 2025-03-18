@@ -5,7 +5,7 @@ import Link from "next/link";
 import BigCalendarContainer from '@/components/BigCalendarContainer';
 import FormContainer from "@/components/FormContainer";
 import { auth } from "@clerk/nextjs/server";
-import { Class, Student } from "@prisma/client";
+import { Class, Student, Parent } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -24,11 +24,13 @@ const SingleStudentPage = async ({
   const student:
     | (Student & {
         class: Class & { _count: { subjects: number } };
+        parent: Parent;
       })
     | null = await prisma.student.findUnique({
     where: { id },
     include: {
       class: { include: { _count: { select: { subjects: true } } } },
+      parent: true,
     },
   });
 
@@ -61,7 +63,7 @@ const SingleStudentPage = async ({
                 )}
               </div>
               <p className="text-sm text-gray-100">
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                Parent: {student.parent?.name + " " + student.parent?.surname} ({student.parent?.username})
               </p>
               <div className="flex text-white items-center justify-between gap-2 flex-wrap text-xs font-medium">
                 <div className="w-full md:w-1/3 lg:w-full 2xl:w-1/3 flex items-center gap-2">
