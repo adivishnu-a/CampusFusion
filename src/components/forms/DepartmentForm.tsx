@@ -52,7 +52,7 @@ const DepartmentForm = ({
       setOpen(false);
       router.refresh();
     }
-  }, [state, type, setOpen]);
+  }, [state, type, setOpen, router]);
 
   const { teachers } = relatedData;
 

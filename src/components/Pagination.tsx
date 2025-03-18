@@ -4,6 +4,9 @@ import { ITEM_PER_PAGE } from "@/lib/settings";
 import { useRouter } from "next/navigation";
 
 const Pagination = ({ page, count }: { page: number; count: number | null }) => {
+
+  const router = useRouter();
+
   if(count===null){
     return (
       <div className="p-4 flex items-center justify-between text-gray-500">
@@ -28,7 +31,7 @@ const Pagination = ({ page, count }: { page: number; count: number | null }) => 
     </div>
     )
   }
-  const router = useRouter();
+  
   const hasPrev = ITEM_PER_PAGE * (page - 1) > 0;
   const hasNext = ITEM_PER_PAGE * (page - 1) + ITEM_PER_PAGE < count;
   const totalPages = Math.ceil(count / ITEM_PER_PAGE);

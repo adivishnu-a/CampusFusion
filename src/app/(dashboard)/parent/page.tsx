@@ -5,7 +5,7 @@ import { auth } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
 const ParentPage = async () => {
   const { sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  // const role = (sessionClaims?.metadata as { role?: string })?.role;
   const userId = (sessionClaims?.metadata as { userId?: string })?.userId;
   const currentUserId = userId;
   const students = await prisma.student.findMany({

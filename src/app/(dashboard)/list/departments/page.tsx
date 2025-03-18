@@ -4,12 +4,12 @@ import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import FilterModal from "@/components/FilterModal";
 import SortModal from "@/components/SortModal";
-import Image from "next/image";
+// import Image from "next/image";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Prisma, Department, Teacher } from "@prisma/client";
 import { auth } from "@clerk/nextjs/server";
-import { buildQueryOptions, parseFilterValues, buildFilterCondition } from "@/lib/queryUtils";
+import { buildQueryOptions, parseFilterValues } from "@/lib/queryUtils";
 
 type DepartmentList = Department & { teachers: Teacher[] };
 
@@ -20,8 +20,8 @@ const DepartmentListPage = async ({
 }) => {
   const { sessionClaims } = await auth();
   const role = (sessionClaims?.metadata as { role?: string })?.role;
-  const userId = (sessionClaims?.metadata as { userId?: string })?.userId;
-  const currentUserId = userId;
+  // const userId = (sessionClaims?.metadata as { userId?: string })?.userId;
+  // const currentUserId = userId;
 
   const columns = [
     {
@@ -85,7 +85,7 @@ const DepartmentListPage = async ({
     { label: 'Teacher Count', field: 'teachers._count' } // Fixed format
   ];
 
-  const { page, sortField, sortOrder, ...queryParams } = searchParams;
+  const { page, ...queryParams } = searchParams;
   const p = page ? parseInt(page) : 1;
 
   // URL PARAMS CONDITION
@@ -97,6 +97,7 @@ const DepartmentListPage = async ({
         switch (key) {
           case "teacherId":
             // Handle multiple teacher IDs with OR relationship
+            // eslint-disable-next-line no-case-declarations
             const teacherIds = parseFilterValues(value);
             if (teacherIds.length > 0) {
               query.teachers = {

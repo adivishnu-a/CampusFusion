@@ -2,8 +2,8 @@ import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import SortModal from "@/components/SortModal";
-import Image from "next/image";
-import Link from "next/link";
+// import Image from "next/image";
+// import Link from "next/link";
 import FormContainer from "@/components/FormContainer";
 import React from "react";
 import { Parent, Prisma } from "@prisma/client";
@@ -21,8 +21,8 @@ const ParentListPage = async ({
 }) => {
   const { sessionClaims } = await auth();
   const role = (sessionClaims?.metadata as { role?: string })?.role;
-  const userId = (sessionClaims?.metadata as { userId?: string })?.userId;
-  const currentUserId = userId;
+  // const userId = (sessionClaims?.metadata as { userId?: string })?.userId;
+  // const currentUserId = userId;
 
   const columns = [
     {
@@ -93,7 +93,7 @@ const ParentListPage = async ({
     { label: 'Username', field: 'username' }
   ];
 
-  const { page, sortField, sortOrder, ...queryParams } = searchParams;
+  const { page, ...queryParams } = searchParams;
   const p = page ? parseInt(page) : 1;
   
   // URL PARAMS CONDITION

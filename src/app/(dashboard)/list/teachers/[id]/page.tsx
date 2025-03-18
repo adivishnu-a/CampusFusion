@@ -1,5 +1,5 @@
 import Announcements from "@/components/Announcements";
-import BigCalendar from "@/components/BigCalendar";
+// import BigCalendar from "@/components/BigCalendar";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
 import FormContainer from "@/components/FormContainer";
 import Performance from "@/components/Performance";
@@ -17,8 +17,8 @@ const SingleTeacherPage = async ({
 }) => {
   const { sessionClaims } = await auth();
   const role = (sessionClaims?.metadata as { role?: string })?.role;
-  const userId = (sessionClaims?.metadata as { userId?: string })?.userId;
-  const currentUserId = userId;
+  // const userId = (sessionClaims?.metadata as { userId?: string })?.userId;
+  // const currentUserId = userId;
 
   const teacher:
     | (Teacher & {

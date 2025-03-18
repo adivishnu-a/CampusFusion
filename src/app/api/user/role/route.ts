@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 
+// eslint-disable-next-line no-unused-vars
 export async function GET(request: NextRequest) {
   try {
     const { sessionClaims } = await auth();

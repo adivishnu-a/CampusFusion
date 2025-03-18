@@ -1,4 +1,4 @@
-import EventCalendar from "@/components/EventCalendar";
+// import EventCalendar from "@/components/EventCalendar";
 import Announcements from "@/components/Announcements";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
 import { auth } from "@clerk/nextjs/server";
@@ -9,9 +9,9 @@ const TeacherPage = async ({
   searchParams: { [keys: string]: string | undefined };
 }) => {
   const { sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  // const role = (sessionClaims?.metadata as { role?: string })?.role;
   const userId = (sessionClaims?.metadata as { userId?: string })?.userId;
-  const currentUserId = userId;
+  // const currentUserId = userId;
   return (
     <div className='p-4 flex gap-4 flex-col xl:flex-row'>
       {/* Left */}

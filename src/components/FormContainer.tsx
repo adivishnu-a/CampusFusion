@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 import prisma from "@/lib/prisma";
 import FormModal from "./FormModal";
 import { auth } from "@clerk/nextjs/server";

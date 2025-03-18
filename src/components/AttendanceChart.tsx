@@ -10,7 +10,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import Image from "next/image";
+// import Image from "next/image";
 
 const AttendanceChart = ({
   data,

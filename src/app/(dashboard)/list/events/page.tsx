@@ -4,7 +4,7 @@ import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import FilterModal from "@/components/FilterModal";
 import SortModal from "@/components/SortModal";
-import Image from "next/image";
+// import Image from "next/image";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Class, Event, Prisma } from "@prisma/client";
@@ -129,7 +129,7 @@ const EventListPage = async ({
     { label: 'Class', field: 'class.name' }
   ];
 
-  const { page, sortField, sortOrder, ...queryParams } = searchParams;
+  const { page, ...queryParams } = searchParams;
 
   const p = page ? parseInt(page) : 1;
 

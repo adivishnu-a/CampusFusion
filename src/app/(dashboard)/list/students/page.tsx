@@ -10,7 +10,7 @@ import Link from "next/link";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { auth } from "@clerk/nextjs/server";
-import { buildQueryOptions, parseFilterValues, buildFilterCondition } from "@/lib/queryUtils";
+import { buildQueryOptions, parseFilterValues } from "@/lib/queryUtils";
 
 type StudentList = Student & { class: Class };
 
@@ -21,8 +21,8 @@ const StudentListPage = async ({
 }) => {
   const { sessionClaims } = await auth();
   const role = (sessionClaims?.metadata as { role?: string })?.role;
-  const userId = (sessionClaims?.metadata as { userId?: string })?.userId;
-  const currentUserId = userId;
+  // const userId = (sessionClaims?.metadata as { userId?: string })?.userId;
+  // const currentUserId = userId;
 
   const columns = [
     {
@@ -96,7 +96,7 @@ const StudentListPage = async ({
     </tr>
   );
 
-  const { page, sortField, sortOrder, ...queryParams } = searchParams;
+  const { page, ...queryParams } = searchParams;
   const p = page ? parseInt(page) : 1;
 
   // URL PARAMS CONDITION

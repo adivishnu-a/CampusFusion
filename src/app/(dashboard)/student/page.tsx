@@ -9,9 +9,9 @@ const StudentPage = async ({
   searchParams: { [keys: string]: string | undefined };
 }) => {
   const { sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  // const role = (sessionClaims?.metadata as { role?: string })?.role;
   const userId = (sessionClaims?.metadata as { userId?: string })?.userId;
-  const currentUserId = userId;
+  // const currentUserId = userId;
 
   const classItem = await prisma.class.findMany({
     where: {

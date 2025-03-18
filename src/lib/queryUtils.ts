@@ -1,4 +1,5 @@
-import { Prisma } from "@prisma/client";
+/* eslint-disable no-unused-vars */
+// import { Prisma } from "@prisma/client";
 
 // Helper function to apply sorting to Prisma queries
 export function applySorting(sortField: string | undefined, sortOrder: string | undefined) {

@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import InputField from "../InputField";
 import Image from "next/image";
 import { studentSchema, StudentSchema } from "@/lib/formValidationSchemas";
-import {
+import React, {
   Dispatch,
   SetStateAction,
   useEffect,
@@ -104,8 +104,6 @@ const StudentForm = ({
   }, [state, router, type, setOpen]);
 
   const { grades, classes } = relatedData;
-
-  const { departments } = relatedData;
 
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>

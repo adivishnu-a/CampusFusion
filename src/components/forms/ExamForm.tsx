@@ -52,7 +52,7 @@ const ExamForm = ({
       setOpen(false);
       router.refresh();
     }
-  }, [state, type, setOpen]);
+  }, [state, type, setOpen, router]);
 
   const { subjects } = relatedData;
 

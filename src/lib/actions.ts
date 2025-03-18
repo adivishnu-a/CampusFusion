@@ -201,7 +201,7 @@ export const createTeacher = async (
         },
       },
     });
-    const user = (await clerkClient()).users.createUser({
+    (await clerkClient()).users.createUser({
       username: data.username,
       password: data.password,
       firstName: data.name,
@@ -245,7 +245,7 @@ export const updateTeacher = async (
       (user: any) => user.publicMetadata?.userId === data.id
     );
     if (userClerk.length > 0) {
-      const user = (await clerkClient()).users.updateUser(userClerk[0].id, {
+      (await clerkClient()).users.updateUser(userClerk[0].id, {
         username: data.username,
         ...(data.password !== "" && { password: data.password }),
         firstName: data.name,
@@ -366,7 +366,7 @@ export const createStudent = async (
         parentId: data.parentId,
       },
     });
-    const user = (await clerkClient()).users.createUser({
+    (await clerkClient()).users.createUser({
       username: data.username,
       password: data.password,
       firstName: data.name,
@@ -411,7 +411,7 @@ export const updateStudent = async (
       (user: any) => user.publicMetadata?.userId === data.id
     );
     if (userClerk.length > 0) {
-      const user = (await clerkClient()).users.updateUser(userClerk[0].id, {
+      (await clerkClient()).users.updateUser(userClerk[0].id, {
         username: data.username,
         ...(data.password !== "" && { password: data.password }),
         firstName: data.name,
@@ -509,7 +509,7 @@ export const createParent = async (
       },
     });
 
-    const user = (await clerkClient()).users.createUser({
+    (await clerkClient()).users.createUser({
       username: data.username,
       password: data.password,
       firstName: data.name,
@@ -548,7 +548,7 @@ export const updateParent = async (
     );
     
     if (userClerk.length > 0) {
-      const user = (await clerkClient()).users.updateUser(userClerk[0].id, {
+      (await clerkClient()).users.updateUser(userClerk[0].id, {
         username: data.username,
         ...(data.password !== "" && { password: data.password }),
         firstName: data.name,

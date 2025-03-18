@@ -22,8 +22,8 @@ const TeachersListPage = async ({
 }) => {
   const { sessionClaims } = await auth();
   const role = (sessionClaims?.metadata as { role?: string })?.role;
-  const userId = (sessionClaims?.metadata as { userId?: string })?.userId;
-  const currentUserId = userId;
+  // const userId = (sessionClaims?.metadata as { userId?: string })?.userId;
+  // const currentUserId = userId;
 
   const columns = [
     {
@@ -126,7 +126,7 @@ const TeachersListPage = async ({
     { label: 'Department Count', field: 'departments._count' } // Fixed format
   ];
 
-  const { page, sortField, sortOrder, ...queryParams } = searchParams;
+  const { page, ...queryParams } = searchParams;
   const p = page ? parseInt(page) : 1;
   
   // URL PARAMS CONDITION

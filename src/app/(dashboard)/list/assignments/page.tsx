@@ -1,11 +1,11 @@
-import FormModal from "@/components/FormModal";
+// import FormModal from "@/components/FormModal";
 import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import FilterModal from "@/components/FilterModal";
 import SortModal from "@/components/SortModal";
-import Image from "next/image";
+// import Image from "next/image";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Assignment, Class, Prisma, Department, Teacher } from "@prisma/client";
@@ -125,7 +125,7 @@ const AssignmentListPage = async ({
     { label: 'Class', field: 'subject.class.name' }
   ];
 
-  const { page, sortField, sortOrder, ...queryParams } = searchParams;
+  const { page, ...queryParams } = searchParams;
 
   const p = page ? parseInt(page) : 1;
 

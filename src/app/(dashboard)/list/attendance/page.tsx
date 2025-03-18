@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import Image from "next/image";
 import AttendanceForm from "@/components/forms/AttendanceForm";
@@ -15,9 +15,9 @@ export default function AttendancePage() {
   const [classes, setClasses] = useState<Class[]>([]);
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [userRole, setUserRole] = useState<string | null>(null);
-  const router = useRouter();
-  const { getToken, userId } = useAuth();
+  // const [userRole, setUserRole] = useState<string | null>(null);
+  // const router = useRouter();
+  const { userId } = useAuth();
 
   useEffect(() => {
     const fetchUserRoleAndClasses = async () => {
@@ -27,7 +27,7 @@ export default function AttendancePage() {
         // Fetch user role
         const response = await fetch("/api/user/role");
         const userData = await response.json();
-        setUserRole(userData.role);
+        // setUserRole(userData.role);
         
         // Fetch classes based on role
         let classesResponse;

@@ -4,10 +4,10 @@ import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import FilterModal from "@/components/FilterModal";
 import SortModal from "@/components/SortModal";
-import Image from "next/image";
+// import Image from "next/image";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { Class, Subject, Prisma, Department, Teacher } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { auth } from "@clerk/nextjs/server";
 import { buildQueryOptions, parseFilterValues } from "@/lib/queryUtils";
 
@@ -25,8 +25,8 @@ const SubjectListPage = async ({
 }) => {
   const { sessionClaims } = await auth();
   const role = (sessionClaims?.metadata as { role?: string })?.role;
-  const userId = (sessionClaims?.metadata as { userId?: string })?.userId;
-  const currentUserId = userId;
+  // const userId = (sessionClaims?.metadata as { userId?: string })?.userId;
+  // const currentUserId = userId;
 
   // Fetch related data for the form dropdowns
   const classes = await prisma.class.findMany({
@@ -121,7 +121,7 @@ const SubjectListPage = async ({
     </tr>
   );
 
-  const { page, sortField, sortOrder, ...queryParams } = searchParams;
+  const { page, ...queryParams } = searchParams;
 
   const p = page ? parseInt(page) : 1;
 

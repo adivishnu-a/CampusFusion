@@ -135,7 +135,7 @@ const ClassListPage = async ({
     { label: 'Subject Count', field: 'subjects._count' }  // Fixed format
   ];
 
-  const { page, sortField, sortOrder, ...queryParams } = searchParams;
+  const { page, ...queryParams } = searchParams;
   const p = page ? parseInt(page) : 1;
 
   // URL PARAMS CONDITION

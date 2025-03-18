@@ -8,7 +8,7 @@ import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { auth } from "@clerk/nextjs/server";
 import { Announcement, Class, Prisma } from "@prisma/client";
-import Image from "next/image";
+// import Image from "next/image";
 import { buildQueryOptions } from "@/lib/queryUtils";
 
 type AnnouncementList = Announcement & { class: Class | null };
@@ -105,7 +105,7 @@ const AnnouncementListPage = async ({
     { label: 'Class', field: 'class.name' }
   ];
 
-  const { page, sortField, sortOrder, ...queryParams } = searchParams;
+  const { page, ...queryParams } = searchParams;
 
   const p = page ? parseInt(page) : 1;
 
