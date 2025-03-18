@@ -29,7 +29,7 @@ interface Result {
   };
 }
 
-const Performance = ({ studentId }: { studentId: string }) => {
+const Performance = ({ studentId, teacherId }: { studentId?: string; teacherId?: string }) => {
   const [gpa, setGpa] = useState(0);
   const [rawScore, setRawScore] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -37,46 +37,90 @@ const Performance = ({ studentId }: { studentId: string }) => {
   useEffect(() => {
     const calculateGPA = async () => {
       try {
-        const response = await fetch(`/api/results?studentId=${studentId}`);
-        if (!response.ok) {
-          console.error('Failed to fetch results:', await response.text());
-          throw new Error('Failed to fetch results');
-        }
-        const results: Result[] = await response.json();
-
-        if (!results || results.length === 0) {
-          setGpa(0);
-          setRawScore(0);
+        if (!studentId && !teacherId) {
           setLoading(false);
           return;
         }
 
-        // Separate exam and assignment results
-        const examResults = results.filter((r) => r.exam !== null);
-        const assignmentResults = results.filter((r) => r.assignment !== null);
+        // For student view
+        if (studentId) {
+          const response = await fetch(`/api/results?studentId=${studentId}`);
+          if (!response.ok) {
+            throw new Error('Failed to fetch results');
+          }
+          const results: Result[] = await response.json();
 
-        // Calculate weighted averages (exams count twice as much)
-        const examAvg = examResults.length > 0
-          ? examResults.reduce((acc, curr) => acc + curr.score, 0) / examResults.length
-          : 0;
+          if (!results || results.length === 0) {
+            setGpa(0);
+            setRawScore(0);
+            setLoading(false);
+            return;
+          }
 
-        const assignmentAvg = assignmentResults.length > 0
-          ? assignmentResults.reduce((acc, curr) => acc + curr.score, 0) / assignmentResults.length
-          : 0;
+          // Calculate student GPA as before
+          const examResults = results.filter((r) => r.exam !== null);
+          const assignmentResults = results.filter((r) => r.assignment !== null);
 
-        // Calculate final weighted average (exams:assignments = 2:1)
-        let weightedAvg = 0;
-        if (examResults.length > 0 && assignmentResults.length > 0) {
-          weightedAvg = ((examAvg * 2) + assignmentAvg) / 3;
-        } else if (examResults.length > 0) {
-          weightedAvg = examAvg;
-        } else if (assignmentResults.length > 0) {
-          weightedAvg = assignmentAvg;
+          const examAvg = examResults.length > 0
+            ? examResults.reduce((acc, curr) => acc + curr.score, 0) / examResults.length
+            : 0;
+
+          const assignmentAvg = assignmentResults.length > 0
+            ? assignmentResults.reduce((acc, curr) => acc + curr.score, 0) / assignmentResults.length
+            : 0;
+
+          let weightedAvg = 0;
+          if (examResults.length > 0 && assignmentResults.length > 0) {
+            weightedAvg = ((examAvg * 2) + assignmentAvg) / 3;
+          } else if (examResults.length > 0) {
+            weightedAvg = examAvg;
+          } else if (assignmentResults.length > 0) {
+            weightedAvg = assignmentAvg;
+          }
+
+          setRawScore(weightedAvg);
+          setGpa(weightedAvg / 20);
+        }
+        // For teacher view
+        else if (teacherId) {
+          // Fetch all classes supervised by the teacher
+          const classesResponse = await fetch(`/api/classes?teacherId=${teacherId}`);
+          if (!classesResponse.ok) {
+            throw new Error('Failed to fetch teacher classes');
+          }
+          const classes = await classesResponse.json();
+          
+          let allResults: Result[] = [];
+          // Fetch results for all students in teacher's classes
+          for (const cls of classes) {
+            const studentsResponse = await fetch(`/api/students?classId=${cls.id}`);
+            if (studentsResponse.ok) {
+              const students = await studentsResponse.json();
+              for (const student of students) {
+                const resultsResponse = await fetch(`/api/results?studentId=${student.id}`);
+                if (resultsResponse.ok) {
+                  const studentResults: Result[] = await resultsResponse.json();
+                  allResults = [...allResults, ...studentResults];
+                }
+              }
+            }
+          }
+
+          if (allResults.length === 0) {
+            setGpa(0);
+            setRawScore(0);
+            setLoading(false);
+            return;
+          }
+
+          // Calculate average score across all students
+          const totalScore = allResults.reduce((acc, curr) => acc + curr.score, 0);
+          const avgScore = totalScore / allResults.length;
+          
+          setRawScore(avgScore);
+          setGpa(avgScore / 20);
         }
 
-        setRawScore(weightedAvg);
-        // Convert to GPA scale (divide by 20 to get 0-5 scale)
-        setGpa(weightedAvg / 20);
         setLoading(false);
       } catch (error) {
         console.error('Error calculating GPA:', error);
@@ -87,13 +131,12 @@ const Performance = ({ studentId }: { studentId: string }) => {
     };
 
     calculateGPA();
-  }, [studentId]);
+  }, [studentId, teacherId]);
 
   const chartData = [
     { name: "Score", value: rawScore, fill: "#0183ff" },
     { name: "Remaining", value: Math.max(0, 100 - rawScore), fill: "#Fc6a6b" }
   ];
-
 
   if (loading) {
     return (

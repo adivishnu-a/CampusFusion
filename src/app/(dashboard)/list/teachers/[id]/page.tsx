@@ -1,8 +1,8 @@
 import Announcements from "@/components/Announcements";
-// import BigCalendar from "@/components/BigCalendar";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
 import FormContainer from "@/components/FormContainer";
 import Performance from "@/components/Performance";
+import TeacherAttendanceCard from "@/components/TeacherAttendanceCard";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { Teacher } from "@prisma/client";
@@ -17,8 +17,6 @@ const SingleTeacherPage = async ({
 }) => {
   const { sessionClaims } = await auth();
   const role = (sessionClaims?.metadata as { role?: string })?.role;
-  // const userId = (sessionClaims?.metadata as { userId?: string })?.userId;
-  // const currentUserId = userId;
 
   const teacher:
     | (Teacher & {
@@ -118,10 +116,7 @@ const SingleTeacherPage = async ({
                 height={24}
                 className="w-6 h-6"
               />
-              <div className="">
-                <h1 className="text-xl font-semibold">90%</h1>
-                <span className="text-sm text-gray-500">Attendance</span>
-              </div>
+              <TeacherAttendanceCard teacherId={teacher.id} />
             </div>
             {/* Card */}
             <div className="bg-white shadow-sm p-4 rounded-md flex gap-4 w-full md:w-[48%] xl:w-[45%] 2xl:w-[48%]">
@@ -216,7 +211,7 @@ const SingleTeacherPage = async ({
             </Link>
           </div>
         </div>
-        <Performance />
+        <Performance teacherId={teacher.id} />
         <Announcements />
       </div>
     </div>
