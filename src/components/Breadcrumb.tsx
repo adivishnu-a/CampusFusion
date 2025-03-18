@@ -2,20 +2,49 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getEntityName } from '@/lib/actions';
 
 const Breadcrumb = () => {
   const pathname = usePathname();
   const [showFullPath, setShowFullPath] = useState(false);
+  const [entityName, setEntityName] = useState<string | null>(null);
   
   // Skip these segments in the breadcrumb
   const excludeSegments = ['list', '[[...sign-in]]', '(dashboard)'];
   
   // Function to format path segments for display
   const formatPathSegment = (segment: string) => {
-    // Capitalize first letter and replace hyphens with spaces
+    // For IDs, show the fetched name instead
+    if (entityName && /^[0-9a-fA-F]{24}$/.test(segment)) {
+      return entityName;
+    }
+    // Otherwise capitalize first letter and replace hyphens with spaces
     return segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' ');
   };
+  
+  // Fetch entity name when the pathname contains an ID
+  useEffect(() => {
+    const fetchEntityName = async () => {
+      const segments = pathname.split('/');
+      const entityType = segments[segments.length - 2]; // 'students' or 'teachers'
+      const id = segments[segments.length - 1];
+      
+      // Only fetch if we have a valid MongoDB ObjectID
+      if (/^[0-9a-fA-F]{24}$/.test(id)) {
+        try {
+          const data = await getEntityName(entityType, id);
+          if (data) {
+            setEntityName(data.name + " " + data.surname);
+          }
+        } catch (error) {
+          console.error('Error fetching entity name:', error);
+        }
+      }
+    };
+
+    fetchEntityName();
+  }, [pathname]);
   
   // Extract and process path segments
   const getPathSegments = () => {

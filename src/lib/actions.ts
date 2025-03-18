@@ -1167,3 +1167,25 @@ export const deleteAnnouncement = async (
     return { success: false, error: true };
   }
 };
+
+export async function getEntityName(type: string, id: string) {
+  'use server';
+  
+  try {
+    if (type === "students") {
+      return await prisma.student.findUnique({
+        where: { id },
+        select: { name: true, surname: true }
+      });
+    } else if (type === "teachers") {
+      return await prisma.teacher.findUnique({
+        where: { id },
+        select: { name: true, surname: true }
+      });
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching entity:", error);
+    return null;
+  }
+}
