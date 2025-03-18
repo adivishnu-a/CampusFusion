@@ -13,6 +13,7 @@ import { buildQueryOptions, parseFilterValues } from "@/lib/queryUtils";
 
 type SubjectList = {
   id: string;
+  name: string;
   department: { name: string };
   class: { name: string };
   teacher: { name: string; surname: string };
@@ -76,8 +77,13 @@ const SubjectListPage = async ({
 
   const columns = [
     {
-      header: "Department Name",
+      header: "Subject Name",
       accessor: "name",
+    },
+    {
+      header: "Department",
+      accessor: "department",
+      className: "hidden md:table-cell",
     },
     {
       header: "Class",
@@ -103,7 +109,8 @@ const SubjectListPage = async ({
       key={item.id}
       className="border-b border-gray-200 even:bg-campDarwinPastelSlateGray text-sm hover:bg-campDarwinPastelBlue"
     >
-      <td className="flex items-center gap-4 p-4">{item.department.name}</td>
+      <td className="flex items-center gap-4 p-4">{item.name}</td>
+      <td className="hidden md:table-cell">{item.department.name}</td>
       <td>{item.class.name}</td>
       <td className="hidden md:table-cell">
         {item.teacher.name + " " + item.teacher.surname}

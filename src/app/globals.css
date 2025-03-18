@@ -105,6 +105,7 @@
 
 .rbc-time-view {
   border-color: #eee !important;
+  border-top: 1px solid #DDD;
 }
 
 .rbc-time-header {
@@ -115,6 +116,23 @@
   border: none !important;
 }
 
+.rbc-time-content > .rbc-time-gutter {
+  padding-top: 0;
+}
+
+/* Make timeslots more consistent in height */
+.rbc-timeslot-group {
+  min-height: 80px !important;
+  background-color: #f7fdfd !important;
+  border-bottom: 1px solid #eee !important;
+}
+
+.rbc-time-slot {
+  height: 100%;
+  border-top: 1px solid #f0f0f0;
+}
+
+/* Time column appearance */
 .rbc-time-gutter.rbc-time-column {
   font-size: 12px !important;
 }
@@ -123,60 +141,121 @@
   padding: 0px 20px !important;
 }
 
-.rbc-timeslot-group {
-  background-color: #f7fdfd !important;
+/* Fix the specific alignment issue for time labels - position them below the line */
+.rbc-time-view .rbc-time-gutter .rbc-timeslot-group .rbc-label {
+  position: relative;
+  top: 0 !important; /* Reset any previous positioning */
+  display: block;
+  margin-top: 2px; /* Add a small margin at the top to position below the line */
+  text-align: center;
 }
 
+.rbc-events-container {
+  margin-right: 0 !important;
+}
+
+/* Calendar container to ensure proper height */
+.calendar-container {
+  height: 100%;
+}
+
+/* Make sure the day-slot takes proper width */
 .rbc-day-slot {
   font-size: 14px !important;
+  width: 100% !important;
 }
 
+/* Fix event positioning */
 .rbc-event {
   border: none !important;
   color: black !important;
-  padding: 10px !important;
+  padding: 0 !important;
   margin: 10px !important;
-  width: 99% !important;
+  margin-top: -1px !important; /* Adjust to align with time slots */
+  width: 95% !important;
+  min-height: 70px !important;
+  background-color: transparent !important; /* Make event background transparent */
+  box-shadow: none !important; /* Remove any shadow */
 }
 
-.rbc-event:nth-child(1) {
+/* Custom event component styling */
+.event-content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: visible; /* Changed from hidden to visible */
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.event-time {
+  font-size: 12px;
+  color: gray;
+  margin-bottom: 4px;
+  white-space: nowrap;
+}
+
+.event-title {
+  font-weight: 400; /* Changed from 500 to 400 (normal weight) */
+  white-space: normal; /* Changed from nowrap to normal */
+  overflow: visible; /* Changed from hidden to visible */
+  text-overflow: initial; /* Remove ellipsis */
+  word-wrap: break-word; /* Allow word breaking */
+  font-size: 14px;
+  line-height: 1.2; /* Add line height for better readability */
+}
+
+/* Hide default event label as we're using custom component */
+.rbc-event-label {
+  display: none !important;
+}
+
+/* Different background colors for different events */
+.rbc-event:nth-child(1) .event-content {
   background-color: #EBFAFB !important;
 }
-.rbc-event:nth-child(2) {
+
+.rbc-event:nth-child(2) .event-content {
   background-color: #F9F2FF !important;
 }
-.rbc-event:nth-child(3) {
+
+.rbc-event:nth-child(3) .event-content {
   background-color: #FFF4E9 !important;
 }
-.rbc-event:nth-child(4) {
-  background-color: #FFF8E5 !important;
-}
-.rbc-event:nth-child(5) {
-  background-color: #EBFAFB !important;
-}
-.rbc-event:nth-child(6) {
-  background-color: #F9F2FF !important;
-}
-.rbc-event:nth-child(7) {
-  background-color: #FFF4E9 !important;
-}
-.rbc-event:nth-child(8) {
-  background-color: #FFF8E5 !important;
-}
-.rbc-event:nth-child(9) {
-  background-color: #EBFAFB !important;
-}
-.rbc-event:nth-child(10) {
-  background-color: #F9F2FF !important;
-}
-.rbc-event:nth-child(11) {
-  background-color: #FFF4E9 !important;
-}
-.rbc-event:nth-child(12) {
+
+.rbc-event:nth-child(4) .event-content {
   background-color: #FFF8E5 !important;
 }
 
-.rbc-event-label{
-  color: gray !important;
-  margin-bottom: 5px;
+.rbc-event:nth-child(5) .event-content {
+  background-color: #EBFAFB !important;
+}
+
+.rbc-event:nth-child(6) .event-content {
+  background-color: #F9F2FF !important;
+}
+
+.rbc-event:nth-child(7) .event-content {
+  background-color: #FFF4E9 !important;
+}
+
+.rbc-event:nth-child(8) .event-content {
+  background-color: #FFF8E5 !important;
+}
+
+.rbc-event:nth-child(9) .event-content {
+  background-color: #EBFAFB !important;
+}
+
+.rbc-event:nth-child(10) .event-content {
+  background-color: #F9F2FF !important;
+}
+
+.rbc-event:nth-child(11) .event-content {
+  background-color: #FFF4E9 !important;
+}
+
+.rbc-event:nth-child(12) .event-content {
+  background-color: #FFF8E5 !important;
 }

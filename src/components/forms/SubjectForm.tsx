@@ -34,6 +34,11 @@ const SubjectForm = ({
       ...data,
       startTime: data.startTime ? new Date(data.startTime) : undefined,
       endTime: data.endTime ? new Date(data.endTime) : undefined,
+      departmentId: data.departmentId,
+      classId: data.classId,
+      teacherId: data.teacherId,
+      day: data.day,
+      name: data.name
     } : undefined,
   });
 
@@ -46,6 +51,22 @@ const SubjectForm = ({
   );
 
   const onSubmit = handleSubmit((data) => {
+    // Create base date for the time (use a reference date like 2024-01-01)
+    const baseDate = new Date(2024, 0, 1); // January 1st, 2024
+    
+    // Set the hours and minutes from the time inputs
+    if (data.startTime) {
+      const startDate = new Date(baseDate);
+      startDate.setHours(data.startTime.getHours(), data.startTime.getMinutes(), 0, 0);
+      data.startTime = startDate;
+    }
+    
+    if (data.endTime) {
+      const endDate = new Date(baseDate);
+      endDate.setHours(data.endTime.getHours(), data.endTime.getMinutes(), 0, 0);
+      data.endTime = endDate;
+    }
+
     formAction(data);
   });
 
@@ -79,6 +100,7 @@ const SubjectForm = ({
         <InputField
           label="Subject Name"
           name="name"
+          defaultValue={data?.name}
           register={register}
           error={errors?.name}
         />
@@ -87,6 +109,7 @@ const SubjectForm = ({
           <InputField
             label="Id"
             name="id"
+            defaultValue={data?.id}
             register={register}
             error={errors?.id}
             hidden
@@ -98,7 +121,9 @@ const SubjectForm = ({
           <select
             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
             {...register("day")}
+            defaultValue={data?.day}
           >
+            <option value="">Select Day</option>
             <option value="MONDAY">Monday</option>
             <option value="TUESDAY">Tuesday</option>
             <option value="WEDNESDAY">Wednesday</option>
@@ -119,16 +144,27 @@ const SubjectForm = ({
             type="time"
             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
             {...register("startTime", {
-              setValueAs: (v) => {
+              setValueAs: (v: any) => {
                 if (!v) return undefined;
-                const [hours, minutes] = v.split(':').map(Number);
-                const date = new Date();
-                date.setHours(hours, minutes, 0, 0);
-                return date;
+                try {
+                  if (v instanceof Date) return v;
+                  const timeStr = String(v);
+                  if (!timeStr.includes(':')) return undefined;
+                  const [hours, minutes] = timeStr.split(':').map(Number);
+                  const date = new Date();
+                  date.setHours(hours, minutes, 0, 0);
+                  return date;
+                } catch (error) {
+                  return undefined;
+                }
               }
             })}
             defaultValue={data?.startTime ? 
-              new Date(data.startTime).toTimeString().slice(0, 5) : 
+              new Date(data.startTime).toLocaleTimeString('en-US', { 
+                hour12: false, 
+                hour: '2-digit', 
+                minute: '2-digit'
+              }) : 
               undefined}
           />
           {errors.startTime?.message && (
@@ -144,16 +180,27 @@ const SubjectForm = ({
             type="time"
             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
             {...register("endTime", {
-              setValueAs: (v) => {
+              setValueAs: (v: any) => {
                 if (!v) return undefined;
-                const [hours, minutes] = v.split(':').map(Number);
-                const date = new Date();
-                date.setHours(hours, minutes, 0, 0);
-                return date;
+                try {
+                  if (v instanceof Date) return v;
+                  const timeStr = String(v);
+                  if (!timeStr.includes(':')) return undefined;
+                  const [hours, minutes] = timeStr.split(':').map(Number);
+                  const date = new Date();
+                  date.setHours(hours, minutes, 0, 0);
+                  return date;
+                } catch (error) {
+                  return undefined;
+                }
               }
             })}
             defaultValue={data?.endTime ? 
-              new Date(data.endTime).toTimeString().slice(0, 5) : 
+              new Date(data.endTime).toLocaleTimeString('en-US', { 
+                hour12: false, 
+                hour: '2-digit', 
+                minute: '2-digit'
+              }) : 
               undefined}
           />
           {errors.endTime?.message && (
@@ -168,6 +215,7 @@ const SubjectForm = ({
           <select
             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
             {...register("departmentId")}
+            defaultValue={data?.departmentId}
           >
             <option value="">Select Department</option>
             {departments.map((department: { id: string; name: string }) => (
@@ -188,6 +236,7 @@ const SubjectForm = ({
           <select
             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
             {...register("classId")}
+            defaultValue={data?.classId}
           >
             <option value="">Select Class</option>
             {classes.map((classItem: { id: string; name: string }) => (
@@ -208,6 +257,7 @@ const SubjectForm = ({
           <select
             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
             {...register("teacherId")}
+            defaultValue={data?.teacherId}
           >
             <option value="">Select Teacher</option>
             {teachers.map((teacher: { id: string; name: string; surname: string }) => (

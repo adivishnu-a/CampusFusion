@@ -2,40 +2,64 @@ const getLatestMonday = (): Date => {
   const today = new Date();
   const dayOfWeek = today.getDay();
   const daysSinceMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-  const latestMonday = today;
+  const latestMonday = new Date(today);
   latestMonday.setDate(today.getDate() - daysSinceMonday);
+  latestMonday.setHours(0, 0, 0, 0);
   return latestMonday;
 };
 
+const dayToNumber = {
+  MONDAY: 1,
+  TUESDAY: 2,
+  WEDNESDAY: 3,
+  THURSDAY: 4,
+  FRIDAY: 5,
+  SATURDAY: 6,
+  SUNDAY: 0,
+} as const;
+
 export const adjustScheduleToCurrentWeek = (
-  subjects: { title: string; start: Date; end: Date }[]
+  subjects: { title: string; start: Date; end: Date; day?: string }[]
 ): { title: string; start: Date; end: Date }[] => {
   const latestMonday = getLatestMonday();
 
   return subjects.map((subject) => {
-    const subjectDayOfWeek = subject.start.getDay();
+    if (!subject.day) return subject;
 
-    const daysFromMonday = subjectDayOfWeek === 0 ? 6 : subjectDayOfWeek - 1;
+    // Get the numeric day (1 for Monday, etc.)
+    const dayNum = dayToNumber[subject.day as keyof typeof dayToNumber];
+    if (dayNum === undefined) return subject;
 
-    const adjustedStartDate = new Date(latestMonday);
+    // Calculate days to add from Monday (0 for Monday, 1 for Tuesday, etc.)
+    const daysToAdd = dayNum - 1;
 
-    adjustedStartDate.setDate(latestMonday.getDate() + daysFromMonday);
-    adjustedStartDate.setHours(
-      subject.start.getHours(),
-      subject.start.getMinutes(),
-      subject.start.getSeconds()
+    // Create new date objects for start and end times
+    const subjectStart = new Date(subject.start);
+    const subjectEnd = new Date(subject.end);
+
+    // Create the adjusted dates by adding days to Monday
+    const adjustedStart = new Date(latestMonday);
+    adjustedStart.setDate(latestMonday.getDate() + daysToAdd);
+    adjustedStart.setHours(
+      subjectStart.getHours(),
+      subjectStart.getMinutes(),
+      0,
+      0
     );
-    const adjustedEndDate = new Date(adjustedStartDate);
-    adjustedEndDate.setHours(
-      subject.end.getHours(),
-      subject.end.getMinutes(),
-      subject.end.getSeconds()
+
+    const adjustedEnd = new Date(latestMonday);
+    adjustedEnd.setDate(latestMonday.getDate() + daysToAdd);
+    adjustedEnd.setHours(
+      subjectEnd.getHours(),
+      subjectEnd.getMinutes(),
+      0,
+      0
     );
 
     return {
       title: subject.title,
-      start: adjustedStartDate,
-      end: adjustedEndDate,
+      start: adjustedStart,
+      end: adjustedEnd,
     };
   });
 };
