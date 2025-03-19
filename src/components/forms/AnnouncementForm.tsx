@@ -119,7 +119,6 @@ const AnnouncementForm = ({
           error={errors?.title}
         />
         
-        {/* Custom textarea field for description since InputField doesn't support textareas */}
         <div className="flex flex-col gap-2 w-full">
           <label className="text-sm text-gray-600">Description</label>
           <textarea
@@ -181,7 +180,6 @@ const AnnouncementForm = ({
             </p>
           )}
           
-          {/* Debug information - can be removed in production */}
           <p className="text-xs text-gray-500">
             {loading ? "Loading classes..." : `${classes.length} classes available`}
           </p>

@@ -108,13 +108,19 @@ const EventForm = ({
           error={errors?.title}
         />
         
-        <InputField
-          label="Description"
-          name="description"
-          defaultValue={data?.description}
-          register={register}
-          error={errors?.description}
-        />
+        <div className="flex flex-col gap-2 w-full">
+          <label className="text-sm text-gray-600">Description</label>
+          <textarea
+            {...register("description")}
+            defaultValue={data?.description}
+            className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full min-h-[100px]"
+          />
+          {errors.description?.message && (
+            <p className="text-xs text-campDarwinCandyPeach">
+              {errors.description.message.toString()}
+            </p>
+          )}
+        </div>
         
         <InputField
           label="Start Time"

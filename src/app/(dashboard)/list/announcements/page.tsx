@@ -57,8 +57,12 @@ const AnnouncementListPage = async ({
       key={item.id}
       className="border-b border-gray-200 even:bg-campDarwinPastelSlateGray text-sm hover:bg-campDarwinPastelBlue"
     >
-      <td className="flex items-center gap-4 p-4">{item.title}</td>
-      <td className="hidden md:table-cell">{item.description}</td>
+      <td className="flex items-center gap-4 p-4" title={item.title}>
+        {item.title.length > 40 ? `${item.title.substring(0, 40)}...` : item.title}
+      </td>
+      <td className="hidden md:table-cell" title={item.description}>
+        {item.description.length > 40 ? `${item.description.substring(0, 40)}...` : item.description}
+      </td>
       <td>{item.class?.name || "School-wide"}</td>
       <td className="hidden md:table-cell">
         {new Intl.DateTimeFormat("en-IN").format(item.date)}

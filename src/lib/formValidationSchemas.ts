@@ -110,6 +110,13 @@ export const examSchema = z.object({
   startTime: z.coerce.date({message:"Start Time is required"}),
   endTime: z.coerce.date({message:"End Time is required"}),
   subjectId: z.coerce.string().min(1, { message: "Subject ID is required" }),
+}).refine((data) => {
+  const start = new Date(data.startTime);
+  const end = new Date(data.endTime);
+  return end >= start;
+}, {
+  message: "End time must be after start time",
+  path: ["endTime"]
 });
 
 export type ExamSchema = z.infer<typeof examSchema>;
@@ -125,6 +132,13 @@ export const subjectSchema = z.object({
   departmentId: z.string().min(1, { message: "Department is required!" }),
   classId: z.string().min(1, { message: "Class is required!" }),
   teacherId: z.string().min(1, { message: "Teacher is required!" }),
+}).refine((data) => {
+  const start = new Date(data.startTime);
+  const end = new Date(data.endTime);
+  return end >= start;
+}, {
+  message: "End time must be after start time",
+  path: ["endTime"]
 });
 
 export type SubjectSchema = z.infer<typeof subjectSchema>;
@@ -135,6 +149,13 @@ export const assignmentSchema = z.object({
   startDate: z.coerce.date({ message: "Start date is required!" }),
   dueDate: z.coerce.date({ message: "Due date is required!" }),
   subjectId: z.string().min(1, { message: "Subject is required!" }),
+}).refine((data) => {
+  const start = new Date(data.startDate);
+  const end = new Date(data.dueDate);
+  return end >= start;
+}, {
+  message: "Due date must be after start date",
+  path: ["dueDate"]
 });
 
 export type AssignmentSchema = z.infer<typeof assignmentSchema>;
@@ -166,18 +187,29 @@ export type ResultSchema = z.infer<typeof resultSchema>;
 
 export const eventSchema = z.object({
   id: z.string().optional(),
-  title: z.string().min(1, { message: "Event title is required!" }),
+  title: z.string()
+    .min(1, { message: "Event title is required!" })
+    .max(80, { message: "Title cannot exceed 80 characters!" }),
   description: z.string().min(1, { message: "Event description is required!" }),
   startTime: z.coerce.date({ message: "Start time is required!" }),
   endTime: z.coerce.date({ message: "End time is required!" }),
   classId: z.string().optional().nullable(),
+}).refine((data) => {
+  const start = new Date(data.startTime);
+  const end = new Date(data.endTime);
+  return end >= start;
+}, {
+  message: "End time must be after start time",
+  path: ["endTime"]
 });
 
 export type EventSchema = z.infer<typeof eventSchema>;
 
 export const announcementSchema = z.object({
   id: z.string().optional(),
-  title: z.string().min(1, { message: "Announcement title is required!" }),
+  title: z.string()
+    .min(1, { message: "Announcement title is required!" })
+    .max(80, { message: "Title cannot exceed 80 characters!" }),
   description: z.string().min(1, { message: "Announcement description is required!" }),
   date: z.coerce.date({ message: "Date is required!" }),
   classId: z.string().optional().nullable(),
