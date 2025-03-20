@@ -1,9 +1,9 @@
 import UserCard from "@/components/UserCard";
-import FinanceChart from "@/components/FinanceChart";
 import Announcements from "@/components/Announcements";
 import CountChartContainer from "@/components/CountChartContainer";
 import AttendanceChartContainer from "@/components/AttendanceChartContainer";
 import EventCalendarContainer from "@/components/EventCalendarContainer";
+import PerformanceChart from '@/components/GradeWisePerformance';
 const AdminPage = ({
   searchParams,
 }: {
@@ -33,7 +33,7 @@ const AdminPage = ({
         </div>
         {/* Bottom Chart */}
         <div className="w-full h-[500px] bg-white rounded-xl shadow-sm p-4">
-          <FinanceChart />
+          <PerformanceChart />
         </div>
       </div>
       {/* Right */}
