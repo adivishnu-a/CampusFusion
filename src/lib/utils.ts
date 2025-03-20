@@ -1,4 +1,4 @@
-const getLatestMonday = (): Date => {
+export const getLatestMonday = (): Date => {
   const today = new Date();
   const dayOfWeek = today.getDay();
   const daysSinceMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;

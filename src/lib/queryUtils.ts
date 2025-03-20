@@ -57,7 +57,7 @@ export function buildQueryOptions<T extends Record<string, any>>(
 
 // Parse comma-separated filter values into an array
 export function parseFilterValues(value: string): string[] {
-  return value.split(',').filter(v => v.trim());
+  return value.split(',').map(v => v.trim()).filter(Boolean);
 }
 
 // Helper function to build Prisma filter conditions for multiple values
