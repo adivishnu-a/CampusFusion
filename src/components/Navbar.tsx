@@ -4,6 +4,9 @@ import Breadcrumb from './Breadcrumb';
 
 const Navbar = async () => {
   const user = await currentUser();
+  const username = user?.username||"";
+  const firstName= user?.firstName||"";
+  const lastName= user?.lastName||"";
   return (
     <div className="flex items-center justify-between p-4 bg-[#F4F4F7]">
       {/* Breadcrumb navigation */}
@@ -14,7 +17,7 @@ const Navbar = async () => {
       {/* User profile information */}
       <div className="flex items-center gap-6">
         <div className="flex flex-col">
-          <span className="text-sm leading-3 font-medium">John Doe</span>
+          <span className="text-sm leading-3 font-medium">{firstName.length>0?(firstName+" "+lastName):(username)}</span>
           <span className="text-[12px] text-gray-500 text-right capitalize">{user?.publicMetadata.role as string}</span>
         </div>
         <UserButton/>
