@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/utils";
 
 // GET: Fetch attendance for a specific class and date
 export async function GET(request: NextRequest) {
@@ -56,7 +57,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(attendance);
   } catch (error) {
-    console.error("Error fetching attendance:", error);
+    logger.error("Error fetching attendance:", error);
     return NextResponse.json({ error: "Failed to fetch attendance" }, { status: 500 });
   }
 }
@@ -127,7 +128,7 @@ export async function POST(request: NextRequest) {
       data: attendance,
     });
   } catch (error) {
-    console.error("Error creating attendance:", error);
+    logger.error("Error creating attendance:", error);
     return NextResponse.json({ error: "Failed to create attendance" }, { status: 500 });
   }
 }
@@ -185,7 +186,7 @@ export async function PUT(request: NextRequest) {
       data: attendance,
     });
   } catch (error) {
-    console.error("Error updating attendance:", error);
+    logger.error("Error updating attendance:", error);
     return NextResponse.json({ error: "Failed to update attendance" }, { status: 500 });
   }
 }

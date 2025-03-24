@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/utils";
 
 export async function GET(request: NextRequest) {
   try {
@@ -107,7 +108,7 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error fetching results:', error);
+    logger.error('Error fetching results:', error);
     return new Response('Internal Server Error', { status: 500 });
   }
 }

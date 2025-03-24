@@ -8,6 +8,20 @@ export const getLatestMonday = (): Date => {
   return latestMonday;
 };
 
+// Utility function to check if we're running in a test environment
+export const isTestEnvironment = (): boolean => {
+  return process.env.NODE_ENV === 'test' || process.env.JEST_WORKER_ID !== undefined;
+};
+
+// Custom logger that suppresses logs during tests
+export const logger = {
+  error: (message: string, error?: any) => {
+    if (!isTestEnvironment()) {
+      console.error(message, error);
+    }
+  }
+};
+
 const dayToNumber = {
   MONDAY: 1,
   TUESDAY: 2,

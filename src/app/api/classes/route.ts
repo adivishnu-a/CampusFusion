@@ -4,6 +4,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/utils";
 
 export async function GET(request: NextRequest) {
   try {
@@ -52,7 +53,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json([]);
     }
   } catch (error) {
-    console.error("Error fetching classes:", error);
+    logger.error("Error fetching classes:", error);
     return NextResponse.json({ error: "Failed to fetch classes" }, { status: 500 });
   }
 }
