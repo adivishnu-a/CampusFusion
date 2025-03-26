@@ -29,6 +29,11 @@ interface Result {
   };
 }
 
+interface TeacherPerformanceData {
+  averageScore: number;
+  totalResults: number;
+}
+
 const Performance = ({ studentId, teacherId }: { studentId?: string; teacherId?: string }) => {
   const [gpa, setGpa] = useState(0);
   const [rawScore, setRawScore] = useState(0);
@@ -81,44 +86,19 @@ const Performance = ({ studentId, teacherId }: { studentId?: string; teacherId?:
           setRawScore(weightedAvg);
           setGpa(weightedAvg / 20);
         }
-        // For teacher view
+        // For teacher view - OPTIMIZED VERSION
         else if (teacherId) {
-          // Fetch all classes supervised by the teacher
-          const classesResponse = await fetch(`/api/classes?teacherId=${teacherId}`);
-          if (!classesResponse.ok) {
-            throw new Error('Failed to fetch teacher classes');
+          // Single API call to get teacher performance data
+          const response = await fetch(`/api/results?teacherId=${teacherId}`);
+          if (!response.ok) {
+            throw new Error('Failed to fetch teacher performance data');
           }
-          const classes = await classesResponse.json();
           
-          let allResults: Result[] = [];
-          // Fetch results for all students in teacher's classes
-          for (const cls of classes) {
-            const studentsResponse = await fetch(`/api/students?classId=${cls.id}`);
-            if (studentsResponse.ok) {
-              const students = await studentsResponse.json();
-              for (const student of students) {
-                const resultsResponse = await fetch(`/api/results?studentId=${student.id}`);
-                if (resultsResponse.ok) {
-                  const studentResults: Result[] = await resultsResponse.json();
-                  allResults = [...allResults, ...studentResults];
-                }
-              }
-            }
-          }
-
-          if (allResults.length === 0) {
-            setGpa(0);
-            setRawScore(0);
-            setLoading(false);
-            return;
-          }
-
-          // Calculate average score across all students
-          const totalScore = allResults.reduce((acc, curr) => acc + curr.score, 0);
-          const avgScore = totalScore / allResults.length;
+          const performanceData: TeacherPerformanceData = await response.json();
           
-          setRawScore(avgScore);
-          setGpa(avgScore / 20);
+          // Use the aggregated data directly
+          setRawScore(performanceData.averageScore);
+          setGpa(performanceData.averageScore / 20);
         }
 
         setLoading(false);
@@ -140,30 +120,33 @@ const Performance = ({ studentId, teacherId }: { studentId?: string; teacherId?:
 
   if (loading) {
     return (
-      <div className="bg-white p-4 shadow-sm rounded-md h-80 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-campDarwinCobaltBlue"></div>
+      <div className="bg-white p-4 rounded-md shadow-sm">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-campDarwinCobaltBlue"></div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white p-4 shadow-sm rounded-md h-80 relative">
-      <div className="flex items-center justify-between">
+    <div className="bg-white p-4 rounded-md shadow-sm relative">
+      <div className="flex justify-between items-center">
         <h1 className="text-xl font-semibold">Performance</h1>
         <Image src="/moreDark.png" alt="" width={20} height={20} />
       </div>
-      <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer width="100%" height={300}>
         <PieChart>
           <Pie
             data={chartData}
-            dataKey="value"
-            nameKey="name"
-            startAngle={180}
-            endAngle={0}
             cx="50%"
             cy="50%"
-            innerRadius={70}
+            startAngle={180}
+            endAngle={0}
+            innerRadius={60}
             outerRadius={100}
+            fill="#8884d8"
+            paddingAngle={0}
+            dataKey="value"
           >
             {chartData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={entry.fill} />

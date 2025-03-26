@@ -117,6 +117,19 @@ export const examSchema = z.object({
 }, {
   message: "End time must be after start time",
   path: ["endTime"]
+}).refine((data) => {
+  const start = new Date(data.startTime);
+  const end = new Date(data.endTime);
+  
+  // Check if the dates are the same day
+  return (
+    start.getFullYear() === end.getFullYear() &&
+    start.getMonth() === end.getMonth() &&
+    start.getDate() === end.getDate()
+  );
+}, {
+  message: "Exams must start and end on the same day",
+  path: ["endTime"]
 });
 
 export type ExamSchema = z.infer<typeof examSchema>;

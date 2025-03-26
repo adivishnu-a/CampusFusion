@@ -7,11 +7,68 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const studentId = searchParams.get('studentId');
+    const teacherId = searchParams.get('teacherId');
 
     const { sessionClaims } = await auth();
     const role = (sessionClaims?.metadata as { role?: string })?.role;
     const userId = (sessionClaims?.metadata as { userId?: string })?.userId;
 
+    // HANDLE TEACHER PERFORMANCE AGGREGATION
+    if (teacherId) {
+      // Check authorization
+      if (!['admin', 'teacher'].includes(role || '')) {
+        return new Response('Unauthorized', { status: 403 });
+      }
+      
+      // For teachers, only allow them to see their own performance data
+      if (role === 'teacher' && userId !== teacherId) {
+        return new Response('Unauthorized', { status: 403 });
+      }
+      
+      // Get all results for students in classes supervised by this teacher
+      // Using a single, optimized query
+      const teacherResults = await prisma.result.findMany({
+        where: {
+          OR: [
+            {
+              exam: {
+                subject: { teacherId }
+              }
+            },
+            {
+              assignment: {
+                subject: { teacherId }
+              }
+            }
+          ]
+        },
+        select: {
+          score: true,
+        }
+      });
+      
+      // Calculate average score
+      if (teacherResults.length === 0) {
+        return new Response(JSON.stringify({ 
+          averageScore: 0, 
+          totalResults: 0 
+        }), {
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+      
+      const totalScore = teacherResults.reduce((sum, result) => sum + result.score, 0);
+      const averageScore = totalScore / teacherResults.length;
+      
+      return new Response(JSON.stringify({
+        averageScore,
+        totalResults: teacherResults.length
+      }), {
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // HANDLE STUDENT-SPECIFIC RESULTS
     if (studentId) {
       // Handle student-specific results (existing code)
       if (role === 'student' && userId !== studentId) {

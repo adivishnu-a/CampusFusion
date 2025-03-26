@@ -39,6 +39,23 @@ const SingleTeacherPage = async ({
     return notFound();
   }
 
+  let departmentNames: string = '';
+  if (teacher.departmentIds && teacher.departmentIds.length > 0) {
+    const departments = await Promise.all(
+      teacher.departmentIds.map(async (deptId: string) => {
+        const dept = await prisma.department.findUnique({
+          where: { id: deptId }
+        });
+        return dept;
+      })
+    );
+    
+    departmentNames = departments
+      .filter(dept => dept !== null)
+      .map(dept => dept?.name)
+      .join(", ");
+  }
+
   return (
     <div className="flex-1 p-4 flex flex-col gap-4 xl:flex-row">
       {/* Left */}
@@ -66,22 +83,7 @@ const SingleTeacherPage = async ({
                 )}
               </div>
               <p className="text-sm text-gray-100">
-                {teacher &&
-                  teacher.departmentIds.map(
-                    (id: string, index: number, arr: string[]) => {
-                      return (
-                        <span key={id}>
-                          {prisma.department
-                            .findUnique({ where: { id: id } })
-                            .then((department: any) => {
-                              // Check if it's the last department in the array
-                              const isLast = index === arr.length - 1;
-                              return `${department.name}${isLast ? "" : ", "}`;
-                            })}
-                        </span>
-                      );
-                    }
-                  )}
+                {departmentNames || "No departments assigned"}
               </p>
               <div className="flex items-center text-white justify-between gap-2 flex-wrap text-xs font-medium">
                 <div className="w-full md:w-1/3 lg:w-full 2xl:w-1/3 flex items-center gap-2">
