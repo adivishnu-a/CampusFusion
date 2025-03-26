@@ -5,7 +5,6 @@ import Link from "next/link";
 import BigCalendarContainer from '@/components/BigCalendarContainer';
 import FormContainer from "@/components/FormContainer";
 import { auth } from "@clerk/nextjs/server";
-import { Class, Student, Parent } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -18,24 +17,24 @@ const SingleStudentPage = async ({
 }) => {
   const { sessionClaims } = await auth();
   const role = (sessionClaims?.metadata as { role?: string })?.role;
-  // const userId = (sessionClaims?.metadata as { userId?: string })?.userId;
-  // const currentUserId = userId;
 
-  const student:
-    | (Student & {
-        class: Class & { _count: { subjects: number } };
-        parent: Parent;
-      })
-    | null = await prisma.student.findUnique({
-    where: { id },
-    include: {
-      class: { include: { _count: { select: { subjects: true } } } },
-      parent: true,
-    },
-  });
+  let student = null;
+  
+  try {
+    student = await prisma.student.findUnique({
+      where: { id },
+      include: {
+        class: { include: { _count: { select: { subjects: true } } } },
+        parent: true,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching student:", error);
+    notFound();
+  }
 
   if (!student) {
-    return notFound();
+    notFound();
   }
 
   return (

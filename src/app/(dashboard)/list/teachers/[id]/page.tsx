@@ -5,7 +5,6 @@ import Performance from "@/components/Performance";
 import TeacherAttendanceCard from "@/components/TeacherAttendanceCard";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { Teacher } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -18,25 +17,28 @@ const SingleTeacherPage = async ({
   const { sessionClaims } = await auth();
   const role = (sessionClaims?.metadata as { role?: string })?.role;
 
-  const teacher:
-    | (Teacher & {
-        _count: { departments: number; subjects: number; classes: number };
-      })
-    | null = await prisma.teacher.findUnique({
-    where: { id },
-    include: {
-      _count: {
-        select: {
-          departments: true,
-          subjects: true,
-          classes: true,
+  let teacher = null;
+  
+  try {
+    teacher = await prisma.teacher.findUnique({
+      where: { id },
+      include: {
+        _count: {
+          select: {
+            departments: true,
+            subjects: true,
+            classes: true,
+          },
         },
       },
-    },
-  });
+    });
+  } catch (error) {
+    console.error("Error fetching teacher:", error);
+    notFound();
+  }
 
   if (!teacher) {
-    return notFound();
+    notFound();
   }
 
   let departmentNames: string = '';
