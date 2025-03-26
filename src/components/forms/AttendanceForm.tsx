@@ -27,13 +27,37 @@ export default function AttendanceForm({ classId, className }: AttendanceFormPro
   );
   const [attendanceExists, setAttendanceExists] = useState(false);
   const [attendance, setAttendance] = useState<Record<string, boolean>>({});
+  const [dateError, setDateError] = useState<string | null>(null);
   const router = useRouter();
+
+  // Get today's date in YYYY-MM-DD format for max date attribute
+  const today = new Date().toISOString().split("T")[0];
+
+  // Check if selected date is in the future
+  const isDateInFuture = (dateString: string): boolean => {
+    const selectedDate = new Date(dateString);
+    selectedDate.setHours(0, 0, 0, 0);
+    
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+    
+    return selectedDate > currentDate;
+  };
 
   // Fetch students and existing attendance data
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
+        // Check if selected date is valid (not in the future)
+        if (isDateInFuture(attendanceDate)) {
+          setDateError("Cannot mark attendance for future dates");
+          setLoading(false);
+          return;
+        } else {
+          setDateError(null);
+        }
+
         // Fetch students for the class
         const studentsResponse = await fetch(`/api/students?classId=${classId}`);
         if (!studentsResponse.ok) throw new Error("Failed to fetch students");
@@ -85,11 +109,26 @@ export default function AttendanceForm({ classId, className }: AttendanceFormPro
   };
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAttendanceDate(e.target.value);
+    const newDate = e.target.value;
+    setAttendanceDate(newDate);
+    
+    // Validate date is not in the future
+    if (isDateInFuture(newDate)) {
+      setDateError("Cannot mark attendance for future dates");
+    } else {
+      setDateError(null);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Double-check date before submitting
+    if (isDateInFuture(attendanceDate)) {
+      setDateError("Cannot mark attendance for future dates");
+      return;
+    }
+    
     setSaving(true);
 
     try {
@@ -139,21 +178,27 @@ export default function AttendanceForm({ classId, className }: AttendanceFormPro
         <h2 className="text-lg font-semibold">
           {className} - Attendance for {new Date(attendanceDate).toLocaleDateString()}
         </h2>
-        <div className="flex items-center space-x-4">
-          <label className="text-sm font-medium">
-            Date:
-            <input
-              type="date"
-              value={attendanceDate}
-              onChange={handleDateChange}
-              className="ml-2 p-2 border rounded-md"
-            />
-          </label>
-          <span className={`text-sm font-medium px-3 py-1 rounded-full ${
-            attendanceExists ? "bg-campDarwinPastelZincYellow" : "bg-campDarwinPastelBlue"
-          }`}>
-            {attendanceExists ? "Update Mode" : "Create Mode"}
-          </span>
+        <div className="flex flex-col">
+          <div className="flex items-center space-x-4">
+            <label className="text-sm font-medium">
+              Date:
+              <input
+                type="date"
+                value={attendanceDate}
+                onChange={handleDateChange}
+                max={today}
+                className="ml-2 p-2 border rounded-md"
+              />
+            </label>
+            <span className={`text-sm font-medium px-3 py-1 rounded-full ${
+              attendanceExists ? "bg-campDarwinPastelZincYellow" : "bg-campDarwinPastelBlue"
+            }`}>
+              {attendanceExists ? "Update Mode" : "Create Mode"}
+            </span>
+          </div>
+          {dateError && (
+            <p className="text-red-500 text-sm mt-1">{dateError}</p>
+          )}
         </div>
       </div>
 
@@ -201,6 +246,7 @@ export default function AttendanceForm({ classId, className }: AttendanceFormPro
                             checked={attendance[student.id] === true}
                             onChange={() => handleAttendanceChange(student.id, true)}
                             className="form-radio h-4 w-4 text-campDarwinCobaltBlue"
+                            disabled={!!dateError}
                           />
                           <span className="text-sm text-green-600">Present</span>
                         </label>
@@ -211,6 +257,7 @@ export default function AttendanceForm({ classId, className }: AttendanceFormPro
                             checked={attendance[student.id] === false}
                             onChange={() => handleAttendanceChange(student.id, false)}
                             className="form-radio h-4 w-4 text-red-600"
+                            disabled={!!dateError}
                           />
                           <span className="text-sm text-red-600">Absent</span>
                         </label>
@@ -239,9 +286,9 @@ export default function AttendanceForm({ classId, className }: AttendanceFormPro
           </button>
           <button
             type="submit"
-            disabled={saving || students.length === 0}
+            disabled={saving || students.length === 0 || !!dateError}
             className={`py-2 px-4 rounded-md shadow-sm text-sm font-medium text-white ${
-              saving || students.length === 0
+              saving || students.length === 0 || !!dateError
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-campDarwinCobaltBlue hover:bg-blue-600"
             }`}
