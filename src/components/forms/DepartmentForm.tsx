@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import InputField from "../InputField";
 import { departmentSchema, DepartmentSchema } from "@/lib/formValidationSchemas";
 import { useFormState } from "react-dom";
@@ -9,8 +9,8 @@ import { createDepartment, updateDepartment } from "@/lib/actions";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import { Dispatch } from "react";
-import { SetStateAction } from "react";
+import { Dispatch, SetStateAction } from "react";
+import Select from "react-select";
 
 const DepartmentForm = ({
   type,
@@ -26,6 +26,7 @@ const DepartmentForm = ({
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<DepartmentSchema>({
     resolver: zodResolver(departmentSchema),
@@ -55,6 +56,21 @@ const DepartmentForm = ({
   }, [state, type, setOpen, router]);
 
   const { teachers } = relatedData;
+  const teacherOptions = teachers.map((teacher: { id: string; name: string; surname: string }) => ({
+    value: teacher.id,
+    label: `${teacher.name} ${teacher.surname}`
+  }));
+
+  const defaultTeachers = data?.teachers
+    ? teacherOptions.filter((option: { value: string }) => 
+        data.teachers.includes(option.value)
+      )
+    : [];
+
+  interface TeacherOption {
+    value: string;
+    label: string;
+  }
 
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
@@ -79,21 +95,32 @@ const DepartmentForm = ({
             hidden
           />
         )}
-        <div className="flex flex-col gap-2 w-full md:w-1/4">
+        <div className="flex flex-col gap-2 w-full">
           <label className="text-sm text-gray-600">Teachers</label>
-          <select
-            multiple className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
-            {...register("teachers")}
-            defaultValue={data?.teachers}
-          >
-            {teachers.map(
-              (teacher: { id: string; name: string; surname: string }) => (
-                <option value={teacher.id} key={teacher.id}>
-                  {teacher.name + " " + teacher.surname}
-                </option>
-              )
+          <Controller
+            name="teachers"
+            control={control}
+            defaultValue={defaultTeachers.map((t: TeacherOption) => t.value)}
+            render={({ field: { onChange, value } }) => (
+              <Select
+                isMulti
+                options={teacherOptions}
+                className="text-sm"
+                placeholder="Select teachers..."
+                value={teacherOptions.filter((option: TeacherOption) => value?.includes(option.value))}
+                onChange={(newValue) => onChange(newValue.map(v => v.value))}
+                styles={{
+                  control: (base) => ({
+                    ...base,
+                    borderColor: errors.teachers ? '#f87171' : '#d1d5db',
+                    borderWidth: '1.5px',
+                    borderRadius: '0.375rem',
+                    minHeight: '42px'
+                  })
+                }}
+              />
             )}
-          </select>
+          />
           {errors.teachers?.message && (
             <p className="text-xs text-campDarwinCandyPeach">
               {errors.teachers.message.toString()}

@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import InputField from "../InputField";
 import Image from "next/image";
 import { TeacherSchema, teacherSchema } from "../../lib/formValidationSchemas";
@@ -10,6 +10,7 @@ import { useFormState } from "react-dom";
 import { createTeacher, updateTeacher } from "@/lib/actions";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import Select from "react-select";
 
 const TeacherForm = ({
   type,
@@ -25,6 +26,7 @@ const TeacherForm = ({
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<TeacherSchema>({
     resolver: zodResolver(teacherSchema),
@@ -91,6 +93,21 @@ const TeacherForm = ({
   }, [state, router, type, setOpen]);
 
   const { departments } = relatedData;
+  const departmentOptions = departments?.map((department: { id: string; name: string }) => ({
+    value: department.id,
+    label: department.name
+  })) || [];
+
+  const defaultDepartments = data?.departments
+    ? departmentOptions.filter((option: { value: string }) => 
+        data.departments.includes(option.value)
+      )
+    : [];
+
+  interface DepartmentOption {
+    value: string;
+    label: string;
+  }
 
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
@@ -197,20 +214,32 @@ const TeacherForm = ({
             </p>
           )}
         </div>
-        <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-xs text-gray-600">Departments</label>
-          <select
-            multiple
-            className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
-            {...register("departments")}
-            defaultValue={data?.departments}
-          >
-            {departments.map((department: { id: number; name: string }) => (
-              <option value={department.id} key={department.id}>
-                {department.name}
-              </option>
-            ))}
-          </select>
+        <div className="flex flex-col gap-2 w-full">
+          <label className="text-sm text-gray-600">Departments</label>
+          <Controller
+            name="departments"
+            control={control}
+            defaultValue={defaultDepartments.map((d: DepartmentOption) => d.value)}
+            render={({ field: { onChange, value } }) => (
+              <Select
+                isMulti
+                options={departmentOptions}
+                className="text-sm"
+                placeholder="Select departments..."
+                value={departmentOptions.filter((option: DepartmentOption) => value?.includes(option.value))}
+                onChange={(newValue) => onChange(newValue.map(v => v.value))}
+                styles={{
+                  control: (base) => ({
+                    ...base,
+                    borderColor: errors.departments ? '#f87171' : '#d1d5db',
+                    borderWidth: '1.5px',
+                    borderRadius: '0.375rem',
+                    minHeight: '42px'
+                  })
+                }}
+              />
+            )}
+          />
           {errors.departments?.message && (
             <p className="text-xs text-campDarwinCandyPeach">
               {errors.departments.message.toString()}
