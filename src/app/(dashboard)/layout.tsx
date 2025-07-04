@@ -10,13 +10,13 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen bg-white dark:bg-dark-bg">
       {/* Left */}
-      <div className="w-[14%] md:w-[8%] lg:w-[16%] xl:w-[14%] h-screen flex flex-col">
+      <div className="w-[14%] md:w-[8%] lg:w-[16%] xl:w-[14%] h-screen flex flex-col bg-white dark:bg-dark-bg-secondary">
         <div className="p-4">
           <Link href="/" className="flex items-center justify-center gap-2">
             <Image src="/logo.png" alt="logo" width={32} height={32} />
-            <span className="hidden lg:block font-bold">CampusFusion</span>
+            <span className="hidden lg:block font-bold text-gray-900 dark:text-dark-text">CampusFusion</span>
           </Link>
         </div>
         <div className="flex-1 overflow-scroll sidebar p-4 pt-0">
@@ -24,9 +24,9 @@ export default function DashboardLayout({
         </div>
       </div>
       {/* Right */}
-      <div className="h-screen w-[86%] md:w-[92%] lg:w-[84%] xl:w-[86%] bg-[#F4F4F7] flex flex-col">
+      <div className="h-screen w-[86%] md:w-[92%] lg:w-[84%] xl:w-[86%] bg-[#F4F4F7] dark:bg-dark-bg flex flex-col">
         {/* Fixed Navbar */}
-        <div className="sticky top-0 bg-[#F4F4F7] z-10">
+        <div className="sticky top-0 bg-[#F4F4F7] dark:bg-dark-bg-secondary z-10">
           <Navbar />
         </div>
         {/* Scrollable Content */}

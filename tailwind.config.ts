@@ -6,6 +6,7 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       backgroundImage: {
@@ -39,7 +40,17 @@ const config: Config = {
         campDarwinPastelCobaltBlueHover: "#D9F5F7",
         campDarwinPastelCandyPeachHover: "#F2E6FE",
         campDarwinPastelZincYellowHover: "#FFF3D1",
-        campDarwinPastelOrangeHover: "#FFE7D1"
+        campDarwinPastelOrangeHover: "#FFE7D1",
+        // Dark mode colors
+        'dark-bg': '#0f172a',
+        'dark-bg-secondary': '#1e293b',
+        'dark-bg-tertiary': '#334155',
+        'dark-text': '#f1f5f9',
+        'dark-text-secondary': '#cbd5e1',
+        'dark-text-muted': '#94a3b8',
+        'dark-border': '#475569',
+        'dark-accent': '#3b82f6',
+        'dark-accent-hover': '#2563eb',
       },
     },
   },

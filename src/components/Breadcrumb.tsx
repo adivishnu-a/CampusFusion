@@ -109,20 +109,20 @@ const Breadcrumb = () => {
               <>
                 <button 
                   onClick={() => setShowFullPath(true)} 
-                  className="text-gray-500 hover:text-gray-700 mx-2"
+                  className="text-gray-500 hover:text-gray-700 dark:text-dark-text-muted dark:hover:text-dark-text-secondary mx-2"
                 >
                   ...
                 </button>
-                <span className="mx-2 text-gray-500">&gt;</span>
+                <span className="mx-2 text-gray-500 dark:text-dark-text-muted">&gt;</span>
               </>
             )}
             <Link 
               href={item.href}
-              className={`${isLast ? 'text-gray-600' : 'text-gray-500 hover:text-gray-700'}`}
+              className={`${isLast ? 'text-gray-600 dark:text-dark-text-secondary' : 'text-gray-500 hover:text-gray-700 dark:text-dark-text-muted dark:hover:text-dark-text-secondary'}`}
             >
               {item.name}
             </Link>
-            {!isLast && <span className="mx-2 text-gray-500">&gt;</span>}
+            {!isLast && <span className="mx-2 text-gray-500 dark:text-dark-text-muted">&gt;</span>}
           </div>
         );
       })}

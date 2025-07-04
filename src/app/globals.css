@@ -2,6 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Dark mode styles */
+@layer base {
+  html {
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .dark body {
+    background-color: #0f172a;
+    color: #f1f5f9;
+  }
+  
+  .dark .react-calendar {
+    background-color: #1e293b !important;
+    color: #f1f5f9 !important;
+  }
+  
+  .dark .react-calendar__navigation button {
+    background-color: #334155 !important;
+    color: #f1f5f9 !important;
+  }
+  
+  .dark .react-calendar__tile {
+    background-color: #1e293b !important;
+    color: #f1f5f9 !important;
+  }
+  
+  .dark .react-calendar__tile:hover {
+    background-color: #475569 !important;
+    color: #f1f5f9 !important;
+  }
+  
+  .dark .sidebar:hover::-webkit-scrollbar-thumb {
+    background-color: #64748b !important;
+  }
+  
+  .dark .dashboard-content::-webkit-scrollbar-thumb {
+    background-color: #64748b !important;
+  }
+}
+
 .react-calendar {
   width: 100% !important;
   border: none !important;
