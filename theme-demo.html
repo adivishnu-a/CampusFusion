@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusFusion Theme Switcher Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'campDarwinCobaltBlue': '#0183ff',
+                        'dark-bg': '#0f172a',
+                        'dark-bg-secondary': '#1e293b',
+                        'dark-bg-tertiary': '#334155',
+                        'dark-text': '#f1f5f9',
+                        'dark-text-secondary': '#cbd5e1',
+                        'dark-text-muted': '#94a3b8',
+                        'dark-border': '#475569',
+                        'dark-accent': '#3b82f6',
+                        'dark-accent-hover': '#2563eb',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .transition-all {
+            transition: all 0.3s ease;
+        }
+        
+        /* Custom scrollbar for dark mode */
+        .dark ::-webkit-scrollbar {
+            width: 6px;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background-color: #64748b;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body class="bg-white dark:bg-dark-bg transition-all duration-300 min-h-screen">
+    <div class="p-8">
+        <div class="max-w-4xl mx-auto">
+            <!-- Header with Theme Switcher -->
+            <header class="flex items-center justify-between mb-8 p-4 bg-gray-100 dark:bg-dark-bg-secondary rounded-lg transition-all duration-300">
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-dark-text">
+                    CampusFusion - Theme Switcher Demo
+                </h1>
+                <button 
+                    id="theme-toggle"
+                    class="p-2 rounded-md bg-gray-200 hover:bg-gray-300 dark:bg-dark-bg-secondary dark:hover:bg-dark-bg-tertiary transition-colors duration-200 border border-gray-300 dark:border-dark-border"
+                    aria-label="Toggle theme"
+                >
+                    <svg id="sun-icon" class="h-5 w-5 text-gray-700 dark:text-dark-text hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                    <svg id="moon-icon" class="h-5 w-5 text-gray-700 dark:text-dark-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                    </svg>
+                </button>
+            </header>
+            
+            <!-- Main Content Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- Sample Card -->
+                <div class="bg-white dark:bg-dark-bg-secondary p-6 rounded-lg shadow-sm border border-gray-200 dark:border-dark-border transition-all duration-300">
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-dark-text mb-4">
+                        Sample Card
+                    </h2>
+                    <p class="text-gray-600 dark:text-dark-text-secondary mb-4">
+                        This is a sample card showing how the theme switcher affects different components.
+                    </p>
+                    <button class="bg-campDarwinCobaltBlue hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors">
+                        Sample Button
+                    </button>
+                </div>
+                
+                <!-- Navigation Menu -->
+                <div class="bg-white dark:bg-dark-bg-secondary p-6 rounded-lg shadow-sm border border-gray-200 dark:border-dark-border transition-all duration-300">
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-dark-text mb-4">
+                        Navigation Menu
+                    </h2>
+                    <nav class="space-y-2">
+                        <a href="#" class="block text-gray-600 dark:text-dark-text-secondary hover:text-campDarwinCobaltBlue dark:hover:text-dark-accent py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary transition-colors">
+                            🏠 Home
+                        </a>
+                        <a href="#" class="block text-gray-600 dark:text-dark-text-secondary hover:text-campDarwinCobaltBlue dark:hover:text-dark-accent py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary transition-colors">
+                            👨‍🎓 Students
+                        </a>
+                        <a href="#" class="block text-gray-600 dark:text-dark-text-secondary hover:text-campDarwinCobaltBlue dark:hover:text-dark-accent py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary transition-colors">
+                            👨‍🏫 Teachers
+                        </a>
+                        <a href="#" class="block text-gray-600 dark:text-dark-text-secondary hover:text-campDarwinCobaltBlue dark:hover:text-dark-accent py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-dark-bg-tertiary transition-colors">
+                            📚 Classes
+                        </a>
+                    </nav>
+                </div>
+            </div>
+            
+            <!-- Features List -->
+            <div class="bg-white dark:bg-dark-bg-secondary p-6 rounded-lg shadow-sm border border-gray-200 dark:border-dark-border transition-all duration-300">
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-dark-text mb-4">
+                    Theme Switcher Features
+                </h2>
+                <ul class="space-y-2 text-gray-600 dark:text-dark-text-secondary">
+                    <li class="flex items-center">
+                        <span class="text-green-500 mr-2">✅</span>
+                        Light/Dark mode toggle with sun/moon icons
+                    </li>
+                    <li class="flex items-center">
+                        <span class="text-green-500 mr-2">✅</span>
+                        System preference detection
+                    </li>
+                    <li class="flex items-center">
+                        <span class="text-green-500 mr-2">✅</span>
+                        localStorage persistence
+                    </li>
+                    <li class="flex items-center">
+                        <span class="text-green-500 mr-2">✅</span>
+                        Smooth transitions between themes
+                    </li>
+                    <li class="flex items-center">
+                        <span class="text-green-500 mr-2">✅</span>
+                        Proper hydration handling
+                    </li>
+                    <li class="flex items-center">
+                        <span class="text-green-500 mr-2">✅</span>
+                        Tailwind CSS dark mode support
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Dashboard Preview -->
+            <div class="mt-8 bg-white dark:bg-dark-bg-secondary rounded-lg shadow-sm border border-gray-200 dark:border-dark-border transition-all duration-300">
+                <div class="p-4 border-b border-gray-200 dark:border-dark-border">
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-dark-text">
+                        Dashboard Preview
+                    </h2>
+                </div>
+                <div class="flex">
+                    <!-- Sidebar -->
+                    <div class="w-64 bg-gray-50 dark:bg-dark-bg-tertiary p-4 border-r border-gray-200 dark:border-dark-border transition-all duration-300">
+                        <div class="mb-6">
+                            <h3 class="font-bold text-gray-900 dark:text-dark-text">CampusFusion</h3>
+                        </div>
+                        <nav class="space-y-2">
+                            <div class="text-gray-600 dark:text-dark-text-muted font-light text-sm mb-2">MENU</div>
+                            <a href="#" class="flex items-center gap-2 text-gray-600 dark:text-dark-text-secondary py-2 px-2 rounded-md hover:bg-blue-50 dark:hover:bg-dark-bg-secondary transition-colors">
+                                <span>🏠</span> Home
+                            </a>
+                            <a href="#" class="flex items-center gap-2 text-gray-600 dark:text-dark-text-secondary py-2 px-2 rounded-md hover:bg-blue-50 dark:hover:bg-dark-bg-secondary transition-colors">
+                                <span>👨‍🎓</span> Students
+                            </a>
+                            <a href="#" class="flex items-center gap-2 text-gray-600 dark:text-dark-text-secondary py-2 px-2 rounded-md hover:bg-blue-50 dark:hover:bg-dark-bg-secondary transition-colors">
+                                <span>👨‍🏫</span> Teachers
+                            </a>
+                        </nav>
+                    </div>
+                    
+                    <!-- Main Content -->
+                    <div class="flex-1 p-6">
+                        <div class="mb-4">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-dark-text">Dashboard Content</h3>
+                            <p class="text-gray-600 dark:text-dark-text-secondary">This area shows how the main content area adapts to different themes.</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-blue-50 dark:bg-dark-bg p-4 rounded-lg transition-all duration-300">
+                                <h4 class="font-semibold text-blue-900 dark:text-blue-300">Stats Card</h4>
+                                <p class="text-blue-700 dark:text-blue-400 text-2xl font-bold">42</p>
+                            </div>
+                            <div class="bg-green-50 dark:bg-dark-bg p-4 rounded-lg transition-all duration-300">
+                                <h4 class="font-semibold text-green-900 dark:text-green-300">Another Card</h4>
+                                <p class="text-green-700 dark:text-green-400 text-2xl font-bold">99</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme switching logic
+        const themeToggle = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        const htmlElement = document.documentElement;
+        
+        // Check for saved theme preference or default to system preference
+        const savedTheme = localStorage.getItem('theme');
+        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        const currentTheme = savedTheme || systemTheme;
+        
+        // Apply the theme
+        function applyTheme(theme) {
+            htmlElement.classList.remove('light', 'dark');
+            htmlElement.classList.add(theme);
+            
+            if (theme === 'dark') {
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            } else {
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+            
+            localStorage.setItem('theme', theme);
+        }
+        
+        // Initialize theme
+        applyTheme(currentTheme);
+        
+        // Theme toggle event listener
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = htmlElement.classList.contains('dark') ? 'dark' : 'light';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            applyTheme(newTheme);
+        });
+        
+        // Listen for system theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (!localStorage.getItem('theme')) {
+                applyTheme(e.matches ? 'dark' : 'light');
+            }
+        });
+    </script>
+</body>
+</html>
